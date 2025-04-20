@@ -1,68 +1,96 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rusti.Co. - Muy pronto</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rusti.Co. - Inauguración</title>
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: url('https://i.imgur.com/t2bZG3U.jpg') no-repeat center center fixed;
-      background-size: cover;
-      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #111;
+      color: white;
       text-align: center;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+    }
+    header {
+      padding: 2em;
+    }
+    header img {
+      max-width: 250px;
+    }
+    .ghibli-image {
+      width: 100%;
+      max-width: 800px;
+      border-radius: 12px;
+      margin: 2em auto;
+      display: block;
     }
     h1 {
-      font-size: 3em;
-      margin-bottom: 0.3em;
+      font-size: 2em;
+      margin-bottom: 0.2em;
     }
-    p {
-      font-size: 1.2em;
-      margin-bottom: 1em;
+    .countdown {
+      font-size: 2em;
+      font-weight: bold;
+      margin: 1em 0;
+      color: #FFD700;
     }
-    input[type="email"] {
-      padding: 0.6em;
-      border-radius: 6px;
-      border: none;
-      margin-right: 0.5em;
-      font-size: 1em;
-    }
-    button {
-      padding: 0.6em 1.2em;
-      border-radius: 6px;
-      border: none;
-      background-color: #e86a17;
-      color: white;
-      font-size: 1em;
-      cursor: pointer;
-    }
-    .social {
+    .follow {
       margin-top: 2em;
+      font-size: 1.2em;
     }
-    .social a {
-      margin: 0 0.5em;
-      color: #fff;
-      font-size: 1.5em;
-      text-decoration: none;
+    .icons {
+      margin-top: 1em;
+    }
+    .icons img {
+      width: 40px;
+      margin: 0 10px;
+      filter: brightness(0) invert(1);
     }
   </style>
 </head>
 <body>
-  <h1>Rusti.Co.</h1>
-  <p>Muy pronto... un rincón de masa, fuego y sabor 🍕🔥</p>
-  <form action="#">
-    <input type="email" placeholder="Déjanos tu correo" required />
-    <button type="submit">Avísenme</button>
-  </form>
-  <div class="social">
-    <a href="https://instagram.com" target="_blank">Instagram</a>
-    <a href="https://wa.me/" target="_blank">WhatsApp</a>
+  <header>
+    <img src="logo.png" alt="Rusti.Co. Logo">
+  </header>
+
+  <img class="ghibli-image" src="ghibli-local.png" alt="Frontis estilo Ghibli">
+
+  <h1>¡Nos estamos preparando!</h1>
+  <p>Te esperamos en nuestra gran inauguración:</p>
+  <div class="countdown" id="countdown">Cargando...</div>
+
+  <div class="follow">
+    Síguenos en <strong>Instagram</strong> y <strong>Facebook</strong> para conocer nuestra promoción de inauguración.
+    <div class="icons">
+      <img src="https://cdn-icons-png.flaticon.com/512/1384/1384031.png" alt="Instagram">
+      <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook">
+    </div>
   </div>
+
+  <script>
+    const countdown = document.getElementById("countdown");
+    const targetDate = new Date("2025-05-15T19:30:00");
+
+    function updateCountdown() {
+      const now = new Date();
+      const diff = targetDate - now;
+
+      if (diff <= 0) {
+        countdown.innerHTML = "¡Ya inauguramos!";
+        return;
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / 1000 / 60) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+
+      countdown.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    }
+
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+  </script>
 </body>
 </html>
