@@ -51,7 +51,7 @@
 </head>
 <body>
   <header>
-  
+    <!-- Aquí puedes volver a agregar el logo si deseas -->
   </header>
 
   <img class="ghibli-image" src="ghibli-local.png" alt="Frontis estilo Ghibli">
@@ -60,12 +60,26 @@
   <p>Te esperamos en nuestra gran inauguración:</p>
   <div class="countdown" id="countdown">Cargando...</div>
 
- <div style="text-align: center; margin-top: 30px;">
-  <p>Síguenos en <strong>Instagram</strong> para conocer nuestra promoción de inauguración.</p>
-  <a href="https://www.instagram.com/rustico.pizzabar/" target="_blank">
-    <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram" width="40" style="margin-top: 10px;">
-  </a>
-</div>
+  <!-- VIDEO EMBEBIDO DE YOUTUBE -->
+  <div style="text-align: center; margin: 40px 0;">
+    <h2 style="font-family: sans-serif;">🎉 ¡Ya abrimos en Rusti-Co.! 🎉</h2>
+    <iframe width="315" height="560" 
+      src="https://www.youtube.com/embed/D2ZJBxfown4" 
+      title="Ya abrimos - Rusti-Co" 
+      frameborder="0" 
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+      allowfullscreen>
+    </iframe>
+  </div>
+
+  <!-- SECCIÓN INSTAGRAM -->
+  <div style="text-align: center; margin-top: 30px;">
+    <p>Síguenos en <strong>Instagram</strong> para conocer nuestra promoción de inauguración.</p>
+    <a href="https://www.instagram.com/rustico.pizzabar/" target="_blank">
+      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram" width="40" style="margin-top: 10px;">
+    </a>
+  </div>
+
   <script>
     const countdown = document.getElementById("countdown");
     const targetDate = new Date("2025-05-30T19:30:00");
@@ -86,8 +100,6 @@
 
       countdown.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
     }
-
-
 
     setInterval(updateCountdown, 1000);
     updateCountdown();
