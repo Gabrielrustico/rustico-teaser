@@ -4,17 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Club Rusti-Co.</title>
-<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Únete al Club Rusti-Co.: 10 visitas = 1 pizza gratis, regalo de cumpleaños y novedades antes que nadie.">
+<meta name="theme-color" content="#0d0a08">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap">
 <style>
-/* Layout: app de una columna para el cliente (como un celular) y panel ancho para el local.
-   Misma marca que la web: negro cálido, amarillo Rusti-Co., Montserrat. */
+/* App del socio: una columna tipo celular, misma marca que la web. */
 :root{
   --ink:#0d0a08; --ink-2:#17120e; --ink-3:#2a2119; --line:#2f251c;
-  --cream:#f4ede2; --muted:#ab9f90; --gold:#ffd700; --gold-ink:#1a1405;
-  --good:#4cd27a; --warn:#ffb020; --bad:#ff6b5a; --info:#7fb2ff;
+  --cream:#f4ede2; --muted:#ab9f90; --gold:#ffd700; --gold-ink:#1a1405; --bad:#ff6b5a; --info:#7fb2ff;
   --font:"Montserrat","Segoe UI",system-ui,-apple-system,sans-serif;
   color-scheme:dark;
 }
@@ -24,554 +23,315 @@ html,body{margin:0}
 body{background:var(--ink);color:var(--cream);font-family:var(--font);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
 img{max-width:100%;display:block}
 [hidden]{display:none!important}
-button,input,select,textarea{font:inherit;color:inherit}
+button,input,select{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:6px}
-h1,h2,h3{margin:0;font-weight:500;letter-spacing:-.01em;text-wrap:balance}
+h1,h2,h3{margin:0;font-weight:500;text-wrap:balance}
 p{margin:0}
-.wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-
-/* Barra demo */
-.demo{background:var(--ink-2);border-bottom:1px solid var(--line)}
-.demo .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;padding-block:10px;max-width:1180px;margin:0 auto}
-.demo .badge{font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;background:var(--gold);color:var(--gold-ink);border-radius:999px;padding:.3em .7em}
-.demo p{color:var(--muted);font-size:.8rem;flex:1;min-width:200px}
-.switch{display:inline-flex;background:var(--ink);border:1px solid var(--line);border-radius:999px;padding:3px}
-.switch button{border:0;background:transparent;color:var(--muted);padding:.45em 1em;border-radius:999px;font-size:.8rem;font-weight:600;cursor:pointer}
-.switch button[aria-pressed="true"]{background:var(--cream);color:var(--ink)}
-.linkbtn{background:none;border:0;color:var(--muted);font-size:.78rem;text-decoration:underline;cursor:pointer;padding:0}
-
-/* Componentes */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5em;border:1px solid transparent;border-radius:999px;padding:.85em 1.3em;font-weight:600;font-size:.88rem;cursor:pointer;text-decoration:none;transition:transform .12s ease}
-.btn:active{transform:scale(.98)}
-.btn-gold{background:var(--gold);color:var(--gold-ink)}
-.btn-line{background:transparent;border-color:var(--line);color:var(--cream)}
-.btn-ghost{background:var(--ink-3);color:var(--cream)}
-.btn-sm{padding:.5em .9em;font-size:.78rem}
-.btn-block{width:100%}
-.btn[disabled]{opacity:.45;cursor:not-allowed}
-.box{background:var(--ink-2);border:1px solid var(--line);border-radius:18px;padding:18px}
+a{color:var(--cream)}
+.app{max-width:440px;margin:0 auto;padding-block:18px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.head img{height:28px;width:auto}
 .label{font-size:.68rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
-.muted{color:var(--muted)}
-.small{font-size:.82rem}
+.muted{color:var(--muted)} .small{font-size:.82rem}
 .stack{display:grid;gap:14px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5em;border:1px solid transparent;border-radius:999px;padding:.9em 1.3em;font-weight:600;font-size:.9rem;cursor:pointer;text-decoration:none;background:none}
+.btn-gold{background:var(--gold);color:var(--gold-ink)}
+.btn-line{border-color:var(--line);color:var(--cream)}
+.btn-block{width:100%}
+.btn-sm{padding:.5em .9em;font-size:.78rem}
+.btn[disabled]{opacity:.5;cursor:wait}
+.linkbtn{background:none;border:0;color:var(--muted);font-size:.8rem;text-decoration:underline;cursor:pointer;padding:0}
+.box{background:var(--ink-2);border:1px solid var(--line);border-radius:18px;padding:18px}
 .field{display:grid;gap:6px}
 .field label{font-size:.8rem;font-weight:500;color:var(--muted)}
-.field input,.field select,.field textarea{background:var(--ink);border:1px solid var(--line);border-radius:12px;padding:.8em .9em;width:100%}
-.field textarea{resize:vertical;min-height:70px}
-.check{display:flex;gap:10px;align-items:flex-start;font-size:.8rem;color:var(--muted)}
-.check input{margin-top:3px;accent-color:var(--gold)}
-.pill{display:inline-flex;align-items:center;gap:6px;font-size:.7rem;font-weight:600;letter-spacing:.06em;border-radius:999px;padding:.25em .7em;border:1px solid currentColor;white-space:nowrap}
-.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
-.s-new{color:var(--info)} .s-active{color:var(--good)} .s-risk{color:var(--warn)} .s-lost{color:var(--bad)}
-.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--cream);color:var(--ink);padding:.8em 1.2em;border-radius:999px;font-weight:600;font-size:.85rem;z-index:50;box-shadow:0 10px 30px rgba(0,0,0,.5);max-width:calc(100% - 32px);text-align:center}
-.tabular{font-variant-numeric:tabular-nums}
-
-/* ===== Vista cliente ===== */
-.phone{max-width:440px;margin:0 auto;padding-block:20px 60px}
-.app-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
-.app-head img{height:28px;width:auto}
-.hello h1{font-size:1.6rem;font-weight:300}
-.hello p{color:var(--muted);margin-top:4px}
+.field input{background:var(--ink);border:1px solid var(--line);border-radius:12px;padding:.8em .9em;width:100%}
+.field small{color:var(--muted);font-size:.74rem}
+.check{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start;font-size:.82rem;color:var(--cream);line-height:1.45}
+.check input{width:18px;height:18px;margin:2px 0 0;accent-color:var(--gold)}
+.check em{font-style:normal;color:var(--muted)}
+.consent{border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;gap:14px}
+.err{color:var(--bad);font-size:.85rem}
+.note{color:var(--muted);font-size:.78rem;text-align:center}
+.hero{border-radius:999px 999px 20px 20px;overflow:hidden;aspect-ratio:4/3;margin-bottom:20px;background:var(--ink-2)}
+.hero img{width:100%;height:100%;object-fit:cover}
+.perks{list-style:none;padding:0;margin:0 0 22px;display:grid;gap:10px}
+.perks li{display:grid;grid-template-columns:22px 1fr;gap:10px;font-size:.9rem}
+.perks i{width:14px;height:14px;border-radius:50%;background:var(--gold);margin-top:4px}
 .card{background:linear-gradient(160deg,#1d1610 0%,#0f0b08 100%);border:1px solid var(--line);border-radius:22px;padding:20px;position:relative;overflow:hidden}
 .card::after{content:"";position:absolute;right:-60px;top:-60px;width:180px;height:180px;border-radius:50%;background:var(--gold);opacity:.08}
 .card-top{display:flex;justify-content:space-between;align-items:center}
 .stamps{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:18px 0 14px}
 .stamps span{aspect-ratio:1;border-radius:50%;border:1.5px dashed var(--ink-3);display:grid;place-items:center;font-size:.75rem;color:var(--muted)}
-.stamps span.on{background:var(--gold);border:0;color:var(--gold-ink);font-weight:700;animation:pop .35s ease}
-.stamps span.prize{border:1.5px solid var(--gold);color:var(--gold);font-size:.55rem;font-weight:700;text-transform:uppercase;text-align:center;line-height:1.1;letter-spacing:.04em}
+.stamps span.on{background:var(--gold);border:0;color:var(--gold-ink);font-weight:700}
+.stamps span.prize{border:1.5px solid var(--gold);color:var(--gold);font-size:.55rem;font-weight:700;text-transform:uppercase;text-align:center;line-height:1.1}
 .stamps span.prize.ready{background:var(--gold);color:var(--gold-ink)}
-@keyframes pop{0%{transform:scale(.6)}80%{transform:scale(1.08)}100%{transform:scale(1)}}
 .bar{height:6px;border-radius:6px;background:var(--ink-3);overflow:hidden}
-.bar i{display:block;height:100%;background:var(--gold);transition:width .4s ease}
+.bar i{display:block;height:100%;background:var(--gold)}
 .card-foot{display:flex;justify-content:space-between;margin-top:10px;font-size:.8rem;color:var(--muted)}
 .card-foot b{color:var(--cream)}
 .prize-box{margin-top:14px;background:var(--gold);color:var(--gold-ink);border-radius:14px;padding:14px;display:grid;gap:6px}
 .prize-box code{font:700 1.3rem/1 var(--font);letter-spacing:.12em}
-.section-title{display:flex;justify-content:space-between;align-items:baseline;margin:26px 0 10px}
-.section-title h2{font-size:1rem;font-weight:600}
+.section{display:flex;justify-content:space-between;align-items:baseline;margin:26px 0 10px}
+.section h2{font-size:1rem;font-weight:600}
 .stars{display:flex;gap:6px}
 .stars button{background:none;border:0;padding:2px;cursor:pointer}
-.stars svg{width:34px;height:34px;fill:var(--ink-3);transition:fill .1s}
+.stars svg{width:34px;height:34px;fill:var(--ink-3)}
 .stars button.on svg{fill:var(--gold)}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
-.chips button{border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:999px;padding:.4em .85em;font-size:.78rem;cursor:pointer}
+.chips button{border:1px solid var(--line);background:none;color:var(--muted);border-radius:999px;padding:.4em .85em;font-size:.78rem;cursor:pointer}
 .chips button[aria-pressed="true"]{border-color:var(--gold);color:var(--gold)}
-.promo{display:grid;grid-template-columns:64px 1fr;gap:14px;align-items:center}
-.promo img{width:64px;height:64px;border-radius:50%;object-fit:cover;background:#050505}
+textarea{width:100%;min-height:70px;background:var(--ink);border:1px solid var(--line);border-radius:12px;padding:.8em;font:inherit;color:inherit;resize:vertical}
+.promo{display:grid;grid-template-columns:60px 1fr;gap:14px;align-items:center}
+.promo img{width:60px;height:60px;border-radius:50%;object-fit:cover;background:#050505}
 .promo h3{font-size:.95rem;font-weight:600}
 .promo p{font-size:.82rem;color:var(--muted)}
+.pill{display:inline-block;font-size:.66rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--info);border:1px solid currentColor;border-radius:999px;padding:.15em .6em;margin-bottom:4px}
 .code-row{display:flex;gap:10px;align-items:center;margin-top:10px}
 .code-row code{flex:1;background:var(--ink);border:1px dashed var(--gold);color:var(--gold);border-radius:12px;padding:.7em;text-align:center;font:700 1.05rem var(--font);letter-spacing:.12em}
-.history{list-style:none;padding:0;margin:0;display:grid}
+.history{list-style:none;padding:0;margin:0}
 .history li{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line);font-size:.85rem}
 .history li:last-child{border-bottom:0}
-.reg-hero{border-radius:999px 999px 20px 20px;overflow:hidden;aspect-ratio:4/3;margin-bottom:20px;background:var(--ink-2)}
-.reg-hero img{width:100%;height:100%;object-fit:cover}
-
-/* ===== Vista local ===== */
-.panel{max-width:1180px;margin:0 auto;padding-block:20px 60px}
-.panel-head{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;margin-bottom:18px}
-.panel-head img{height:26px;width:auto}
-.panel-head h1{font-size:1.15rem;font-weight:500}
-.fudo{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:.78rem;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:.4em .9em}
-.fudo i{width:8px;height:8px;border-radius:50%;background:var(--warn)}
-.ptabs{display:flex;gap:6px;overflow-x:auto;border-bottom:1px solid var(--line);margin-bottom:22px;scrollbar-width:none}
-.ptabs::-webkit-scrollbar{display:none}
-.ptabs button{flex:none;background:none;border:0;border-bottom:2px solid transparent;color:var(--muted);padding:.8em .9em;font-weight:600;font-size:.85rem;cursor:pointer}
-.ptabs button[aria-selected="true"]{color:var(--cream);border-color:var(--gold)}
-.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:22px}
-.kpi{background:var(--ink-2);border:1px solid var(--line);border-radius:16px;padding:16px}
-.kpi b{display:block;font-size:1.8rem;font-weight:300;margin-top:6px;font-variant-numeric:tabular-nums}
-.kpi small{color:var(--muted);font-size:.75rem}
-@media (max-width:760px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
-.grid2 > *{min-width:0}
-@media (max-width:860px){.grid2{grid-template-columns:1fr}}
-.search{display:flex;gap:10px}
-.search input{flex:1;min-width:0;background:var(--ink);border:1px solid var(--line);border-radius:12px;padding:.8em .9em}
-.cust{display:grid;gap:12px}
-.cust-head{display:flex;justify-content:space-between;align-items:start;gap:10px}
-.cust-head h3{font-size:1.1rem}
-.mini-stamps{display:flex;gap:5px;flex-wrap:wrap}
-.mini-stamps i{width:18px;height:18px;border-radius:50%;border:1.5px dashed var(--ink-3)}
-.mini-stamps i.on{background:var(--gold);border:0}
-.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:16px}
-table{width:100%;border-collapse:collapse;font-size:.84rem}
-th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
-th{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600;background:var(--ink-2)}
-tr:last-child td{border-bottom:0}
-td.num{text-align:right;font-variant-numeric:tabular-nums}
-.segs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:22px}
-.seg{background:var(--ink-2);border:1px solid var(--line);border-radius:16px;padding:16px;cursor:pointer;text-align:left;display:grid;gap:6px}
-.seg[aria-pressed="true"]{border-color:var(--gold)}
-.seg b{font-size:1.6rem;font-weight:300;font-variant-numeric:tabular-nums}
-.seg p{font-size:.78rem;color:var(--muted)}
-@media (max-width:760px){.segs{grid-template-columns:repeat(2,minmax(0,1fr))}}
-.msg{background:var(--ink);border:1px solid var(--line);border-radius:12px;padding:12px;font-size:.85rem;white-space:pre-wrap}
-.rating{display:grid;gap:6px;padding:14px 0;border-bottom:1px solid var(--line)}
-.rating:last-child{border-bottom:0}
-.rating .top{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
-.rstars{color:var(--gold);letter-spacing:2px}
-.rstars s{color:var(--ink-3);text-decoration:none}
-.barchart{display:grid;gap:8px}
-.barchart div{display:grid;grid-template-columns:70px 1fr 34px;gap:10px;align-items:center;font-size:.8rem}
-.barchart span.track{height:8px;background:var(--ink-3);border-radius:8px;overflow:hidden}
-.barchart span.track i{display:block;height:100%;background:var(--gold)}
+.toggle{display:flex;justify-content:space-between;align-items:center;gap:14px}
+.switch{position:relative;width:46px;height:26px;flex:none}
+.switch input{opacity:0;width:0;height:0}
+.switch span{position:absolute;inset:0;background:var(--ink-3);border-radius:26px;cursor:pointer;transition:.2s}
+.switch span::before{content:"";position:absolute;width:20px;height:20px;left:3px;top:3px;background:var(--cream);border-radius:50%;transition:.2s}
+.switch input:checked+span{background:var(--gold)}
+.switch input:checked+span::before{transform:translateX(20px);background:var(--gold-ink)}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--cream);color:var(--ink);padding:.8em 1.2em;border-radius:999px;font-weight:600;font-size:.85rem;z-index:50;max-width:calc(100% - 32px);text-align:center}
+.loading{display:grid;place-items:center;min-height:50vh;color:var(--muted)}
 </style>
 </head>
 <body>
-
-<div class="demo">
-  <div class="wrap">
-    <span class="badge">Prototipo</span>
-    <p>Datos de ejemplo. Prueba los dos lados: lo que ve el cliente y lo que ve el local.</p>
-    <div class="switch" role="group" aria-label="Cambiar vista">
-      <button type="button" id="vCliente" aria-pressed="true">Cliente</button>
-      <button type="button" id="vLocal" aria-pressed="false">Local</button>
-    </div>
-    <button class="linkbtn" type="button" id="resetDemo">Reiniciar demo</button>
-  </div>
-</div>
-
-<main id="cliente" class="phone wrap"></main>
-<main id="local" class="panel wrap" hidden></main>
+<main class="app" id="app"><div class="loading">Cargando tu tarjeta…</div></main>
 <div class="toast" id="toast" hidden></div>
 
 <script>
-/* ================= Ajustes del Club (editables) ================= */
-const CONFIG = {
-  visitsForPrize: 10,
-  prize: "1 pizza gratis a elección",
-  birthdayGift: "Postre gratis para el cumpleañero, o una Pizza Nutella por cada 6 personas en su mesa",
-  referralBonus: 1,                 // visitas extra para ambos al invitar
-  riskDays: 30, lostDays: 60,       // segmentos: activo ≤30 días, en riesgo 31–60, perdido >60
-  googleReviewUrl: "https://g.page/r/CcTIIN9Gqc2wEAE/review",
-  imgBase: "../img/",
-};
-/* =============================================================== */
+/* ===== Ajustes ===== */
+const API_URL = "https://script.google.com/macros/s/AKfycbxGEE89OFZEPTTve4zdjylVMj80sAnWi2TlRYvxKoQHSozT4GBWVHd7t93LMNxp2Q/exec";   // URL de la app web de Apps Script (termina en /exec)
+const GOOGLE_REVIEW_URL = "https://g.page/r/CcTIIN9Gqc2wEAE/review";
+const IMG = "../img/";
+const CONSENT_VERSION = "2026-10-25";
+/* =================== */
 
-const DAY = 864e5;
-const today = new Date(); today.setHours(12,0,0,0);
-const daysAgo = n => new Date(today - n*DAY).toISOString().slice(0,10);
-const fmtDate = iso => new Date(iso+"T12:00:00").toLocaleDateString("es-CL",{day:"numeric",month:"short"});
-const fmtLong = iso => new Date(iso+"T12:00:00").toLocaleDateString("es-CL",{month:"long",year:"numeric"});
-const diffDays = iso => Math.round((today - new Date(iso+"T12:00:00"))/DAY);
-const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt = iso => iso ? new Date(iso + "T12:00:00").toLocaleDateString("es-CL", {day:"numeric", month:"short"}) : "";
+const fmtMes = iso => iso ? new Date(iso + "T12:00:00").toLocaleDateString("es-CL", {month:"long", year:"numeric"}) : "";
+const star = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3 6.6 7.2.7-5.4 4.8 1.6 7.1L12 17.6 5.6 21.2l1.6-7.1L1.8 9.3 9 8.6z"/></svg>';
+const head = `<div class="head"><a href="../"><img src="${IMG}logo-color.png" alt="Rusti-Co."></a><span class="label">Club</span></div>`;
+function toast(m){ const t=$("toast"); t.textContent=m; t.hidden=false; clearTimeout(toast.t); toast.t=setTimeout(()=>t.hidden=true,3200); }
+const store = {
+  get(){ try { return localStorage.getItem("rustico-club-token"); } catch(e){ return null; } },
+  set(t){ try { t ? localStorage.setItem("rustico-club-token", t) : localStorage.removeItem("rustico-club-token"); } catch(e){} },
+};
+let mem = store.get();
+const token = () => mem;
+const setToken = t => { mem = t; store.set(t); };
 
-/* ----- Datos de ejemplo ----- */
-function seed(){
-  const people = [
-    ["Camila Rojas","+56 9 8123 4567",7,4,"1993-"+String(today.getMonth()+1).padStart(2,"0")+"-18",210],
-    ["Matías Fuentes","+56 9 7234 5678",10,2,"1988-03-02",260],
-    ["Valentina Soto","+56 9 6345 6789",3,12,"1997-07-21",95],
-    ["Benjamín Muñoz","+56 9 5456 7890",1,1,"1990-11-09",1],
-    ["Javiera Contreras","+56 9 9567 8901",5,38,"1995-01-30",180],
-    ["Diego Sepúlveda","+56 9 8678 9012",8,9,"1985-"+String(today.getMonth()+1).padStart(2,"0")+"-03",240],
-    ["Francisca Morales","+56 9 7789 0123",2,75,"1999-05-14",120],
-    ["Tomás Araya","+56 9 6890 1234",4,44,"1992-09-27",150],
-    ["Isidora Vargas","+56 9 5901 2345",6,6,"1996-12-12",170],
-    ["Sebastián Reyes","+56 9 9012 3456",1,0,"1991-04-04",0],
-    ["Antonia Castillo","+56 9 8111 2233",9,15,"1994-06-19",230],
-    ["Joaquín Pizarro","+56 9 7222 3344",2,52,"1987-08-08",90],
-    ["Martina Espinoza","+56 9 6333 4455",3,92,"1998-02-25",200],
-    ["Cristóbal Navarro","+56 9 5444 5566",1,3,"1993-10-16",3],
-    ["Fernanda Tapia","+56 9 9555 6677",4,20,"1990-"+String(today.getMonth()+1).padStart(2,"0")+"-27",110],
-    ["Nicolás Herrera","+56 9 8666 7788",2,33,"1989-07-07",70],
-    ["Catalina Ortiz","+56 9 7777 8899",5,63,"1997-03-13",190],
-    ["Felipe Gutiérrez","+56 9 6888 9900",3,8,"1986-11-22",60],
-  ];
-  const comments = ["Riquísima la masa, volveremos","La burrata es otro nivel","Demoró un poco la pizza","Excelente atención del garzón","Muy buen pisco sour de mango","Había mucho ruido","Todo perfecto, 10/10"];
-  const customers = people.map(([name,phone,stamps,lastAgo,birthday,joinedAgo],i)=>{
-    const visits=[]; let d=lastAgo;
-    for(let k=0;k<stamps;k++){ visits.push(daysAgo(d)); d+= 6 + (i*7+k*5)%14; }
-    return {id:"c"+i,name,phone,email:"",birthday,stamps:stamps%CONFIG.visitsForPrize,total:stamps,redeemed:stamps>=CONFIG.visitsForPrize?0:0,
-      visits:visits.sort(),joined:daysAgo(Math.max(joinedAgo,lastAgo)),code:(name.split(" ")[0].toUpperCase().normalize("NFD").replace(/[^A-Z]/g,"")+"-"+(37+i*13)),
-      referredBy:null};
+async function api(accion, datos = {}){
+  const r = await fetch(API_URL, {method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"}, body:JSON.stringify({accion, ...datos})});
+  if (!r.ok) throw new Error("No pudimos conectarnos. Revisa tu internet e intenta de nuevo.");
+  return r.json();
+}
+async function busy(btn, fn){ btn.disabled = true; try { return await fn(); } catch(e){ toast(e.message || "No pudimos conectarnos."); } finally { btn.disabled = false; } }
+
+/* ---------- Bienvenida ---------- */
+function welcome(){
+  $("app").innerHTML = `${head}
+    <div class="hero"><img src="${IMG}compartir.jpg" alt="Amigos compartiendo pizza en Rusti-Co."></div>
+    <h1 style="font-size:1.7rem;font-weight:300">Únete al Club Rusti-Co.</h1>
+    <p class="muted" style="margin:8px 0 18px">Gratis y en 30 segundos. Cada vez que vienes, sumas un sello.</p>
+    <ul class="perks">
+      <li><i></i><span><b>10 visitas = 1 pizza gratis</b> a elección.</span></li>
+      <li><i></i><span><b>Regalo de cumpleaños:</b> postre gratis, o una Pizza Nutella por cada 6 personas en tu mesa.</span></li>
+      <li><i></i><span><b>Invita a un amigo</b> y los dos suman una visita extra.</span></li>
+      <li><i></i><span><b>Pruebas primero</b> las pizzas nuevas.</span></li>
+    </ul>
+    <div class="stack">
+      <button class="btn btn-gold btn-block" type="button" id="goReg">Crear mi tarjeta</button>
+      <button class="btn btn-line btn-block" type="button" id="goLogin">Ya soy socio</button>
+    </div>`;
+  $("goReg").onclick = register;
+  $("goLogin").onclick = () => login();
+}
+
+/* ---------- Registro con autorizaciones separadas ---------- */
+function register(){
+  const ref = new URLSearchParams(location.search).get("amigo") || "";
+  $("app").innerHTML = `${head}
+    <h1 style="font-size:1.5rem;font-weight:300;margin-bottom:6px">Crea tu tarjeta</h1>
+    <p class="muted small" style="margin-bottom:20px">Solo pedimos lo necesario para el Club.</p>
+    <form id="f" class="stack" novalidate>
+      <div class="field"><label for="nombre">Nombre y apellido</label><input id="nombre" autocomplete="name" required></div>
+      <div class="field"><label for="tel">Celular</label><input id="tel" type="tel" inputmode="tel" autocomplete="tel" placeholder="+56 9 1234 5678" required><small>Con él te encontramos en la caja.</small></div>
+      <div class="field"><label for="mail">Correo</label><input id="mail" type="email" autocomplete="email" placeholder="tu@correo.cl" required><small>Ahí te llega tu código para entrar desde otro celular.</small></div>
+      <div class="field"><label for="cumple">Fecha de cumpleaños <span class="muted">(opcional, para tu regalo)</span></label><input id="cumple" type="date"></div>
+      <div class="field"><label for="ref">Código de un amigo <span class="muted">(opcional)</span></label><input id="ref" value="${esc(ref)}" placeholder="Ej: MATIAS-50" autocapitalize="characters"></div>
+      <div class="consent">
+        <label class="check"><input type="checkbox" id="c18"><span>Soy mayor de 18 años.</span></label>
+        <label class="check"><input type="checkbox" id="cClub"><span>Autorizo a Rusti-Co. a usar mis datos para <b>administrar mi membresía del Club</b>: registrar mis visitas, entregarme premios y mi regalo de cumpleaños, y pedirme que califique mis visitas. <em>Obligatorio para unirte.</em></span></label>
+        <label class="check"><input type="checkbox" id="cPromo"><span>Quiero recibir <b>promociones y novedades</b> de Rusti-Co. por WhatsApp y correo. <em>Opcional. Puedes cambiarlo cuando quieras.</em></span></label>
+        <p class="small muted">Lee la <a href="privacidad.html" target="_blank" rel="noopener">política de privacidad</a>: qué datos guardamos, para qué, por cuánto tiempo y cómo ejercer tus derechos. Puedes retirar tu autorización y eliminar tus datos desde tu tarjeta.</p>
+      </div>
+      <p class="err" id="err" hidden></p>
+      <button class="btn btn-gold btn-block" type="submit" id="send">Crear mi tarjeta</button>
+      <button class="linkbtn" type="button" id="back">Volver</button>
+    </form>`;
+  $("back").onclick = welcome;
+  $("f").addEventListener("submit", e => {
+    e.preventDefault();
+    const err = $("err"); err.hidden = true;
+    const fail = m => { err.textContent = m; err.hidden = false; };
+    if (!$("c18").checked) return fail("El Club es solo para mayores de 18 años.");
+    if (!$("cClub").checked) return fail("Para unirte al Club necesitamos tu autorización para administrar tu membresía.");
+    busy($("send"), async () => {
+      const r = await api("registrar", {
+        nombre: $("nombre").value, telefono: $("tel").value, email: $("mail").value, cumpleanos: $("cumple").value,
+        referido: $("ref").value, mayor_18: true, acepta_club: true, acepta_promos: $("cPromo").checked, version: CONSENT_VERSION,
+      });
+      if (!r.ok) return fail(r.error);
+      if (r.yaExiste) { toast(r.mensaje); return code($("tel").value); }
+      setToken(r.token); card(r.tarjeta); toast("¡Bienvenido al Club! Ya tienes tu tarjeta.");
+    });
   });
-  customers[1].stamps=10; // Matías tiene su premio listo
-  const ratings = [];
-  customers.forEach((c,i)=>{ if(c.visits.length && i%3!==2){ const s=[5,5,4,3,5,2,4][i%7]; ratings.push({id:"r"+i,cid:c.id,date:c.visits[c.visits.length-1],stars:s,tags:s>=4?["Pizza","Atención"]:["Tiempo de espera"],comment:comments[i%7],handled:false}); }});
-  return {
-    customers, ratings,
-    promos:[
-      {id:"p1",title:"Martes de pisco sour",detail:"2x1 en pisco sour de sabores, solo socios.",audience:"Socios",img:"coctel",until:daysAgo(-10)},
-      {id:"p2",title:"Pizza Brisket: pruébala primero",detail:"Socios con 5 o más visitas: 20% de descuento esta semana.",audience:"Socios",img:"pizzero",until:daysAgo(-6),early:true},
-    ],
-    me:null, pendingRating:null, campaigns:[],
-  };
 }
-let S;
-function load(){ try{ const raw=localStorage.getItem("rustico-club-demo"); if(raw){ S=JSON.parse(raw); return; } }catch(e){} S=seed(); }
-function save(){ try{ localStorage.setItem("rustico-club-demo",JSON.stringify(S)); }catch(e){} }
-load();
 
-function toast(msg){ const t=$("toast"); t.textContent=msg; t.hidden=false; clearTimeout(toast._t); toast._t=setTimeout(()=>t.hidden=true,2600); }
-function lastVisit(c){ return c.visits.length? c.visits[c.visits.length-1] : null; }
-function segment(c){
-  const lv=lastVisit(c); if(!lv) return "new";
-  const d=diffDays(lv);
-  if(c.total<=1 && d<=CONFIG.riskDays) return "new";
-  if(d<=CONFIG.riskDays) return "active";
-  if(d<=CONFIG.lostDays) return "risk";
-  return "lost";
+/* ---------- Entrar con código ---------- */
+function login(){
+  $("app").innerHTML = `${head}
+    <h1 style="font-size:1.5rem;font-weight:300;margin-bottom:6px">Entra a tu tarjeta</h1>
+    <p class="muted small" style="margin-bottom:20px">Te enviaremos un código a tu correo.</p>
+    <form id="f" class="stack" novalidate>
+      <div class="field"><label for="tel">Celular</label><input id="tel" type="tel" inputmode="tel" autocomplete="tel" placeholder="+56 9 1234 5678"></div>
+      <p class="err" id="err" hidden></p>
+      <button class="btn btn-gold btn-block" type="submit" id="send">Enviarme el código</button>
+      <button class="linkbtn" type="button" id="back">Volver</button>
+    </form>`;
+  $("back").onclick = welcome;
+  $("f").addEventListener("submit", e => { e.preventDefault();
+    busy($("send"), async () => { const r = await api("pedirCodigo", {telefono: $("tel").value});
+      if (!r.ok) { $("err").textContent = r.error; $("err").hidden = false; return; }
+      toast(r.mensaje); code($("tel").value); });
+  });
 }
-const SEG = {new:["Nuevo","s-new"],active:["Activo","s-active"],risk:["En riesgo","s-risk"],lost:["Perdido","s-lost"]};
-const segPill = c => { const [t,k]=SEG[segment(c)]; return `<span class="pill ${k}">${t}</span>`; };
-const isBirthdayMonth = c => c.birthday && +c.birthday.slice(5,7)===today.getMonth()+1;
-const starSvg = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3 6.6 7.2.7-5.4 4.8 1.6 7.1L12 17.6 5.6 21.2l1.6-7.1L1.8 9.3 9 8.6z"/></svg>';
-const copy = async (text) => { try{ await navigator.clipboard.writeText(text); toast("Copiado"); }catch(e){ toast("Selecciona el texto y cópialo"); } };
+function code(tel){
+  $("app").innerHTML = `${head}
+    <h1 style="font-size:1.5rem;font-weight:300;margin-bottom:6px">Revisa tu correo</h1>
+    <p class="muted small" style="margin-bottom:20px">Escribe el código de 6 dígitos que te enviamos. Vence en 10 minutos.</p>
+    <form id="f" class="stack" novalidate>
+      <div class="field"><label for="cod">Código</label><input id="cod" inputmode="numeric" autocomplete="one-time-code" maxlength="6" style="font-size:1.4rem;letter-spacing:.3em;text-align:center"></div>
+      <p class="err" id="err" hidden></p>
+      <button class="btn btn-gold btn-block" type="submit" id="send">Entrar</button>
+      <button class="linkbtn" type="button" id="again">Enviar otro código</button>
+    </form>`;
+  $("cod").focus();
+  $("again").onclick = () => login();
+  $("f").addEventListener("submit", e => { e.preventDefault();
+    busy($("send"), async () => { const r = await api("verificarCodigo", {telefono: tel, codigo: $("cod").value});
+      if (!r.ok) { $("err").textContent = r.error; $("err").hidden = false; return; }
+      setToken(r.token); card(r.tarjeta); });
+  });
+}
 
-/* ================= VISTA CLIENTE ================= */
-function renderClient(){
-  const el=$("cliente");
-  const me = S.me && S.customers.find(c=>c.id===S.me);
-  if(!me){ el.innerHTML = registerView(); bindRegister(); return; }
-  const n=CONFIG.visitsForPrize, st=Math.min(me.stamps,n), left=n-st, ready=st>=n;
-  const stamps = Array.from({length:n},(_,i)=> i===n-1
-      ? `<span class="prize${ready?" ready":""}">Pizza<br>gratis</span>`
-      : `<span class="${i<st?"on":""}">${i+1}</span>`).join("");
-  const promos = S.promos.filter(p=>p.audience!=="En riesgo" || segment(me)==="risk");
-  el.innerHTML = `
-    <div class="app-head"><img src="${CONFIG.imgBase}logo-color.png" alt="Rusti-Co."><span class="label">Club</span></div>
-    <div class="hello"><h1>Hola, ${esc(me.name.split(" ")[0])}</h1>
-      <p>${ready?"¡Tu pizza gratis está lista!":`Te ${left===1?"falta 1 visita":`faltan ${left} visitas`} para tu pizza gratis.`}</p></div>
+/* ---------- Tarjeta ---------- */
+function card(t){
+  const N = t.club.visitasParaPremio, st = Math.min(t.sellos, N), left = N - st, ready = st >= N;
+  const first = t.nombre.split(" ")[0];
+  const bday = t.cumpleanos && +t.cumpleanos.slice(5,7) === new Date().getMonth() + 1;
+  const invite = location.origin + location.pathname + "?amigo=" + encodeURIComponent(t.codigo);
+  $("app").innerHTML = `${head}
+    <div><h1 style="font-size:1.6rem;font-weight:300">Hola, ${esc(first)}</h1>
+      <p class="muted" style="margin-top:4px">${ready ? "¡Tu pizza gratis está lista!" : `Te ${left===1?"falta 1 visita":`faltan ${left} visitas`} para tu pizza gratis.`}</p></div>
 
     <div class="card" style="margin-top:18px">
-      <div class="card-top"><span class="label">Tarjeta de socio</span><span class="small muted tabular">${esc(me.phone)}</span></div>
-      <div class="stamps">${stamps}</div>
-      <div class="bar"><i style="width:${st/n*100}%"></i></div>
-      <div class="card-foot"><span>Socio desde ${fmtLong(me.joined)}</span><b class="tabular">${st} / ${n}</b></div>
-      ${ready?`<div class="prize-box"><span class="label" style="color:var(--gold-ink)">Muestra este código al pagar</span><code>${esc(me.code)}</code><span class="small">${esc(CONFIG.prize)}</span></div>`:""}
+      <div class="card-top"><span class="label">Tarjeta de socio</span><span class="small muted">${esc(t.telefono)}</span></div>
+      <div class="stamps">${Array.from({length:N},(_,i)=> i===N-1 ? `<span class="prize${ready?" ready":""}">Pizza<br>gratis</span>` : `<span class="${i<st?"on":""}">${i+1}</span>`).join("")}</div>
+      <div class="bar"><i style="width:${st/N*100}%"></i></div>
+      <div class="card-foot"><span>Socio desde ${esc(fmtMes(t.alta))}</span><b>${st} / ${N}</b></div>
+      ${ready ? `<div class="prize-box"><span class="label" style="color:var(--gold-ink)">Muestra esta pantalla al pagar</span><code>${esc(t.codigo)}</code><span class="small">${esc(t.club.premio)}</span></div>` : ""}
     </div>
+    <p class="note" style="margin-top:10px">Al pedir, dile al garzón tu nombre o teléfono para sumar tu sello.</p>
 
-    ${S.pendingRating ? rateView() : ""}
-
-    ${isBirthdayMonth(me)?`<div class="box" style="margin-top:16px;border-color:var(--gold)"><span class="label" style="color:var(--gold)">Es tu mes</span><h3 style="margin-top:6px">Feliz cumpleaños 🎂</h3><p class="muted small" style="margin-top:4px">Durante todo tu mes: ${esc(CONFIG.birthdayGift.charAt(0).toLowerCase()+CONFIG.birthdayGift.slice(1))}. Muestra esta pantalla en el local.</p></div>`:""}
-
-    <div class="section-title"><h2>Para socios</h2><span class="label">${promos.length} activas</span></div>
-    <div class="stack">${promos.map(p=>`
-      <div class="box promo"><img src="${CONFIG.imgBase}${esc(p.img||"pizzero")}.jpg" alt="">
-        <div>${p.early?'<span class="pill s-new" style="margin-bottom:6px">Primero tú</span>':""}<h3>${esc(p.title)}</h3><p>${esc(p.detail)}</p><p class="small" style="margin-top:4px">Hasta el ${fmtDate(p.until)}</p></div></div>`).join("") || '<p class="muted small">No hay promociones activas.</p>'}</div>
-
-    <div class="section-title"><h2>Invita a un amigo</h2></div>
-    <div class="box">
-      <p class="small muted">Cuando tu amigo se registra con tu código y hace su primera visita, los dos suman ${CONFIG.referralBonus} visita extra.</p>
-      <div class="code-row"><code id="myCode">${esc(me.code)}</code><button class="btn btn-ghost btn-sm" type="button" id="copyCode">Copiar</button></div>
-    </div>
-
-    <div class="section-title"><h2>¿Te gustó? Cuéntalo en Google</h2></div>
-    <div class="box"><p class="small muted" style="margin-bottom:12px">Tu reseña ayuda a que más vecinos de Concepción nos encuentren.</p>
-      <a class="btn btn-line btn-block" href="${CONFIG.googleReviewUrl}" target="_blank" rel="noopener">Calificar en Google</a></div>
-
-    <div class="section-title"><h2>Tus visitas</h2><span class="label tabular">${me.total} en total</span></div>
-    <div class="box"><ul class="history">${me.visits.slice().reverse().slice(0,6).map(v=>`<li><span>${fmtDate(v)}</span><span class="muted">+1 sello</span></li>`).join("") || '<li class="muted">Aún no tienes visitas. ¡Te esperamos!</li>'}</ul></div>
-
-    <p class="small muted" style="margin-top:24px;text-align:center">¿No eres ${esc(me.name.split(" ")[0])}? <button class="linkbtn" type="button" id="logout">Cambiar de cuenta</button></p>
-  `;
-  $("copyCode").onclick=()=>copy(me.code);
-  $("logout").onclick=()=>{ S.me=null; S.pendingRating=null; save(); renderClient(); };
-  if(S.pendingRating) bindRate(me);
-}
-
-function registerView(){
-  return `
-    <div class="app-head"><img src="${CONFIG.imgBase}logo-color.png" alt="Rusti-Co."><span class="label">Club</span></div>
-    <div class="reg-hero"><img src="${CONFIG.imgBase}compartir.jpg" alt="Amigos compartiendo pizza en Rusti-Co."></div>
-    <h1 style="font-size:1.7rem;font-weight:300">Únete al Club Rusti-Co.</h1>
-    <p class="muted" style="margin:8px 0 20px">${CONFIG.visitsForPrize} visitas = ${esc(CONFIG.prize)}. Además, regalo de cumpleaños y novedades antes que nadie.</p>
-    <form id="regForm" class="stack" novalidate>
-      <div class="field"><label for="rName">Nombre y apellido</label><input id="rName" autocomplete="name" required value="Camila Rojas"></div>
-      <div class="field"><label for="rPhone">Teléfono (WhatsApp)</label><input id="rPhone" type="tel" inputmode="tel" autocomplete="tel" required value="+56 9 8123 4567"></div>
-      <div class="field"><label for="rMail">Correo (opcional)</label><input id="rMail" type="email" autocomplete="email" placeholder="tu@correo.cl"></div>
-      <div class="field"><label for="rBday">Fecha de cumpleaños</label><input id="rBday" type="date"></div>
-      <div class="field"><label for="rRef">Código de un amigo (opcional)</label><input id="rRef" placeholder="Ej: MATIAS-50" autocapitalize="characters"></div>
-      <label class="check"><input type="checkbox" id="rOk" checked> Acepto que Rusti-Co. guarde mis datos para el Club y me envíe beneficios por WhatsApp o correo. Puedo darme de baja cuando quiera.</label>
-      <p class="small" id="regErr" style="color:var(--bad)" hidden></p>
-      <button class="btn btn-gold btn-block" type="submit">Crear mi tarjeta</button>
-      <p class="small muted" style="text-align:center">¿Ya eres socio? Escribe tu teléfono y entra a tu tarjeta.</p>
-    </form>`;
-}
-function bindRegister(){
-  $("regForm").addEventListener("submit",e=>{
-    e.preventDefault();
-    const name=$("rName").value.trim(), phone=$("rPhone").value.trim(), err=$("regErr");
-    const digits=phone.replace(/\D/g,"");
-    if(name.length<3){ err.textContent="Escribe tu nombre y apellido."; err.hidden=false; return; }
-    if(digits.length<9){ err.textContent="Revisa tu teléfono: debe tener al menos 9 dígitos."; err.hidden=false; return; }
-    if(!$("rOk").checked){ err.textContent="Para crear tu tarjeta necesitamos tu autorización para guardar tus datos."; err.hidden=false; return; }
-    const existing=S.customers.find(c=>c.phone.replace(/\D/g,"").endsWith(digits.slice(-9)));
-    if(existing){ S.me=existing.id; save(); renderClient(); toast("Bienvenido de vuelta"); return; }
-    const ref=$("rRef").value.trim().toUpperCase();
-    const refBy=ref && S.customers.find(c=>c.code===ref);
-    const c={id:"c"+Date.now(),name,phone,email:$("rMail").value.trim(),birthday:$("rBday").value||"",stamps:0,total:0,visits:[],
-      joined:today.toISOString().slice(0,10),code:name.split(" ")[0].toUpperCase().normalize("NFD").replace(/[^A-Z]/g,"")+"-"+(10+Math.floor(Math.random()*89)),referredBy:refBy?refBy.id:null};
-    S.customers.push(c); S.me=c.id; save(); renderClient();
-    toast(refBy?`Tarjeta creada. Tú y ${refBy.name.split(" ")[0]} sumarán una visita extra.`:"Tarjeta creada. ¡Bienvenido al Club!");
-  });
-}
-
-function rateView(){
-  return `
-    <div class="box" style="margin-top:16px;border-color:var(--gold)" id="rateBox">
-      <span class="label" style="color:var(--gold)">Visita de hoy</span>
+    ${t.calificarVisita ? `<div class="box" id="rate" style="margin-top:16px;border-color:var(--gold)">
+      <span class="label" style="color:var(--gold)">Tu visita del ${esc(fmt(t.calificarVisita))}</span>
       <h3 style="margin:6px 0 12px">¿Cómo estuvo todo?</h3>
-      <div class="stars" id="stars">${[1,2,3,4,5].map(i=>`<button type="button" data-v="${i}" aria-label="${i} estrella${i>1?"s":""}">${starSvg}</button>`).join("")}</div>
-      <div id="rateMore" hidden style="margin-top:14px" class="stack">
-        <p class="small muted" id="rateQ"></p>
-        <div class="chips" id="rateTags">${["Pizza","Atención","Tiempo de espera","Ambiente","Precio","Tragos"].map(t=>`<button type="button" aria-pressed="false">${t}</button>`).join("")}</div>
-        <div class="field"><label for="rateTxt">Comentario (opcional)</label><textarea id="rateTxt"></textarea></div>
-        <button class="btn btn-gold btn-block" type="button" id="rateSend">Enviar calificación</button>
-      </div>
-    </div>`;
-}
-function bindRate(me){
-  let val=0;
-  const btns=[...document.querySelectorAll("#stars button")];
-  btns.forEach(b=>b.onclick=()=>{ val=+b.dataset.v; btns.forEach(x=>x.classList.toggle("on",+x.dataset.v<=val)); $("rateMore").hidden=false;
-    $("rateQ").textContent = val>=4 ? "¡Qué bueno! ¿Qué fue lo mejor?" : "Lo sentimos. ¿Qué podemos mejorar?"; });
-  document.querySelectorAll("#rateTags button").forEach(b=>b.onclick=()=>b.setAttribute("aria-pressed",b.getAttribute("aria-pressed")!=="true"));
-  $("rateSend").onclick=()=>{
-    const tags=[...document.querySelectorAll('#rateTags button[aria-pressed="true"]')].map(b=>b.textContent);
-    S.ratings.unshift({id:"r"+Date.now(),cid:me.id,date:today.toISOString().slice(0,10),stars:val,tags,comment:$("rateTxt").value.trim(),handled:false});
-    S.pendingRating=null; save();
-    const box=$("rateBox");
-    box.innerHTML = val>=4
-      ? `<span class="label" style="color:var(--gold)">Gracias</span><h3 style="margin:6px 0 8px">¡Nos alegra que lo hayas disfrutado!</h3><p class="small muted" style="margin-bottom:12px">¿Nos regalas 30 segundos en Google? Ayuda mucho a un local nuevo.</p><a class="btn btn-gold btn-block" href="${CONFIG.googleReviewUrl}" target="_blank" rel="noopener">Dejar reseña en Google</a>`
-      : `<span class="label" style="color:var(--gold)">Gracias</span><h3 style="margin:6px 0 8px">Gracias por contarnos</h3><p class="small muted" style="margin-bottom:12px">El encargado ya recibió tu comentario y te escribirá para solucionarlo. Si quieres, también puedes dejar tu reseña en Google.</p><a class="btn btn-line btn-block" href="${CONFIG.googleReviewUrl}" target="_blank" rel="noopener">Calificar en Google</a>`;
-  };
-}
+      <div class="stars" id="stars">${[1,2,3,4,5].map(i=>`<button type="button" data-v="${i}" aria-label="${i} estrella${i>1?"s":""}">${star}</button>`).join("")}</div>
+      <div id="more" hidden class="stack" style="margin-top:14px">
+        <p class="small muted" id="q"></p>
+        <div class="chips">${["Pizza","Atención","Tiempo de espera","Ambiente","Precio","Tragos"].map(x=>`<button type="button" aria-pressed="false">${x}</button>`).join("")}</div>
+        <textarea id="com" placeholder="Comentario (opcional)" aria-label="Comentario"></textarea>
+        <button class="btn btn-gold btn-block" type="button" id="sendRate">Enviar calificación</button>
+      </div></div>` : ""}
 
-/* ================= VISTA LOCAL ================= */
-let ptab="caja", segSel="risk", query="", selected=null;
-function renderLocal(){
-  const el=$("local");
-  const tabs=[["caja","Sumar visita"],["resumen","Resumen"],["segmentos","Segmentos"],["calif","Calificaciones"],["promos","Promociones"],["clientes","Clientes"]];
-  const lowOpen=S.ratings.filter(r=>r.stars<=3&&!r.handled).length;
-  el.innerHTML = `
-    <div class="panel-head"><img src="${CONFIG.imgBase}logo-color.png" alt="Rusti-Co."><h1>Panel del Club</h1>
-      <span class="fudo" title="Hasta conectar Fudo, las visitas se suman desde aquí"><i></i>Fudo sin conectar · visitas manuales</span></div>
-    <div class="ptabs" role="tablist">${tabs.map(([k,t])=>`<button role="tab" type="button" data-t="${k}" aria-selected="${k===ptab}">${t}${k==="calif"&&lowOpen?` <span class="pill s-lost" style="margin-left:4px">${lowOpen}</span>`:""}</button>`).join("")}</div>
-    <div id="pbody"></div>`;
-  el.querySelectorAll(".ptabs button").forEach(b=>b.onclick=()=>{ptab=b.dataset.t; renderLocal();});
-  ({caja:pCaja,resumen:pResumen,segmentos:pSeg,calif:pCalif,promos:pPromos,clientes:pClientes})[ptab]();
-}
+    ${bday ? `<div class="box" style="margin-top:16px;border-color:var(--gold)"><span class="label" style="color:var(--gold)">Es tu mes</span><h3 style="margin-top:6px">¡Feliz cumpleaños! 🎂</h3><p class="small muted" style="margin-top:4px">${esc(t.club.regaloCumpleanos)}. Muestra esta pantalla en el local.</p></div>` : ""}
 
-function pCaja(){
-  const b=$("pbody");
-  const results = query.length>=2 ? S.customers.filter(c=>c.name.toLowerCase().includes(query.toLowerCase())||c.phone.replace(/\D/g,"").includes(query.replace(/\D/g,"")||"#")) : [];
-  const c = selected && S.customers.find(x=>x.id===selected);
-  const visitedToday = c && lastVisit(c)===today.toISOString().slice(0,10);
-  b.innerHTML = `
-    <div class="grid2">
-      <div class="box stack">
-        <span class="label">Buscar socio</span>
-        <div class="search"><input id="q" placeholder="Teléfono o nombre" value="${esc(query)}" inputmode="search" autocomplete="off"></div>
-        <div class="stack" id="results">${results.slice(0,6).map(r=>`
-          <button type="button" class="box" data-id="${r.id}" style="text-align:left;cursor:pointer;padding:12px;display:flex;justify-content:space-between;gap:10px;align-items:center">
-            <span><b style="font-weight:600">${esc(r.name)}</b><br><span class="small muted tabular">${esc(r.phone)}</span></span>${segPill(r)}</button>`).join("") || `<p class="small muted">${query.length>=2?"Sin resultados. Pídele que se registre con el QR de la mesa.":"Prueba con “Camila” o “8123”."}</p>`}</div>
-      </div>
-      <div class="box">
-        ${c?`<div class="cust">
-          <div class="cust-head"><div><h3>${esc(c.name)}</h3><p class="small muted tabular">${esc(c.phone)} · ${c.total} visitas en total</p></div>${segPill(c)}</div>
-          <div class="mini-stamps">${Array.from({length:CONFIG.visitsForPrize},(_,i)=>`<i class="${i<c.stamps?"on":""}"></i>`).join("")}</div>
-          <p class="small">${c.stamps>=CONFIG.visitsForPrize?`<b style="color:var(--gold)">Premio listo:</b> ${esc(CONFIG.prize)}. Código ${esc(c.code)}.`:`Lleva <b class="tabular">${c.stamps} de ${CONFIG.visitsForPrize}</b>. Última visita: ${lastVisit(c)?fmtDate(lastVisit(c)):"—"}.`}</p>
-          ${isBirthdayMonth(c)?`<p class="small" style="color:var(--gold)">🎂 Está de cumpleaños este mes. Regalo: ${esc(CONFIG.birthdayGift.charAt(0).toLowerCase()+CONFIG.birthdayGift.slice(1))}.</p>`:""}
-          <div style="display:flex;flex-wrap:wrap;gap:10px">
-            <button class="btn btn-gold" type="button" id="addVisit" ${visitedToday||c.stamps>=CONFIG.visitsForPrize?"disabled":""}>${visitedToday?"Visita de hoy ya sumada":"Sumar visita"}</button>
-            ${c.stamps>=CONFIG.visitsForPrize?`<button class="btn btn-line" type="button" id="redeem">Canjear pizza gratis</button>`:""}
-          </div>
-          <p class="small muted">Máximo una visita por día por socio. Al conectar Fudo, la visita se suma sola cuando se cierra la cuenta.</p>
-        </div>`:`<span class="label">Socio seleccionado</span><p class="muted small" style="margin-top:10px">Busca al cliente por teléfono para sumar su visita o canjear su premio.</p>`}
-      </div>
-    </div>`;
-  const q=$("q"); q.oninput=()=>{ query=q.value; const pos=q.selectionStart; pCaja(); const n=$("q"); n.focus(); n.setSelectionRange(pos,pos); };
-  b.querySelectorAll("#results [data-id]").forEach(x=>x.onclick=()=>{selected=x.dataset.id; pCaja();});
-  if(c && $("addVisit")) $("addVisit").onclick=()=>{
-    const iso=today.toISOString().slice(0,10);
-    c.visits.push(iso); c.total++; c.stamps=Math.min(c.stamps+1,CONFIG.visitsForPrize);
-    if(c.total===1 && c.referredBy){ const r=S.customers.find(x=>x.id===c.referredBy); if(r){ r.stamps=Math.min(r.stamps+CONFIG.referralBonus,CONFIG.visitsForPrize); c.stamps=Math.min(c.stamps+CONFIG.referralBonus,CONFIG.visitsForPrize); } }
-    if(c.id===S.me) S.pendingRating=true;
-    save(); pCaja();
-    toast(c.stamps>=CONFIG.visitsForPrize?`¡${c.name.split(" ")[0]} completó su tarjeta!`:`Visita sumada: ${c.stamps}/${CONFIG.visitsForPrize}`);
-  };
-  if(c && $("redeem")) $("redeem").onclick=()=>{ c.stamps=0; c.redeemed=(c.redeemed||0)+1; save(); pCaja(); toast("Premio canjeado. La tarjeta vuelve a 0."); };
-}
+    <div class="section"><h2>Para socios</h2><span class="label">${t.club.promos.length} activas</span></div>
+    <div class="stack">${t.club.promos.map(p=>`<div class="box promo"><img src="${IMG}${esc(p.foto||"schop")}.jpg" alt="">
+      <div>${p.novedad?'<span class="pill">Primero tú</span>':""}<h3>${esc(p.titulo)}</h3><p>${esc(p.detalle)}</p>${p.hasta?`<p class="small">Hasta el ${esc(fmt(p.hasta))}</p>`:""}</div></div>`).join("") || '<p class="small muted">Pronto tendrás beneficios exclusivos aquí.</p>'}</div>
 
-function pResumen(){
-  const cs=S.customers, month=today.toISOString().slice(0,7);
-  const visitsMonth=cs.reduce((a,c)=>a+c.visits.filter(v=>v.startsWith(month)).length,0);
-  const newMonth=cs.filter(c=>c.joined.startsWith(month)).length;
-  const avg=S.ratings.length? (S.ratings.reduce((a,r)=>a+r.stars,0)/S.ratings.length):0;
-  const segCount=k=>cs.filter(c=>segment(c)===k).length;
-  const bdays=cs.filter(isBirthdayMonth);
-  const dist=[5,4,3,2,1].map(s=>[s,S.ratings.filter(r=>r.stars===s).length]);
-  const maxD=Math.max(1,...dist.map(d=>d[1]));
-  $("pbody").innerHTML = `
-    <div class="kpis">
-      <div class="kpi"><small>Socios</small><b>${cs.length}</b><small>${newMonth} nuevos este mes</small></div>
-      <div class="kpi"><small>Visitas este mes</small><b>${visitsMonth}</b><small>de socios del Club</small></div>
-      <div class="kpi"><small>Calificación promedio</small><b>${avg.toFixed(1).replace(".",",")}</b><small>${S.ratings.length} calificaciones</small></div>
-      <div class="kpi"><small>En riesgo de perderse</small><b style="color:var(--warn)">${segCount("risk")}</b><small>sin venir hace 31 a 60 días</small></div>
+    <div class="section"><h2>Invita a un amigo</h2></div>
+    <div class="box"><p class="small muted">Cuando tu amigo se registra con tu código y hace su primera visita, los dos suman ${t.club.bonoReferido} visita extra.</p>
+      <div class="code-row"><code>${esc(t.codigo)}</code><button class="btn btn-line btn-sm" type="button" id="copy">Copiar link</button></div></div>
+
+    <div class="section"><h2>¿Te gustó? Cuéntalo en Google</h2></div>
+    <div class="box"><p class="small muted" style="margin-bottom:12px">Tu reseña ayuda a que más vecinos de Concepción nos encuentren.</p>
+      <a class="btn btn-line btn-block" href="${GOOGLE_REVIEW_URL}" target="_blank" rel="noopener">Calificar en Google</a></div>
+
+    <div class="section"><h2>Tus visitas</h2><span class="label">${t.visitasTotal} en total</span></div>
+    <div class="box"><ul class="history">${t.visitas.map(v=>`<li><span>${esc(fmt(v))}</span><span class="muted">+1 sello</span></li>`).join("") || '<li class="muted">Aún no tienes visitas. ¡Te esperamos!</li>'}</ul></div>
+
+    <div class="section"><h2>Mis datos y autorizaciones</h2></div>
+    <div class="box stack">
+      <div class="toggle"><span class="small">Recibir promociones y novedades por WhatsApp y correo</span>
+        <label class="switch"><input type="checkbox" id="promo" ${t.aceptaPromos?"checked":""} aria-label="Recibir promociones"><span></span></label></div>
+      <p class="small muted">${esc(t.email)} · ${esc(t.telefono)}${t.cumpleanos?` · cumpleaños ${esc(fmt(t.cumpleanos))}`:""}</p>
+      <p class="small muted">Para corregir tus datos o ejercer tus derechos escribe a administracion@rusti-co.cl. <a href="privacidad.html" target="_blank" rel="noopener">Política de privacidad</a>.</p>
+      <button class="linkbtn" type="button" id="del" style="justify-self:start">Salir del Club y eliminar mis datos</button>
+      <div id="delBox" hidden class="stack" style="border-top:1px solid var(--line);padding-top:14px">
+        <p class="small">Vas a perder tu tarjeta y tus ${t.sellos} sellos. Esto no se puede deshacer.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn btn-sm" style="background:var(--bad);color:#1a0705" type="button" id="delYes">Sí, eliminar mis datos</button><button class="btn btn-line btn-sm" type="button" id="delNo">Cancelar</button></div>
+      </div>
     </div>
-    <div class="grid2">
-      <div class="box stack"><span class="label">Calificaciones</span>
-        <div class="barchart">${dist.map(([s,n])=>`<div><span>${s} ★</span><span class="track"><i style="width:${n/maxD*100}%"></i></span><span class="tabular">${n}</span></div>`).join("")}</div>
-      </div>
-      <div class="box stack"><span class="label">Cumpleaños este mes</span>
-        ${bdays.map(c=>`<div style="display:flex;justify-content:space-between;gap:10px"><span>${esc(c.name)}</span><span class="muted tabular">${fmtDate(today.getFullYear()+c.birthday.slice(4))}</span></div>`).join("")||'<p class="small muted">Nadie este mes.</p>'}
-        <button class="btn btn-line btn-sm" type="button" id="bdayMsg" style="justify-self:start">Preparar saludo</button>
-      </div>
-      <div class="box stack"><span class="label">Socios vs. clientes sin registro</span>
-        <p class="small muted">Cuánto gasta y cuántas veces vuelve un socio comparado con un cliente común. Este dato llega desde Fudo, con sus ventas por cliente.</p>
-        <span class="pill s-risk" style="justify-self:start">Disponible al conectar Fudo</span>
-      </div>
-      <div class="box stack"><span class="label">Premios</span>
-        <p><b class="tabular" style="font-size:1.4rem;font-weight:300">${cs.filter(c=>c.stamps>=CONFIG.visitsForPrize).length}</b> <span class="muted small">socios con pizza gratis lista para canjear</span></p>
-        <p><b class="tabular" style="font-size:1.4rem;font-weight:300">${cs.filter(c=>c.stamps>=CONFIG.visitsForPrize-2&&c.stamps<CONFIG.visitsForPrize).length}</b> <span class="muted small">a 1 o 2 visitas del premio</span></p>
-      </div>
-    </div>`;
-  $("bdayMsg").onclick=()=>{ segSel="bday"; ptab="segmentos"; renderLocal(); };
+    <p class="note" style="margin-top:22px"><button class="linkbtn" type="button" id="out">Cerrar sesión en este celular</button></p>`;
+
+  $("copy").onclick = async () => { try { await navigator.clipboard.writeText(invite); toast("Link copiado. Compártelo con tus amigos."); } catch(e){ toast("Tu código es " + t.codigo); } };
+  $("out").onclick = () => { setToken(null); welcome(); };
+  $("del").onclick = () => { $("delBox").hidden = false; };
+  $("delNo").onclick = () => { $("delBox").hidden = true; };
+  $("delYes").onclick = e => busy(e.target, async () => { const r = await api("eliminarme", {token: token()});
+    if (!r.ok) return toast(r.error); setToken(null); welcome(); toast("Tus datos fueron eliminados. ¡Gracias por haber sido parte del Club!"); });
+  $("promo").onchange = e => busy(e.target, async () => { const r = await api("preferencias", {token: token(), acepta_promos: e.target.checked});
+    if (!r.ok) { e.target.checked = !e.target.checked; return toast(r.error); }
+    toast(e.target.checked ? "Listo: te avisaremos de promociones." : "Listo: ya no recibirás promociones."); });
+
+  if (t.calificarVisita) {
+    let val = 0;
+    const btns = [...document.querySelectorAll("#stars button")];
+    btns.forEach(b => b.onclick = () => { val = +b.dataset.v; btns.forEach(x => x.classList.toggle("on", +x.dataset.v <= val)); $("more").hidden = false;
+      $("q").textContent = val >= 4 ? "¡Qué bueno! ¿Qué fue lo mejor?" : "Lo sentimos. ¿Qué podemos mejorar?"; });
+    document.querySelectorAll(".chips button").forEach(b => b.onclick = () => b.setAttribute("aria-pressed", b.getAttribute("aria-pressed") !== "true"));
+    $("sendRate").onclick = e => busy(e.target, async () => {
+      const temas = [...document.querySelectorAll('.chips button[aria-pressed="true"]')].map(b => b.textContent);
+      const r = await api("calificar", {token: token(), estrellas: val, temas, comentario: $("com").value});
+      if (!r.ok) return toast(r.error);
+      $("rate").innerHTML = val >= 4
+        ? `<span class="label" style="color:var(--gold)">Gracias</span><h3 style="margin:6px 0 8px">¡Nos alegra que lo hayas disfrutado!</h3><p class="small muted" style="margin-bottom:12px">¿Nos regalas 30 segundos en Google? Ayuda mucho a un local nuevo.</p><a class="btn btn-gold btn-block" href="${GOOGLE_REVIEW_URL}" target="_blank" rel="noopener">Dejar reseña en Google</a>`
+        : `<span class="label" style="color:var(--gold)">Gracias</span><h3 style="margin:6px 0 8px">Gracias por contarnos</h3><p class="small muted" style="margin-bottom:12px">El encargado ya recibió tu comentario y te escribirá para solucionarlo. Si quieres, también puedes dejar tu reseña en Google.</p><a class="btn btn-line btn-block" href="${GOOGLE_REVIEW_URL}" target="_blank" rel="noopener">Calificar en Google</a>`;
+    });
+  }
 }
 
-const TEMPLATES = {
-  new:"Hola {nombre}, ¡gracias por unirte al Club Rusti-Co.! 🍕 Ya tienes tu primer sello. Vuelve esta semana y te regalamos un helado soft con tu pizza.",
-  active:"Hola {nombre}, llegó algo nuevo a Rusti-Co.: la Pizza Brisket. Como socio, la pruebas antes que nadie con 20% de descuento esta semana. ¡Te esperamos!",
-  risk:"Hola {nombre}, te echamos de menos en Rusti-Co. 🍕 Ven antes del domingo y tu visita vale doble sello en tu tarjeta del Club.",
-  lost:"Hola {nombre}, hace tiempo que no te vemos. Te guardamos un regalo: pisco sour o postre gratis con tu próxima pizza. Válido por 15 días. ¡Te esperamos en Ramón Carrasco 99!",
-  bday:"¡Feliz cumpleaños, {nombre}! 🎂 Ven a celebrarlo a Rusti-Co. este mes: tu postre va por la casa, y si vienen 6 o más, les regalamos una Pizza Nutella por cada 6 personas.",
-};
-function pSeg(){
-  const groups={new:S.customers.filter(c=>segment(c)==="new"),active:S.customers.filter(c=>segment(c)==="active"),risk:S.customers.filter(c=>segment(c)==="risk"),lost:S.customers.filter(c=>segment(c)==="lost"),bday:S.customers.filter(isBirthdayMonth)};
-  const info={new:["Nuevos","1 visita, recién llegados"],active:["Activos","vinieron en los últimos 30 días"],risk:["En riesgo","31 a 60 días sin venir"],lost:["Perdidos","más de 60 días sin venir"]};
-  const list=groups[segSel]||[];
-  const tpl=TEMPLATES[segSel];
-  $("pbody").innerHTML = `
-    <div class="segs">${Object.entries(info).map(([k,[t,d]])=>`<button type="button" class="seg" data-k="${k}" aria-pressed="${k===segSel}"><span class="pill ${SEG[k][1]}" style="justify-self:start">${t}</span><b>${groups[k].length}</b><p>${d}</p></button>`).join("")}</div>
-    <div class="grid2">
-      <div class="box stack"><span class="label">${segSel==="bday"?"Cumpleaños este mes":info[segSel][0]} · ${list.length} socios</span>
-        <div class="table-wrap"><table><thead><tr><th>Socio</th><th>Última visita</th><th class="num">Visitas</th></tr></thead>
-        <tbody>${list.map(c=>`<tr><td>${esc(c.name)}</td><td>${lastVisit(c)?`hace ${diffDays(lastVisit(c))} días`:"—"}</td><td class="num">${c.total}</td></tr>`).join("")||'<tr><td colspan="3" class="muted">Nadie en este grupo.</td></tr>'}</tbody></table></div>
-      </div>
-      <div class="box stack"><span class="label">Mensaje sugerido</span>
-        <div class="msg" id="tpl">${esc(tpl)}</div>
-        <p class="small muted">{nombre} se reemplaza por el nombre de cada socio. Puedes editar el mensaje antes de enviarlo.</p>
-        <div style="display:flex;flex-wrap:wrap;gap:10px"><button class="btn btn-gold btn-sm" type="button" id="copyTpl">Copiar mensaje</button>
-        <button class="btn btn-line btn-sm" type="button" id="sendTpl" ${list.length?"":"disabled"}>Marcar como enviado a ${list.length}</button></div>
-        ${S.campaigns.length?`<span class="label" style="margin-top:8px">Enviados</span>${S.campaigns.slice(0,4).map(k=>`<p class="small muted">${fmtDate(k.date)} · ${esc(k.name)} · ${k.n} socios</p>`).join("")}`:""}
-      </div>
-    </div>`;
-  $("pbody").querySelectorAll(".seg").forEach(b=>b.onclick=()=>{segSel=b.dataset.k; pSeg();});
-  $("copyTpl").onclick=()=>copy(tpl);
-  $("sendTpl").onclick=()=>{ S.campaigns.unshift({date:today.toISOString().slice(0,10),name:segSel==="bday"?"Cumpleaños":info[segSel][0],n:list.length}); save(); pSeg(); toast("Registrado. En la versión final se envía por WhatsApp."); };
-}
-
-function pCalif(){
-  const name=id=>(S.customers.find(c=>c.id===id)||{}).name||"Cliente";
-  const phone=id=>(S.customers.find(c=>c.id===id)||{}).phone||"";
-  const rs=S.ratings.slice().sort((a,b)=>(a.handled-b.handled)||(a.stars-b.stars));
-  $("pbody").innerHTML = `
-    <div class="box">
-      <span class="label">Las de 3 estrellas o menos aparecen primero para contactar al cliente rápido</span>
-      <div>${rs.map(r=>`
-        <div class="rating">
-          <div class="top"><b style="font-weight:600">${esc(name(r.cid))}</b><span class="rstars">${"★".repeat(r.stars)}<s>${"★".repeat(5-r.stars)}</s></span></div>
-          <p class="small muted">${fmtDate(r.date)}${r.tags.length?" · "+r.tags.map(esc).join(", "):""}</p>
-          ${r.comment?`<p>“${esc(r.comment)}”</p>`:""}
-          ${r.stars<=3?(r.handled?`<span class="pill s-active" style="justify-self:start">Contactado</span>`:`<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><span class="small tabular">${esc(phone(r.cid))}</span><button class="btn btn-gold btn-sm" type="button" data-h="${r.id}">Marcar como contactado</button></div>`):""}
-        </div>`).join("")}</div>
-    </div>`;
-  $("pbody").querySelectorAll("[data-h]").forEach(b=>b.onclick=()=>{ const r=S.ratings.find(x=>x.id===b.dataset.h); r.handled=true; save(); renderLocal(); toast("Marcado como contactado"); });
-}
-
-function pPromos(){
-  $("pbody").innerHTML = `
-    <div class="grid2">
-      <form class="box stack" id="promoForm" novalidate>
-        <span class="label">Nueva promoción</span>
-        <div class="field"><label for="pTitle">Título</label><input id="pTitle" placeholder="Ej: Jueves de cervezas artesanales"></div>
-        <div class="field"><label for="pDetail">Detalle</label><textarea id="pDetail" placeholder="Ej: 2x1 en Cocholgue y Fuzz de 18:00 a 21:00."></textarea></div>
-        <div class="field"><label for="pAud">Para quién</label><select id="pAud"><option>Socios</option><option>En riesgo</option></select></div>
-        <div class="field"><label for="pUntil">Válida hasta</label><input id="pUntil" type="date" value="${daysAgo(-7)}"></div>
-        <label class="check"><input type="checkbox" id="pEarly"> Es una novedad que los socios prueban primero</label>
-        <p class="small" id="pErr" style="color:var(--bad)" hidden></p>
-        <button class="btn btn-gold" type="submit">Publicar en la app</button>
-      </form>
-      <div class="box stack"><span class="label">Activas · las ven los socios en su app</span>
-        ${S.promos.map(p=>`<div class="promo" style="padding:8px 0;border-bottom:1px solid var(--line)"><img src="${CONFIG.imgBase}${esc(p.img||"pizzero")}.jpg" alt="">
-          <div><h3>${esc(p.title)}</h3><p>${esc(p.detail)}</p><p class="small">${esc(p.audience)} · hasta el ${fmtDate(p.until)} <button class="linkbtn" type="button" data-del="${p.id}">Quitar</button></p></div></div>`).join("")||'<p class="small muted">No hay promociones activas.</p>'}
-      </div>
-    </div>`;
-  $("promoForm").addEventListener("submit",e=>{ e.preventDefault();
-    const t=$("pTitle").value.trim(), d=$("pDetail").value.trim();
-    if(!t||!d){ $("pErr").textContent="Completa el título y el detalle."; $("pErr").hidden=false; return; }
-    S.promos.unshift({id:"p"+Date.now(),title:t,detail:d,audience:$("pAud").value,until:$("pUntil").value||daysAgo(-7),img:"schop",early:$("pEarly").checked});
-    save(); pPromos(); toast("Publicada. Ya aparece en la app del cliente.");
-  });
-  $("pbody").querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{ S.promos=S.promos.filter(p=>p.id!==b.dataset.del); save(); pPromos(); });
-}
-
-function pClientes(){
-  const cs=S.customers.slice().sort((a,b)=>(lastVisit(b)||"").localeCompare(lastVisit(a)||""));
-  $("pbody").innerHTML = `
-    <div class="table-wrap"><table>
-      <thead><tr><th>Socio</th><th>Teléfono</th><th>Estado</th><th class="num">Sellos</th><th class="num">Visitas</th><th>Última visita</th><th>Cumpleaños</th><th>Socio desde</th></tr></thead>
-      <tbody>${cs.map(c=>`<tr><td>${esc(c.name)}</td><td class="tabular">${esc(c.phone)}</td><td>${segPill(c)}</td><td class="num">${c.stamps}/${CONFIG.visitsForPrize}</td><td class="num">${c.total}</td><td>${lastVisit(c)?fmtDate(lastVisit(c)):"—"}</td><td>${c.birthday?fmtDate(today.getFullYear()+c.birthday.slice(4)):"—"}</td><td>${fmtDate(c.joined)}</td></tr>`).join("")}</tbody>
-    </table></div>
-    <p class="small muted" style="margin-top:12px">${cs.length} socios. En la versión final podrás descargar esta lista en Excel.</p>`;
-}
-
-/* ================= Cambio de vista ================= */
-function setView(v){
-  $("cliente").hidden = v!=="cliente"; $("local").hidden = v!=="local";
-  $("vCliente").setAttribute("aria-pressed",v==="cliente"); $("vLocal").setAttribute("aria-pressed",v==="local");
-  v==="cliente"?renderClient():renderLocal();
-  window.scrollTo(0,0);
-}
-$("vCliente").onclick=()=>setView("cliente");
-$("vLocal").onclick=()=>setView("local");
-$("resetDemo").onclick=()=>{ try{localStorage.removeItem("rustico-club-demo");}catch(e){} S=seed(); query=""; selected=null; ptab="caja"; setView("cliente"); toast("Demo reiniciada"); };
-setView(location.hash==="#local"?"local":"cliente");
+/* ---------- Inicio ---------- */
+(async function start(){
+  if (!API_URL.startsWith("https://")) { welcome(); return; }
+  if (!token()) { new URLSearchParams(location.search).get("amigo") ? register() : welcome(); return; }
+  try {
+    const r = await api("miTarjeta", {token: token()});
+    if (r.ok) return card(r.tarjeta);
+    setToken(null); toast(r.error || "Tu sesión venció."); login();
+  } catch(e) { $("app").innerHTML = `${head}<div class="box"><p>No pudimos cargar tu tarjeta. Revisa tu internet.</p><button class="btn btn-gold btn-block" style="margin-top:14px" type="button" onclick="location.reload()">Reintentar</button></div>`; }
+})();
 </script>
 </body>
 </html>
