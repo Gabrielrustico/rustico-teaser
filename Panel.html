@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="es">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap">
+<style>
+:root{--ink:#0d0a08;--ink-2:#17120e;--ink-3:#2a2119;--line:#2f251c;--cream:#f4ede2;--muted:#ab9f90;--gold:#ffd700;--gold-ink:#1a1405;
+  --good:#4cd27a;--warn:#ffb020;--bad:#ff6b5a;--info:#7fb2ff;--font:"Montserrat","Segoe UI",system-ui,sans-serif;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ink);color:var(--cream);font-family:var(--font);font-size:15px;line-height:1.5}
+button,input,select,textarea{font:inherit;color:inherit}
+[hidden]{display:none!important}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:6px}
+h1,h2,h3{margin:0;font-weight:500}
+p{margin:0}
+.panel{max-width:1180px;margin:0 auto;padding:20px 16px 60px}
+.head{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;margin-bottom:18px}
+.head img{height:26px}
+.head h1{font-size:1.15rem}
+.fudo{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:.78rem;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:.4em .9em}
+.fudo i{width:8px;height:8px;border-radius:50%;background:var(--warn)}
+.fudo.on i{background:var(--good)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5em;border:1px solid transparent;border-radius:999px;padding:.75em 1.2em;font-weight:600;font-size:.85rem;cursor:pointer;background:none}
+.btn-gold{background:var(--gold);color:var(--gold-ink)}
+.btn-line{border-color:var(--line);color:var(--cream)}
+.btn-sm{padding:.45em .85em;font-size:.76rem}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.linkbtn{background:none;border:0;color:var(--muted);font-size:.78rem;text-decoration:underline;cursor:pointer;padding:0}
+.tabs{display:flex;gap:6px;overflow-x:auto;border-bottom:1px solid var(--line);margin-bottom:22px}
+.tabs button{flex:none;background:none;border:0;border-bottom:2px solid transparent;color:var(--muted);padding:.8em .9em;font-weight:600;font-size:.85rem;cursor:pointer}
+.tabs button[aria-selected="true"]{color:var(--cream);border-color:var(--gold)}
+.box{background:var(--ink-2);border:1px solid var(--line);border-radius:18px;padding:18px}
+.label{font-size:.68rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.muted{color:var(--muted)} .small{font-size:.82rem}
+.stack{display:grid;gap:14px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+.grid2>*{min-width:0}
+@media (max-width:860px){.grid2{grid-template-columns:1fr}}
+.kpis,.segs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:22px}
+@media (max-width:760px){.kpis,.segs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpi,.seg{background:var(--ink-2);border:1px solid var(--line);border-radius:16px;padding:16px}
+.kpi b,.seg b{display:block;font-size:1.8rem;font-weight:300;margin-top:6px;font-variant-numeric:tabular-nums}
+.kpi small{color:var(--muted);font-size:.75rem}
+.seg{cursor:pointer;text-align:left;display:grid;gap:4px}
+.seg[aria-pressed="true"]{border-color:var(--gold)}
+.seg p{font-size:.78rem;color:var(--muted)}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:.7rem;font-weight:600;border-radius:999px;padding:.25em .7em;border:1px solid currentColor;white-space:nowrap;justify-self:start}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.s-new{color:var(--info)} .s-active{color:var(--good)} .s-risk{color:var(--warn)} .s-lost{color:var(--bad)}
+.field{display:grid;gap:6px}
+.field label{font-size:.8rem;color:var(--muted)}
+.field input,.field select,.field textarea,.search{background:var(--ink);border:1px solid var(--line);border-radius:12px;padding:.75em .9em;width:100%}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:.8rem;color:var(--muted)}
+.check input{accent-color:var(--gold);margin-top:3px}
+.result{display:flex;justify-content:space-between;gap:10px;align-items:center;text-align:left;cursor:pointer;width:100%;background:var(--ink);border:1px solid var(--line);border-radius:14px;padding:12px}
+.mini{display:flex;gap:5px;flex-wrap:wrap}
+.mini i{width:18px;height:18px;border-radius:50%;border:1.5px dashed var(--ink-3)}
+.mini i.on{background:var(--gold);border:0}
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:16px}
+table{width:100%;border-collapse:collapse;font-size:.84rem}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600;background:var(--ink-2)}
+tr:last-child td{border-bottom:0}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.msg{background:var(--ink);border:1px solid var(--line);border-radius:12px;padding:12px;font-size:.85rem;width:100%;min-height:110px}
+.rating{display:grid;gap:6px;padding:14px 0;border-bottom:1px solid var(--line)}
+.rating:last-child{border-bottom:0}
+.rstars{color:var(--gold);letter-spacing:2px}
+.rstars s{color:var(--ink-3);text-decoration:none}
+.bars div{display:grid;grid-template-columns:50px 1fr 34px;gap:10px;align-items:center;font-size:.8rem;margin-bottom:8px}
+.bars .track{height:8px;background:var(--ink-3);border-radius:8px;overflow:hidden}
+.bars .track i{display:block;height:100%;background:var(--gold)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--cream);color:var(--ink);padding:.8em 1.2em;border-radius:999px;font-weight:600;font-size:.85rem;z-index:50;max-width:calc(100% - 32px);text-align:center}
+.empty{padding:40px 0;text-align:center;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="panel">
+  <div class="head">
+    <img src="https://www.rusti-co.cl/img/logo-color.png" alt="Rusti-Co.">
+    <h1>Panel del Club</h1>
+    <span class="fudo" id="fudo"><i></i><span id="fudoTxt">Cargando…</span></span>
+    <button class="btn btn-line btn-sm" type="button" id="syncBtn">Revisar Fudo ahora</button>
+  </div>
+  <div class="tabs" role="tablist" id="tabs"></div>
+  <div id="body"><p class="empty">Cargando socios…</p></div>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+let D = null, tab = 'caja', seg = 'risk', query = '', sel = null;
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt = iso => iso ? new Date(iso + 'T12:00:00').toLocaleDateString('es-CL', {day:'numeric', month:'short'}) : '—';
+const dias = iso => iso ? Math.floor((Date.now() - new Date(iso + 'T12:00:00')) / 864e5) : null;
+const SEG = {new:['Nuevo','s-new'], active:['Activo','s-active'], risk:['En riesgo','s-risk'], lost:['Perdido','s-lost']};
+const pill = s => `<span class="pill ${SEG[s.segmento][1]}">${SEG[s.segmento][0]}</span>`;
+const mesActual = () => new Date().getMonth() + 1;
+const esCumpleMes = s => s.cumpleanos && +s.cumpleanos.slice(5, 7) === mesActual();
+function toast(m){ const t=$('toast'); t.textContent=m; t.hidden=false; clearTimeout(toast.t); toast.t=setTimeout(()=>t.hidden=true,3000); }
+function call(fn, ...args){
+  return new Promise((ok, ko) => google.script.run.withSuccessHandler(ok).withFailureHandler(e => { toast(e.message || 'Error'); ko(e); })[fn](...args));
+}
+async function load(){ D = await call('panelDatos'); render(); }
+
+function render(){
+  const low = D.calif.filter(c => c.estrellas <= 3 && c.contactado !== 'si').length;
+  $('fudo').classList.toggle('on', D.fudoConfigurado);
+  $('fudoTxt').textContent = D.fudoConfigurado ? (D.ultimoSync ? 'Última revisión: ' + D.ultimoSync.split(' · ')[0] : 'Fudo conectado') : 'Faltan las claves de Fudo';
+  const tabs = [['caja','Sumar visita'],['resumen','Resumen'],['segmentos','Segmentos'],['calif','Calificaciones'],['promos','Promociones'],['socios','Socios']];
+  $('tabs').innerHTML = tabs.map(([k,t]) => `<button role="tab" type="button" data-t="${k}" aria-selected="${k===tab}">${t}${k==='calif'&&low?` <span class="pill s-lost">${low}</span>`:''}</button>`).join('');
+  $('tabs').querySelectorAll('button').forEach(b => b.onclick = () => { tab = b.dataset.t; render(); });
+  ({caja, resumen, segmentos, calif, promos, socios})[tab]();
+}
+
+function caja(){
+  const q = query.trim().toLowerCase(), qd = q.replace(/\D/g,'');
+  const res = q.length >= 2 ? D.socios.filter(s => s.nombre.toLowerCase().includes(q) || (qd.length >= 3 && s.telefono.replace(/\D/g,'').includes(qd))).slice(0,8) : [];
+  const s = sel && D.socios.find(x => x.id === sel);
+  const N = D.club.visitasParaPremio;
+  const hoy = new Date().toISOString().slice(0,10);
+  $('body').innerHTML = `
+  <div class="grid2">
+    <div class="box stack"><span class="label">Buscar socio</span>
+      <input class="search" id="q" placeholder="Teléfono o nombre" value="${esc(query)}" autocomplete="off">
+      <div class="stack">${res.map(r => `<button type="button" class="result" data-id="${r.id}"><span><b>${esc(r.nombre)}</b><br><span class="small muted">${esc(r.telefono)}</span></span>${pill(r)}</button>`).join('') || `<p class="small muted">${q.length>=2?'Sin resultados. Pídele que se registre con el QR de la mesa.':'Escribe al menos 2 letras o 3 números.'}</p>`}</div>
+      <p class="small muted">Las visitas se suman solas cuando el garzón asigna al socio a la mesa en Fudo. Usa este botón solo si se le olvidó.</p>
+    </div>
+    <div class="box">${s ? `<div class="stack">
+      <div style="display:flex;justify-content:space-between;gap:10px"><div><h3>${esc(s.nombre)}</h3><p class="small muted">${esc(s.telefono)} · ${s.visitas} visitas · código ${esc(s.codigo)}</p></div>${pill(s)}</div>
+      <div class="mini">${Array.from({length:N},(_,i)=>`<i class="${i<s.sellos?'on':''}"></i>`).join('')}</div>
+      <p class="small">${s.sellos>=N?`<b style="color:var(--gold)">Premio listo:</b> ${esc(D.club.premio)}.`:`Lleva <b>${s.sellos} de ${N}</b>. Última visita: ${fmt(s.ultima)}.`}</p>
+      ${esCumpleMes(s)?`<p class="small" style="color:var(--gold)">🎂 De cumpleaños este mes: ${esc(D.club.regaloCumpleanos.toLowerCase())}.</p>`:''}
+      ${!s.fudo?'<p class="small" style="color:var(--warn)">Aún no está creado en Fudo. Se reintenta en la próxima revisión.</p>':''}
+      <div style="display:flex;flex-wrap:wrap;gap:10px">
+        <button class="btn btn-gold" type="button" id="add" ${s.ultima===hoy||s.sellos>=N?'disabled':''}>${s.ultima===hoy?'Visita de hoy ya sumada':'Sumar visita'}</button>
+        ${s.sellos>=N?'<button class="btn btn-line" type="button" id="redeem">Canjear premio</button>':''}
+      </div></div>` : '<span class="label">Socio seleccionado</span><p class="small muted" style="margin-top:10px">Busca al cliente para ver su tarjeta, sumar una visita olvidada o canjear su premio.</p>'}
+    </div>
+  </div>`;
+  const qi = $('q'); qi.oninput = () => { query = qi.value; const p = qi.selectionStart; caja(); const n = $('q'); n.focus(); n.setSelectionRange(p,p); };
+  document.querySelectorAll('[data-id]').forEach(b => b.onclick = () => { sel = b.dataset.id; caja(); });
+  if ($('add')) $('add').onclick = async e => { e.target.disabled = true; toast(await call('panelSumarVisita', s.id)); await load(); };
+  if ($('redeem')) $('redeem').onclick = async e => { e.target.disabled = true; toast(await call('panelCanjear', s.id)); await load(); };
+}
+
+function resumen(){
+  const cs = D.socios, mes = new Date().toISOString().slice(0,7);
+  const avg = D.calif.length ? D.calif.reduce((a,c)=>a+c.estrellas,0)/D.calif.length : 0;
+  const dist = [5,4,3,2,1].map(n => [n, D.calif.filter(c=>c.estrellas===n).length]);
+  const max = Math.max(1, ...dist.map(d=>d[1]));
+  const N = D.club.visitasParaPremio;
+  $('body').innerHTML = cs.length ? `
+  <div class="kpis">
+    <div class="kpi"><small>Socios</small><b>${cs.length}</b><small>${cs.filter(s=>s.alta.startsWith(mes)).length} nuevos este mes</small></div>
+    <div class="kpi"><small>Visitas este mes</small><b>${D.visitasMes}</b><small>de socios del Club</small></div>
+    <div class="kpi"><small>Calificación promedio</small><b>${avg ? avg.toFixed(1).replace('.',',') : '—'}</b><small>${D.calif.length} calificaciones</small></div>
+    <div class="kpi"><small>En riesgo</small><b style="color:var(--warn)">${cs.filter(s=>s.segmento==='risk').length}</b><small>31 a 60 días sin venir</small></div>
+  </div>
+  <div class="grid2">
+    <div class="box stack"><span class="label">Calificaciones</span><div class="bars">${dist.map(([n,c])=>`<div><span>${n} ★</span><span class="track"><i style="width:${c/max*100}%"></i></span><span class="num">${c}</span></div>`).join('')}</div></div>
+    <div class="box stack"><span class="label">Cumpleaños este mes</span>${cs.filter(esCumpleMes).map(s=>`<p style="display:flex;justify-content:space-between"><span>${esc(s.nombre)}</span><span class="muted">${fmt(new Date().getFullYear()+s.cumpleanos.slice(4))}</span></p>`).join('')||'<p class="small muted">Nadie este mes.</p>'}</div>
+    <div class="box stack"><span class="label">Premios</span>
+      <p><b style="font-size:1.4rem;font-weight:300">${cs.filter(s=>s.sellos>=N).length}</b> <span class="small muted">con pizza gratis lista para canjear</span></p>
+      <p><b style="font-size:1.4rem;font-weight:300">${cs.filter(s=>s.sellos>=N-2&&s.sellos<N).length}</b> <span class="small muted">a 1 o 2 visitas del premio</span></p></div>
+    <div class="box stack"><span class="label">Autorizaciones</span>
+      <p><b style="font-size:1.4rem;font-weight:300">${cs.filter(s=>s.promos).length}</b> <span class="small muted">de ${cs.length} socios aceptan recibir promociones</span></p>
+      <p class="small muted">Envía promociones solo a quienes las aceptaron. La pestaña Segmentos ya los filtra.</p></div>
+  </div>` : '<div class="box empty">Todavía no hay socios. Pon el QR del Club en las mesas y aparecerán aquí.</div>';
+}
+
+const TPL = {
+  new:'Hola {nombre}, ¡gracias por unirte al Club Rusti-Co.! 🍕 Ya tienes tu primer sello. Te esperamos pronto para el segundo.',
+  active:'Hola {nombre}, tenemos novedades en Rusti-Co. y como socio del Club las pruebas primero. ¡Te esperamos!',
+  risk:'Hola {nombre}, te echamos de menos en Rusti-Co. 🍕 Ven antes del domingo y tu visita vale doble sello en tu tarjeta del Club.',
+  lost:'Hola {nombre}, hace tiempo que no te vemos. Te guardamos un regalo: pisco sour o postre gratis con tu próxima pizza, válido por 15 días. ¡Te esperamos en Ramón Carrasco 99!',
+  bday:'¡Feliz cumpleaños, {nombre}! 🎂 Ven a celebrarlo a Rusti-Co. este mes: tu postre va por la casa, y si vienen 6 o más, les regalamos una Pizza Nutella por cada 6 personas.',
+};
+function segmentos(){
+  const g = {new:[],active:[],risk:[],lost:[]};
+  D.socios.forEach(s => g[s.segmento].push(s));
+  g.bday = D.socios.filter(esCumpleMes);
+  const info = {new:['Nuevos','1 visita, recién llegados'],active:['Activos','vinieron en los últimos 30 días'],risk:['En riesgo','31 a 60 días sin venir'],lost:['Perdidos','más de 60 días sin venir']};
+  const lista = g[seg] || [];
+  const conPromos = seg === 'bday' ? lista : lista.filter(s => s.promos);
+  $('body').innerHTML = `
+  <div class="segs">${Object.entries(info).map(([k,[t,d]])=>`<button type="button" class="seg" data-k="${k}" aria-pressed="${k===seg}"><span class="pill ${SEG[k][1]}">${t}</span><b>${g[k].length}</b><p>${d}</p></button>`).join('')}</div>
+  <p style="margin:-8px 0 18px"><button class="linkbtn" type="button" id="bday">Ver cumpleaños del mes (${g.bday.length})</button></p>
+  <div class="grid2">
+    <div class="box stack"><span class="label">${seg==='bday'?'Cumpleaños este mes':info[seg][0]} · ${lista.length} socios</span>
+      <div class="table-wrap"><table><thead><tr><th>Socio</th><th>Teléfono</th><th>Última visita</th><th>Promos</th></tr></thead>
+      <tbody>${lista.map(s=>`<tr><td>${esc(s.nombre)}</td><td>${esc(s.telefono)}</td><td>${s.ultima?`hace ${dias(s.ultima)} días`:'—'}</td><td>${s.promos?'Sí':'No'}</td></tr>`).join('')||'<tr><td colspan="4" class="muted">Nadie en este grupo.</td></tr>'}</tbody></table></div>
+    </div>
+    <div class="box stack"><span class="label">Mensaje sugerido</span>
+      <textarea class="msg" id="tpl">${esc(TPL[seg])}</textarea>
+      <p class="small muted">${seg==='bday'?'El saludo de cumpleaños es parte del Club y puede ir a todos.':`Solo ${conPromos.length} de ${lista.length} aceptaron recibir promociones: envíales a ellos.`} {nombre} se reemplaza por el nombre de cada uno.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:10px"><button class="btn btn-gold btn-sm" type="button" id="copy">Copiar mensaje</button>
+      <button class="btn btn-line btn-sm" type="button" id="copyTels" ${conPromos.length?'':'disabled'}>Copiar teléfonos (${conPromos.length})</button>
+      <button class="btn btn-line btn-sm" type="button" id="sent" ${conPromos.length?'':'disabled'}>Marcar como enviado</button></div>
+      ${D.campanas.length?`<span class="label" style="margin-top:6px">Enviados</span>${D.campanas.map(c=>`<p class="small muted">${fmt(c.fecha)} · ${esc(c.segmento)} · ${c.socios} socios</p>`).join('')}`:''}
+    </div>
+  </div>`;
+  document.querySelectorAll('.seg').forEach(b => b.onclick = () => { seg = b.dataset.k; segmentos(); });
+  $('bday').onclick = () => { seg = 'bday'; segmentos(); };
+  const copy = async t => { try { await navigator.clipboard.writeText(t); toast('Copiado'); } catch(e){ toast('Selecciona el texto y cópialo'); } };
+  $('copy').onclick = () => copy($('tpl').value);
+  $('copyTels').onclick = () => copy(conPromos.map(s => s.nombre.split(' ')[0] + ': ' + s.telefono).join('\n'));
+  $('sent').onclick = async () => { toast(await call('panelRegistrarCampana', seg==='bday'?'Cumpleaños':info[seg][0], conPromos.length, $('tpl').value)); await load(); };
+}
+
+function calif(){
+  const rs = D.calif.slice().sort((a,b) => ((a.contactado==='si')-(b.contactado==='si')) || ((a.estrellas<=3?0:1)-(b.estrellas<=3?0:1)));
+  $('body').innerHTML = `<div class="box"><span class="label">Las de 3 estrellas o menos van primero para contactar rápido al cliente</span>
+    <div>${rs.map(r=>`<div class="rating">
+      <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><b>${esc(r.socio)}</b><span class="rstars">${'★'.repeat(r.estrellas)}<s>${'★'.repeat(5-r.estrellas)}</s></span></div>
+      <p class="small muted">${fmt(r.fecha)}${r.temas?' · '+esc(r.temas):''}</p>
+      ${r.comentario?`<p>“${esc(r.comentario)}”</p>`:''}
+      ${r.estrellas<=3?(r.contactado==='si'?'<span class="pill s-active">Contactado</span>':`<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="small">${esc(r.telefono)}</span><button class="btn btn-gold btn-sm" type="button" data-f="${r.fila}">Marcar como contactado</button></div>`):''}
+    </div>`).join('')||'<p class="empty">Aún no hay calificaciones.</p>'}</div></div>`;
+  document.querySelectorAll('[data-f]').forEach(b => b.onclick = async () => { b.disabled = true; toast(await call('panelContactado', +b.dataset.f)); await load(); });
+}
+
+function promos(){
+  const en7 = new Date(Date.now()+7*864e5).toISOString().slice(0,10);
+  $('body').innerHTML = `<div class="grid2">
+    <form class="box stack" id="pf">
+      <span class="label">Nueva promoción</span>
+      <div class="field"><label for="pt">Título</label><input id="pt" placeholder="Ej: Jueves de cervezas artesanales"></div>
+      <div class="field"><label for="pd">Detalle</label><textarea id="pd" rows="3" placeholder="Ej: 2x1 en Cocholgue y Fuzz de 18:00 a 21:00."></textarea></div>
+      <div class="field"><label for="pp">Para quién</label><select id="pp"><option>Socios</option><option>En riesgo</option></select></div>
+      <div class="field"><label for="ph">Válida hasta</label><input id="ph" type="date" value="${en7}"></div>
+      <div class="field"><label for="pfoto">Foto</label><select id="pfoto">${['schop','coctel','pizzero','burrata','brisket','capricciosa','salmon','nutella','ejecutivo','tiramisu'].map(f=>`<option>${f}</option>`).join('')}</select></div>
+      <label class="check"><input type="checkbox" id="pn"> Es una novedad que los socios prueban primero</label>
+      <button class="btn btn-gold" type="submit">Publicar en la app</button>
+    </form>
+    <div class="box stack"><span class="label">Activas · las ven los socios en su tarjeta</span>
+      ${D.promos.map(p=>`<div style="display:grid;grid-template-columns:56px 1fr;gap:12px;align-items:center;padding-bottom:10px;border-bottom:1px solid var(--line)">
+        <img src="https://www.rusti-co.cl/img/${esc(p.foto||'schop')}.jpg" alt="" style="width:56px;height:56px;border-radius:50%;object-fit:cover">
+        <div><b>${esc(p.titulo)}</b><p class="small muted">${esc(p.detalle)}</p><p class="small">${esc(p.para)} · hasta ${fmt(p.hasta)} <button class="linkbtn" type="button" data-p="${p.id}">Quitar</button></p></div></div>`).join('')||'<p class="small muted">No hay promociones activas.</p>'}
+    </div></div>`;
+  $('pf').onsubmit = async e => { e.preventDefault();
+    toast(await call('panelGuardarPromo', {titulo:$('pt').value, detalle:$('pd').value, para:$('pp').value, hasta:$('ph').value, novedad:$('pn').checked, foto:$('pfoto').value}));
+    await load(); };
+  document.querySelectorAll('[data-p]').forEach(b => b.onclick = async () => { toast(await call('panelQuitarPromo', b.dataset.p)); await load(); });
+}
+
+function socios(){
+  const cs = D.socios.slice().sort((a,b) => (b.ultima||'').localeCompare(a.ultima||''));
+  const N = D.club.visitasParaPremio;
+  $('body').innerHTML = cs.length ? `<div class="table-wrap"><table>
+    <thead><tr><th>Socio</th><th>Teléfono</th><th>Correo</th><th>Estado</th><th class="num">Sellos</th><th class="num">Visitas</th><th>Última</th><th>Cumpleaños</th><th>Promos</th><th>Fudo</th><th></th></tr></thead>
+    <tbody>${cs.map(s=>`<tr><td>${esc(s.nombre)}</td><td>${esc(s.telefono)}</td><td>${esc(s.email)}</td><td>${pill(s)}</td><td class="num">${s.sellos}/${N}</td><td class="num">${s.visitas}</td><td>${fmt(s.ultima)}</td><td>${s.cumpleanos?fmt(new Date().getFullYear()+s.cumpleanos.slice(4)):'—'}</td><td>${s.promos?'Sí':'No'}</td><td>${s.fudo?'Sí':'Pendiente'}</td><td><button class="linkbtn" type="button" data-del="${s.id}">Eliminar datos</button></td></tr>`).join('')}</tbody>
+  </table></div>
+  <p class="small muted" style="margin-top:12px">${cs.length} socios. La lista completa está en la hoja de cálculo, pestaña Socios. "Eliminar datos" es para cuando un cliente lo pide por correo o en el local.</p>
+  <div class="box" id="confirm" hidden style="margin-top:14px"><p id="confirmTxt"></p><div style="display:flex;gap:10px;margin-top:12px"><button class="btn btn-gold btn-sm" type="button" id="yes">Sí, eliminar</button><button class="btn btn-line btn-sm" type="button" id="no">Cancelar</button></div></div>`
+  : '<div class="box empty">Todavía no hay socios.</div>';
+  let target = null;
+  document.querySelectorAll('[data-del]').forEach(b => b.onclick = () => { target = b.dataset.del; const s = D.socios.find(x=>x.id===target);
+    $('confirmTxt').textContent = `¿Eliminar los datos personales de ${s.nombre}? Pierde su tarjeta y sus sellos. No se puede deshacer.`; $('confirm').hidden = false; $('confirm').scrollIntoView({behavior:'smooth'}); });
+  if ($('no')) $('no').onclick = () => $('confirm').hidden = true;
+  if ($('yes')) $('yes').onclick = async () => { toast(await call('panelEliminarSocio', target)); await load(); };
+}
+
+$('syncBtn').onclick = async e => { e.target.disabled = true; try { toast(await call('panelSincronizar')); await load(); } finally { e.target.disabled = false; } };
+load();
+</script>
+</body>
+</html>
