@@ -184,12 +184,26 @@ section{scroll-margin-top:72px}
 @media (max-width:860px){.gallery{grid-template-columns:repeat(2,1fr);grid-auto-rows:180px}}
 
 /* Reseñas */
-.review .wrap{display:grid;grid-template-columns:auto 1fr auto;gap:36px;align-items:center;padding-block:56px;border-block:1px solid var(--ink-3)}
-.stars{display:flex;gap:6px}
-.stars svg{width:30px;height:30px;fill:var(--gold)}
-.review h2{font-size:clamp(1.5rem,3vw,2.1rem)}
-.review p{color:var(--muted);margin-top:8px}
-@media (max-width:860px){.review .wrap{grid-template-columns:1fr;gap:20px}}
+.review .wrap{padding-block:56px;border-block:1px solid var(--ink-3)}
+.review-head{margin-bottom:26px}
+.review-head h2{font-size:clamp(1.5rem,3vw,2.1rem);margin-top:10px}
+.review-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:18px}
+.review-grid>*{min-width:0}
+.rcard{border:1px solid var(--ink-3);border-radius:18px;padding:24px;display:grid;gap:14px;align-content:start}
+.rcard.google{background:var(--ink-2);border-color:color-mix(in srgb,var(--gold) 35%,transparent)}
+.rbrand{display:flex;align-items:center;gap:14px}
+.gbadge{width:48px;height:48px;border-radius:50%;background:#fff;display:grid;place-items:center;flex:none}
+.gbadge img{width:28px;height:28px}
+.rbrand b{display:block;font-weight:600}
+.stars{display:flex;gap:4px}
+.stars svg{width:20px;height:20px;fill:var(--gold)}
+.rcard h3{font-size:1.15rem;font-weight:500;letter-spacing:0;line-height:1.3}
+.rcard p{color:var(--muted)}
+.rcard .btn{justify-self:start}
+.wsp-num{font-size:1.25rem;font-weight:500;color:var(--cream);font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.chat{width:48px;height:48px;border-radius:50%;background:var(--ink-3);display:grid;place-items:center;flex:none}
+.chat svg{width:24px;height:24px;fill:var(--cream)}
+@media (max-width:860px){.review-grid{grid-template-columns:1fr}}
 
 /* Visítanos */
 .visit .wrap{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
@@ -335,20 +349,25 @@ footer nav a:hover{color:var(--cream)}
     </div>
   </section>
 
-  <section class="review">
+  <section class="review" id="resenas">
     <div class="wrap">
-      <div class="stars" aria-hidden="true">
-        <svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2.7-5.4 4.8 1.6 7.1L12 17.6 5.6 21.2l1.6-7.1L1.8 9.3 9 8.6z"/></svg>
-        <svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2.7-5.4 4.8 1.6 7.1L12 17.6 5.6 21.2l1.6-7.1L1.8 9.3 9 8.6z"/></svg>
-        <svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2.7-5.4 4.8 1.6 7.1L12 17.6 5.6 21.2l1.6-7.1L1.8 9.3 9 8.6z"/></svg>
-        <svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2.7-5.4 4.8 1.6 7.1L12 17.6 5.6 21.2l1.6-7.1L1.8 9.3 9 8.6z"/></svg>
-        <svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2.7-5.4 4.8 1.6 7.1L12 17.6 5.6 21.2l1.6-7.1L1.8 9.3 9 8.6z"/></svg>
+      <div class="review-head"><p class="eyebrow">Tu opinión</p><h2>¿Ya viniste? Cuéntanos cómo te fue.</h2></div>
+      <div class="review-grid">
+        <div class="rcard google">
+          <div class="rbrand"><span class="gbadge"><img src="img/google-g.png" alt="Google"></span>
+            <div><b>Reseñas de Google</b><div class="stars" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2.7-5.4 4.8 1.6 7.1L12 17.6 5.6 21.2l1.6-7.1L1.8 9.3 9 8.6z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2.7-5.4 4.8 1.6 7.1L12 17.6 5.6 21.2l1.6-7.1L1.8 9.3 9 8.6z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2.7-5.4 4.8 1.6 7.1L12 17.6 5.6 21.2l1.6-7.1L1.8 9.3 9 8.6z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2.7-5.4 4.8 1.6 7.1L12 17.6 5.6 21.2l1.6-7.1L1.8 9.3 9 8.6z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2.7-5.4 4.8 1.6 7.1L12 17.6 5.6 21.2l1.6-7.1L1.8 9.3 9 8.6z"/></svg></div></div></div>
+          <h3>¿Te gustó? Déjanos tu reseña en Google.</h3>
+          <p>Toma 30 segundos y ayuda a que más vecinos de Concepción nos encuentren.</p>
+          <a class="btn btn-gold" id="googleReview" href="#" target="_blank" rel="noopener">Dejar mi reseña en Google</a>
+        </div>
+        <div class="rcard">
+          <div class="rbrand"><span class="chat" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 3h16a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H9l-5 4v-4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm3 6.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Zm5 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Zm5 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z"/></svg></span>
+            <div><b>WhatsApp directo</b><span class="wsp-num">+56 9 8415 0886</span></div></div>
+          <h3>¿Algo no salió bien? Escríbenos directo.</h3>
+          <p>Lo lee el dueño y lo solucionamos.</p>
+          <a class="btn btn-line" href="https://wa.me/56984150886?text=Hola%20Rusti-Co.%2C%20quiero%20comentarles%20sobre%20mi%20visita%3A%20" target="_blank" rel="noopener">Escribir por WhatsApp</a>
+        </div>
       </div>
-      <div>
-        <h2>¿Ya viniste? Cuéntale a Concepción.</h2>
-        <p>Tu reseña en Google nos ayuda a que más vecinos nos encuentren.</p>
-      </div>
-      <a class="btn btn-gold" id="googleReview" href="#" target="_blank" rel="noopener">Califícanos en Google</a>
     </div>
   </section>
 

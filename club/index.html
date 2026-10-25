@@ -317,7 +317,7 @@ function card(t){
       if (!r.ok) return toast(r.error);
       $("rate").innerHTML = val >= 4
         ? `<span class="label" style="color:var(--gold)">Gracias</span><h3 style="margin:6px 0 8px">¡Nos alegra que lo hayas disfrutado!</h3><p class="small muted" style="margin-bottom:12px">¿Nos regalas 30 segundos en Google? Ayuda mucho a un local nuevo.</p><a class="btn btn-gold btn-block" href="${GOOGLE_REVIEW_URL}" target="_blank" rel="noopener">Dejar reseña en Google</a>`
-        : `<span class="label" style="color:var(--gold)">Gracias</span><h3 style="margin:6px 0 8px">Gracias por contarnos</h3><p class="small muted" style="margin-bottom:12px">El encargado ya recibió tu comentario y te escribirá para solucionarlo. Si quieres, también puedes dejar tu reseña en Google.</p><a class="btn btn-line btn-block" href="${GOOGLE_REVIEW_URL}" target="_blank" rel="noopener">Calificar en Google</a>`;
+        : `<span class="label" style="color:var(--gold)">Gracias</span><h3 style="margin:6px 0 8px">Gracias por contarnos</h3><p class="small muted" style="margin-bottom:12px">El encargado ya recibió tu comentario y te escribirá para solucionarlo. Si prefieres, escríbele tú directo al +56 9 8415 0886.</p><div class="stack"><a class="btn btn-gold btn-block" href="https://wa.me/56984150886?text=Hola%20Rusti-Co.%2C%20quiero%20comentarles%20sobre%20mi%20visita%3A%20" target="_blank" rel="noopener">Escribir por WhatsApp</a><a class="btn btn-line btn-block" href="${GOOGLE_REVIEW_URL}" target="_blank" rel="noopener">También puedes dejar tu reseña en Google</a></div>`;
     });
   }
 }
