@@ -1,0 +1,29 @@
+name: Actualizar precios desde Fudo
+
+on:
+  schedule:
+    - cron: "17 10 * * *"   # todos los días, ~7:17 en Concepción
+  workflow_dispatch:         # botón "Run workflow" para correrlo a mano
+
+permissions:
+  contents: write
+
+jobs:
+  carta:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Leer productos de Fudo
+        env:
+          FUDO_API_KEY: ${{ secrets.FUDO_API_KEY }}
+          FUDO_API_SECRET: ${{ secrets.FUDO_API_SECRET }}
+        run: python3 scripts/actualizar_carta.py
+      - name: Guardar cambios
+        run: |
+          if [ -n "$(git status --porcelain menu.json)" ]; then
+            git config user.name "Actualizador de carta"
+            git config user.email "actions@users.noreply.github.com"
+            git add menu.json
+            git commit -m "Actualiza precios desde Fudo"
+            git push
+          fi

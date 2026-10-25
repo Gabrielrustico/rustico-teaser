@@ -501,6 +501,39 @@ names.forEach(n => {
 });
 render(names[0]);
 
+/* Precios al día: GitHub lee Fudo cada mañana y deja los precios en menu.json */
+const FUDO_ALIASES = {
+  "Prosciutto, mango y crema":"Prosciuttos Mango y Crema",
+  "Mojito N°7":"Mojito N°7 – Número de la Suerte",
+  "Chiflón del Diablo":"Cerveza Scottish Ambar Chiflón del diablo",
+  "Mure La Gringa":"Cerveza Mure la gringa",
+  "Pisco sour tradicional":"Pisco Sour Tradicional",
+  "Gin tonic":"Gin Tonic Tradicional",
+  "Caipiriña":"Caipirina tradicional",
+  "Cerveza 0°":"Budweiser 0°",
+  "Bebidas":"Coca Cola",
+  "Café espresso":"Cafe expresso",
+  "Jugos naturales":"Jugo Frambuesa",
+  "Mojito sin alcohol":"Mojito tradicional (sin alcohol)",
+  "Guinness Stout":"Guinness Stout 4.2°",
+};
+const normName = s => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/^pizza (de )?/,"").replace(/[^a-z0-9]/g,"");
+fetch("menu.json", {cache:"no-store"}).then(r => r.ok ? r.json() : null).then(data => {
+  if (!data || !data.products) return;
+  for (const cat of Object.values(MENU)) {
+    cat.items = cat.items.filter(it => {
+      const f = data.products[normName(FUDO_ALIASES[it[0]] || it[0])];
+      if (!f) return true;
+      if (f.active === false) return false;
+      it[1] = f.price; return true;
+    });
+  }
+  if (data.updated) document.getElementById("menuDate").textContent =
+    new Date(data.updated).toLocaleDateString("es-CL", {day:"numeric", month:"long", year:"numeric", timeZone:"America/Santiago"});
+  const cur = tabsEl.querySelector('[aria-selected="true"]');
+  render(cur ? cur.dataset.cat : names[0]);
+}).catch(() => {});
+
 /* Horario y estado "abierto ahora" en hora de Concepción */
 function nowSantiago(){
   const parts = new Intl.DateTimeFormat("en-US",{timeZone:"America/Santiago",weekday:"short",hour:"2-digit",minute:"2-digit",hour12:false}).formatToParts(new Date());
