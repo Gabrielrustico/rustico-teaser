@@ -1,99 +1,524 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rusti.Co. - Inauguración</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #111;
-      color: white;
-      text-align: center;
-    }
-    header {
-      padding: 2em;
-    }
-    header img {
-      max-width: 250px;
-    }
-    h1 {
-      font-size: 2em;
-      margin-bottom: 0.2em;
-    }
-    .countdown {
-      font-size: 2em;
-      font-weight: bold;
-      margin: 1em 0;
-      color: #FFD700;
-    }
-    .follow {
-      margin-top: 2em;
-      font-size: 1.2em;
-    }
-    .icons {
-      margin-top: 1em;
-    }
-    .icons img {
-      width: 40px;
-      margin: 0 10px;
-      filter: brightness(0) invert(1);
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Rusti-Co. Pizzería & Bar</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Pizzería y bar en Lomas de San Andrés, Concepción. Pizza napolitana con horno a la vista, coctelería de autor y cervezas artesanales.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap">
+<style>
+/* Layout: noche cálida de pizzería. Fondo casi negro, un solo acento amarillo de marca,
+   marcos en forma de arco (la boca del horno) y el círculo amarillo del logo como motivo. */
+:root{
+  --ink:#0d0a08;        /* fondo: negro de marca entibiado */
+  --ink-2:#17120e;      /* superficies */
+  --ink-3:#231b15;      /* bordes y líneas */
+  --cream:#f4ede2;      /* texto principal */
+  --muted:#ab9f90;      /* texto secundario */
+  --gold:#ffd700;       /* amarillo Rusti-Co. */
+  --gold-ink:#1a1405;   /* texto sobre amarillo */
+  --font:"Montserrat", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --step-hero:clamp(2.6rem, 7.2vw, 5.6rem);
+  --step-h2:clamp(1.9rem, 4.4vw, 3.2rem);
+  --step-h3:1.15rem;
+  --wrap:1180px;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+body{background:var(--ink);color:var(--cream);font-family:var(--font);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--ink)}
+a{color:inherit}
+img{display:block;max-width:100%}
+.wrap{max-width:var(--wrap);margin:0 auto;padding-left:max(20px, env(safe-area-inset-left,0px));padding-right:max(20px, env(safe-area-inset-right,0px))}
+h1,h2,h3{text-wrap:balance;margin:0;font-weight:300;letter-spacing:-.02em;line-height:1.05}
+p{margin:0}
+.eyebrow{font-size:.74rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+.lede{color:var(--muted);max-width:56ch}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:4px}
+
+/* Botones */
+.btn{display:inline-flex;align-items:center;gap:.6em;padding:.95em 1.5em;border-radius:999px;font:600 .9rem/1 var(--font);letter-spacing:.04em;text-decoration:none;border:1px solid transparent;cursor:pointer;transition:transform .15s ease, background .15s ease}
+.btn:hover{transform:translateY(-1px)}
+.btn-gold{background:var(--gold);color:var(--gold-ink)}
+.btn-gold:hover{background:#ffe24d}
+.btn-line{border-color:var(--ink-3);color:var(--cream);background:transparent}
+.btn-line:hover{border-color:var(--muted)}
+.dot{width:.6em;height:.6em;border-radius:50%;background:var(--gold-ink)}
+
+/* Barra superior */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb, var(--ink) 88%, transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--ink-3)}
+.top .wrap{display:flex;align-items:center;gap:24px;padding-block:14px}
+.top img{height:34px;width:auto}
+.nav{display:flex;gap:26px;margin-left:auto;font-size:.88rem;font-weight:500}
+.nav a{text-decoration:none;color:var(--muted)}
+.nav a:hover{color:var(--cream)}
+.top .btn{padding:.7em 1.2em;font-size:.8rem}
+@media (max-width:760px){.nav{display:none}.top .btn{margin-left:auto}}
+
+/* Hero */
+.hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center;padding-block:64px 72px}
+.hero h1{font-size:var(--step-hero);margin:18px 0 22px}
+.hero h1 em{font-style:normal;color:var(--gold)}
+.hero .lede{font-size:1.08rem}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.status{display:flex;align-items:center;gap:10px;margin-top:30px;font-size:.88rem;color:var(--muted)}
+.status b{color:var(--cream);font-weight:600}
+.pulse{width:9px;height:9px;border-radius:50%;background:var(--muted);flex:none}
+.pulse.on{background:#4cd27a;box-shadow:0 0 0 0 rgba(76,210,122,.6);animation:pulse 2s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 9px rgba(76,210,122,0)}100%{box-shadow:0 0 0 0 rgba(76,210,122,0)}}
+.arch{border-radius:999px 999px 18px 18px;overflow:hidden;background:var(--ink-2);aspect-ratio:2/3;max-width:100%}
+.arch img{width:100%;height:100%;object-fit:cover}
+.hero-figure{position:relative;justify-self:center;width:min(100%,430px)}
+.hero-figure figcaption{position:absolute;left:-28px;bottom:42px;background:var(--gold);color:var(--gold-ink);border-radius:999px;padding:.8em 1.2em;font-size:.8rem;font-weight:600;letter-spacing:.02em;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+@media (max-width:860px){
+  .hero .wrap{grid-template-columns:1fr;gap:36px;padding-block:36px 56px}
+  .hero-figure{order:-1;width:min(100%,360px)}
+  .arch{aspect-ratio:4/5}
+  .hero-figure figcaption{left:12px}
+}
+
+/* Franja de atributos */
+.facts{border-block:1px solid var(--ink-3)}
+.facts ul{list-style:none;margin:0;display:grid;grid-template-columns:repeat(4,1fr);gap:0;padding-block:0}
+.facts li{padding:26px 22px;border-left:1px solid var(--ink-3)}
+.facts li:first-child{border-left:0;padding-left:0}
+.facts b{display:block;font-weight:600;font-size:.95rem;margin-bottom:4px}
+.facts span{color:var(--muted);font-size:.86rem;line-height:1.5}
+@media (max-width:860px){.facts ul{grid-template-columns:1fr 1fr}.facts li{border-left:0;padding-left:0;border-top:1px solid var(--ink-3)}.facts li:nth-child(-n+2){border-top:0}}
+@media (max-width:460px){.facts ul{grid-template-columns:1fr}.facts li:nth-child(2){border-top:1px solid var(--ink-3)}}
+
+/* Secciones */
+section{scroll-margin-top:72px}
+.sec{padding-block:96px}
+.sec-head{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:20px 40px;margin-bottom:40px}
+.sec-head h2{font-size:var(--step-h2);margin-top:12px}
+
+/* Carta */
+.tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:34px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;border:1px solid var(--ink-3);background:transparent;color:var(--muted);font:500 .88rem var(--font);padding:.65em 1.15em;border-radius:999px;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--cream);color:var(--ink);border-color:var(--cream)}
+.pizzas{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:34px 26px}
+@media (max-width:560px){.pizzas{grid-template-columns:1fr 1fr;gap:26px 14px}.pizza .row{flex-wrap:wrap;gap:2px 8px}.pizza .row .lead{display:none}.pizza .desc{font-size:.8rem}}
+.more-title{margin:56px 0 22px;font-size:.74rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+.pizza{display:grid;gap:12px}
+.pizza .ph{aspect-ratio:1;border-radius:50%;overflow:hidden;background:#050505}
+.pizza .ph img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
+.pizza:hover .ph img{transform:scale(1.04) rotate(4deg)}
+.pizza .ph.none{display:grid;place-items:center;background:radial-gradient(circle at 50% 50%, var(--ink-3) 0 62%, var(--ink-2) 63%)}
+.pizza .ph.none span{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.row{display:flex;align-items:baseline;gap:12px}
+.row h3{font-size:var(--step-h3);font-weight:500;letter-spacing:0;line-height:1.3}
+.row .lead{flex:1;border-bottom:1px dotted var(--ink-3);transform:translateY(-4px);min-width:16px}
+.price{font-weight:600;color:var(--gold);font-variant-numeric:tabular-nums;white-space:nowrap}
+.desc{color:var(--muted);font-size:.88rem;line-height:1.5}
+.tag{display:inline-block;margin-left:6px;font-size:.66rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);border:1px solid color-mix(in srgb,var(--gold) 45%,transparent);border-radius:999px;padding:.15em .6em;vertical-align:middle}
+.list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 56px}
+.list .item{display:grid;gap:4px;min-width:0}
+.list.photos .item{grid-template-columns:84px 1fr;column-gap:18px;align-items:center}
+.list.photos .thumb{grid-row:span 2;width:84px;height:84px;border-radius:50%;overflow:hidden;background:#050505}
+.list.photos .thumb img{width:100%;height:100%;object-fit:cover}
+@media (max-width:760px){.list{grid-template-columns:1fr}}
+.note{margin-top:40px;color:var(--muted);font-size:.82rem}
+.note a{color:var(--cream)}
+.exec{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 24px;border:1px solid color-mix(in srgb,var(--gold) 40%,transparent);border-radius:16px;padding:18px 22px;margin-bottom:30px}
+.exec p:not(.eyebrow){color:var(--cream);margin-top:6px;font-size:.95rem}
+.exec .price{font-size:1.5rem;font-weight:500}
+
+/* Club */
+.club{background:var(--gold);color:var(--gold-ink)}
+.club .wrap{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;padding-block:96px}
+.club .eyebrow{color:var(--gold-ink)}
+.club h2{font-size:var(--step-h2);margin:12px 0 18px;font-weight:300}
+.club p.lede{color:color-mix(in srgb,var(--gold-ink) 78%,var(--gold))}
+.perks{list-style:none;padding:0;margin:30px 0 34px;display:grid;gap:14px}
+.perks li{display:grid;grid-template-columns:28px 1fr;gap:12px;align-items:start}
+.perks i{width:22px;height:22px;border-radius:50%;background:var(--gold-ink);margin-top:2px}
+.perks b{font-weight:600}
+.btn-ink{background:var(--gold-ink);color:var(--gold)}
+.btn-ink:hover{background:#000}
+.card{background:var(--ink);color:var(--cream);border-radius:22px;padding:28px;box-shadow:0 30px 60px rgba(40,30,0,.35);max-width:440px;justify-self:center;width:100%}
+.card-top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.card-top img{height:24px;width:auto}
+.card-top small{color:var(--muted);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase}
+.card h3{font-size:1.4rem;font-weight:400;margin:22px 0 4px}
+.card .sub{color:var(--muted);font-size:.85rem}
+.stamps{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:22px 0 18px}
+.stamps span{aspect-ratio:1;border-radius:50%;border:1.5px dashed var(--ink-3);display:grid;place-items:center;font-size:.72rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.stamps span.on{background:var(--gold);border:0;color:var(--gold-ink);font-weight:700}
+.stamps span.prize{border:1.5px solid var(--gold);color:var(--gold);font-size:.58rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-align:center;line-height:1.1}
+.bar{height:6px;border-radius:6px;background:var(--ink-3);overflow:hidden}
+.bar i{display:block;height:100%;width:70%;background:var(--gold)}
+.card .foot{display:flex;justify-content:space-between;margin-top:10px;font-size:.8rem;color:var(--muted)}
+.card .foot b{color:var(--cream);font-weight:600}
+@media (max-width:860px){.club .wrap{grid-template-columns:1fr;gap:44px;padding-block:72px}}
+
+/* Ambiente */
+.gallery{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:220px;gap:14px}
+.gallery figure{margin:0;border-radius:14px;overflow:hidden;background:var(--ink-2)}
+.gallery figure.tall{grid-row:span 2}
+.gallery figure.arch-sm{border-radius:999px 999px 14px 14px}
+.gallery img{width:100%;height:100%;object-fit:cover}
+@media (max-width:860px){.gallery{grid-template-columns:repeat(2,1fr);grid-auto-rows:180px}}
+
+/* Reseñas */
+.review .wrap{display:grid;grid-template-columns:auto 1fr auto;gap:36px;align-items:center;padding-block:56px;border-block:1px solid var(--ink-3)}
+.stars{display:flex;gap:6px}
+.stars svg{width:30px;height:30px;fill:var(--gold)}
+.review h2{font-size:clamp(1.5rem,3vw,2.1rem)}
+.review p{color:var(--muted);margin-top:8px}
+@media (max-width:860px){.review .wrap{grid-template-columns:1fr;gap:20px}}
+
+/* Visítanos */
+.visit .wrap{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
+.visit h2{font-size:var(--step-h2);margin:12px 0 22px}
+.addr{font-size:1.25rem;font-weight:400;line-height:1.45}
+.addr small{display:block;color:var(--muted);font-size:.9rem;margin-top:4px}
+.hours{width:100%;border-collapse:collapse;margin-top:8px;font-variant-numeric:tabular-nums}
+.hours td{padding:12px 0;border-bottom:1px solid var(--ink-3)}
+.hours td:last-child{text-align:right}
+.hours tr.today td{color:var(--gold);font-weight:600}
+.hours tr.today td:first-child::after{content:"Hoy";margin-left:10px;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;border:1px solid currentColor;border-radius:999px;padding:.15em .55em;vertical-align:middle}
+.extras{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+.chip{font-size:.8rem;color:var(--muted);border:1px solid var(--ink-3);border-radius:999px;padding:.45em .9em}
+.visit .arch{aspect-ratio:4/5}
+@media (max-width:860px){.visit .wrap{grid-template-columns:1fr;gap:40px}.visit .arch{max-width:420px}}
+
+/* Pie */
+footer{padding-block:56px 40px;border-top:1px solid var(--ink-3);margin-top:96px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between;align-items:center}
+footer img{height:30px;width:auto}
+footer p{color:var(--muted);font-size:.85rem}
+footer nav{display:flex;gap:22px;font-size:.85rem}
+footer nav a{color:var(--muted);text-decoration:none}
+footer nav a:hover{color:var(--cream)}
+</style>
 </head>
 <body>
-  <header>
-    <img src="440a6a0f-fc00-4df4-bfbe-e6403d33e810.png" alt="Logo Rusti-Co.">
-  </header>
 
-  <h1>¡Ya Abrimos!</h1>
-  <p>¡Ven a conocer la mejor pizza de Concepción!:</p>
-  <div class="countdown" id="countdown">Cargando...</div>
 
-  <!-- VIDEO EMBEBIDO DE YOUTUBE -->
-  <div style="text-align: center; margin: 40px 0;">
-    <h2 style="font-family: sans-serif;">🎉 ¡Ya abrimos en Rusti-Co.! 🎉</h2>
-    <iframe width="315" height="560" 
-      src="https://www.youtube.com/embed/D2ZJBxfown4" 
-      title="Ya abrimos - Rusti-Co" 
-      frameborder="0" 
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-      allowfullscreen>
-    </iframe>
+<header class="top">
+  <div class="wrap">
+    <a href="#inicio" aria-label="Rusti-Co. inicio"><img src="img/logo-color.png" alt="Rusti-Co. Pizzería & Bar"></a>
+    <nav class="nav" aria-label="Secciones">
+      <a href="#carta">Carta</a>
+      <a href="#club">Club</a>
+      <a href="#ambiente">Ambiente</a>
+      <a href="#visitanos">Visítanos</a>
+    </nav>
+    <a class="btn btn-gold" href="club/">Únete al Club</a>
+  </div>
+</header>
+
+<main id="inicio">
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <p class="eyebrow">Pizzería &amp; Bar · Lomas de San Andrés, Concepción</p>
+        <h1>Momentos que <em>saben bien.</em></h1>
+        <p class="lede">Pizza napolitana con sabores chilenos, hecha frente a ti en nuestro horno a la vista. Coctelería de autor, cervezas artesanales y mesas para compartir.</p>
+        <div class="cta-row">
+          <a class="btn btn-gold" href="#carta"><span class="dot"></span>Ver la carta</a>
+          <a class="btn btn-line" href="https://www.google.com/maps/dir/?api=1&amp;destination=Ram%C3%B3n%20Carrasco%2099%2C%20Concepci%C3%B3n%2C%20Chile" target="_blank" rel="noopener">Cómo llegar</a>
+        </div>
+        <p class="status" id="status"><span class="pulse" id="pulse"></span><span id="statusText">Lunes a sábado 13:00–23:00 · Domingo 12:00–18:00</span></p>
+      </div>
+      <figure class="hero-figure" style="margin:0">
+        <div class="arch"><img src="img/horno.jpg" alt="Pizza entrando al horno napolitano encendido" width="900" height="1350"></div>
+        <figcaption>Horno a la vista</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <div class="facts">
+    <ul class="wrap">
+      <li><b>Masa napolitana</b><span>Borde alto y aireado, horneada en minutos.</span></li>
+      <li><b>Coctelería de autor</b><span>Pisco sour de sabores, mojitos y gin.</span></li>
+      <li><b>Cervezas artesanales</b><span>Cocholgue, Fuzz, Pröcer, Porteña y más.</span></li>
+      <li><b>Estacionamiento y delivery</b><span>Llega fácil o pide a tu casa.</span></li>
+    </ul>
   </div>
 
-  <!-- SECCIÓN INSTAGRAM -->
-  <div style="text-align: center; margin-top: 30px;">
-    <p>Síguenos en <strong>Instagram</strong> y entérate primero de nuestras promociones.</p>
-    <a href="https://www.instagram.com/rustico.pizzabar/" target="_blank">
-      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram" width="40" style="margin-top: 10px;">
-    </a>
+  <section id="carta" class="sec">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow">La carta</p>
+          <h2>Del horno a tu mesa</h2>
+        </div>
+        <p class="lede">Dieciséis pizzas, antipastos, panuozzos, postres y una barra completa. Precios en pesos chilenos.</p>
+      </div>
+      <div class="exec">
+        <div><p class="eyebrow">Menú ejecutivo · lunes a viernes, 13:00 a 15:30</p>
+        <p>Pizza individual (Margarita, Pepperoni o Napolitana) + bebida 220 cc + ensalada.</p></div>
+        <span class="price">$9.990</span>
+      </div>
+      <div class="tabs" role="tablist" id="tabs"></div>
+      <div id="menu"></div>
+      <p class="note">Precios actualizados al <span id="menuDate"></span>. Revisa la <a id="fudoLink" href="#" target="_blank" rel="noopener">carta QR</a> para ver todo lo disponible hoy. Si tienes alguna alergia o restricción, avísanos al pedir.</p>
+    </div>
+  </section>
+
+  <section id="club" class="club">
+    <div class="wrap">
+      <div>
+        <p class="eyebrow">Club Rusti-Co.</p>
+        <h2>Cada visita suma. La décima pizza va por la casa.</h2>
+        <p class="lede">Regístrate gratis con tu teléfono en 30 segundos. Cada vez que vienes, sumas un sello en tu tarjeta.</p>
+        <ul class="perks">
+          <li><i></i><span><b>10 visitas = 1 pizza gratis.</b> La que tú elijas.</span></li>
+          <li><i></i><span><b>Regalo de cumpleaños:</b> postre gratis para ti, o una Pizza Nutella por cada 6 personas en tu mesa.</span></li>
+          <li><i></i><span><b>Invita a un amigo</b> y los dos suman una visita extra.</span></li>
+          <li><i></i><span><b>Pruebas primero</b> las pizzas nuevas, antes que nadie.</span></li>
+        </ul>
+        <a class="btn btn-ink" href="club/">Únete gratis</a>
+      </div>
+      <div class="card" aria-label="Ejemplo de tarjeta del Club">
+        <div class="card-top"><img src="img/logo-color.png" alt=""><small>Tarjeta de socio</small></div>
+        <h3>Hola, Camila</h3>
+        <p class="sub">Te faltan 3 visitas para tu pizza gratis.</p>
+        <div class="stamps" aria-hidden="true">
+          <span class="on">1</span><span class="on">2</span><span class="on">3</span><span class="on">4</span><span class="on">5</span>
+          <span class="on">6</span><span class="on">7</span><span>8</span><span>9</span><span class="prize">Pizza<br>gratis</span>
+        </div>
+        <div class="bar"><i></i></div>
+        <div class="foot"><span>Socia desde marzo 2026</span><b>7 / 10</b></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="ambiente" class="sec">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow">Ambiente</p>
+          <h2>Rústico, cálido y para compartir</h2>
+        </div>
+        <p class="lede">Ven con amigos o en familia. Y no te vayas sin tu foto en las alas de neón.</p>
+      </div>
+      <div class="gallery">
+        <figure class="tall arch-sm"><img src="img/alas.jpg" alt="Clienta con un cóctel frente a las alas de neón de Rusti-Co." loading="lazy"></figure>
+        <figure><img src="img/pareja.jpg" alt="Pareja compartiendo una pizza" loading="lazy"></figure>
+        <figure class="tall"><img src="img/pizzero.jpg" alt="Pizzero mostrando una pizza de rúcula y prosciutto" loading="lazy"></figure>
+        <figure><img src="img/coctel.jpg" alt="Cóctel de autor bajo el letrero de neón" loading="lazy"></figure>
+        <figure><img src="img/nino.jpg" alt="Niño frente a una pizza de Nutella" loading="lazy"></figure>
+        <figure><img src="img/provoleta-pull.jpg" alt="Provoleta rústica fundida" loading="lazy"></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="review">
+    <div class="wrap">
+      <div class="stars" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2.7-5.4 4.8 1.6 7.1L12 17.6 5.6 21.2l1.6-7.1L1.8 9.3 9 8.6z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2.7-5.4 4.8 1.6 7.1L12 17.6 5.6 21.2l1.6-7.1L1.8 9.3 9 8.6z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2.7-5.4 4.8 1.6 7.1L12 17.6 5.6 21.2l1.6-7.1L1.8 9.3 9 8.6z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2.7-5.4 4.8 1.6 7.1L12 17.6 5.6 21.2l1.6-7.1L1.8 9.3 9 8.6z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2.7-5.4 4.8 1.6 7.1L12 17.6 5.6 21.2l1.6-7.1L1.8 9.3 9 8.6z"/></svg>
+      </div>
+      <div>
+        <h2>¿Ya viniste? Cuéntale a Concepción.</h2>
+        <p>Tu reseña en Google nos ayuda a que más vecinos nos encuentren.</p>
+      </div>
+      <a class="btn btn-gold" id="googleReview" href="#" target="_blank" rel="noopener">Califícanos en Google</a>
+    </div>
+  </section>
+
+  <section id="visitanos" class="sec visit">
+    <div class="wrap">
+      <div>
+        <p class="eyebrow">Visítanos</p>
+        <h2>Te esperamos con el horno encendido</h2>
+        <p class="addr">Ramón Carrasco 99<small>Lomas de San Andrés, Concepción</small></p>
+        <table class="hours" aria-label="Horario de atención">
+          <tbody id="hours"></tbody>
+        </table>
+        <div class="extras">
+          <span class="chip">Estacionamiento</span>
+          <span class="chip">Delivery</span>
+          <span class="chip">Para familias</span>
+        </div>
+        <div class="cta-row">
+          <a class="btn btn-gold" href="https://www.google.com/maps/dir/?api=1&amp;destination=Ram%C3%B3n%20Carrasco%2099%2C%20Concepci%C3%B3n%2C%20Chile" target="_blank" rel="noopener">Cómo llegar</a>
+          <a class="btn btn-line" href="https://www.instagram.com/rustico.pizzabar/" target="_blank" rel="noopener">Instagram @rustico.pizzabar</a>
+        </div>
+      </div>
+      <div class="arch"><img src="img/fachada.jpg" alt="Fachada de Rusti-Co. con su letrero" loading="lazy"></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <img src="img/logo-color.png" alt="Rusti-Co.">
+    <p>Momentos que saben bien · Ramón Carrasco 99, Concepción</p>
+    <nav aria-label="Pie">
+      <a href="#carta">Carta</a>
+      <a href="club/">Club</a>
+      <a href="https://www.instagram.com/rustico.pizzabar/" target="_blank" rel="noopener">Instagram</a>
+    </nav>
   </div>
+</footer>
 
-  <script>
-    const countdown = document.getElementById("countdown");
-    const targetDate = new Date("2025-05-30T19:30:00");
+<script>
+/* ===== Ajustes del local: edita aquí ===== */
+const GOOGLE_REVIEW_URL = "https://g.page/r/CcTIIN9Gqc2wEAE/review";
+const HOURS = [ // 0 = domingo
+  {d:"Domingo", open:"12:00", close:"18:00"},
+  {d:"Lunes", open:"13:00", close:"23:00"},
+  {d:"Martes", open:"13:00", close:"23:00"},
+  {d:"Miércoles", open:"13:00", close:"23:00"},
+  {d:"Jueves", open:"13:00", close:"23:00"},
+  {d:"Viernes", open:"13:00", close:"23:00"},
+  {d:"Sábado", open:"13:00", close:"23:00"},
+];
+const MENU_UPDATED = "25 de octubre de 2026";
+const FUDO_MENU_URL = "https://menu.fu.do/rusti-co/qr-menu";
+const MENU = {
+  "Pizzas": {type:"pizzas", items:[
+    ["Margarita",9900,"Pomodoro, fior di latte, albahaca y aceite de oliva.","margarita"],
+    ["Pepperoni",13990,"Pomodoro, fior di latte y pepperoni.","pepperoni"],
+    ["Napolitana",12990,"Pomodoro, fior di latte, cherrys horneados y jamón.","napolitana"],
+    ["Hawaiana",13500,"Pomodoro, fior di latte, jamón y piña asada.","hawaiana"],
+    ["Burrata",18990,"Pomodoro, fior di latte, mortadela de pistacho, burrata, pesto y pistacho.","burrata","Favorita"],
+    ["Brisket",19900,"Pomodoro, fior di latte, brisket, pimentón asado, mermelada de brisket, ají verde, cebolla caramelizada y albahaca.","brisket"],
+    ["Pesto",16990,"Base de pesto, fior di latte, cherrys horneados, prosciutto y grana padano.","pesto"],
+    ["Capricciosa",16990,"Pomodoro, fior di latte, jamón, aceitunas sevillanas, champiñones, alcachofa y parmesano.","capricciosa","Nueva"],
+    ["Rúcula",15900,"Pomodoro, fior di latte, rúcula, prosciutto, aceto balsámico reducido y grana padano.","rucula"],
+    ["4 Quesos",15990,"Mascarpone, queso azul, fior di latte, ricotta y albahaca.","cuatroquesos"],
+    ["Salmón",17900,"Fior di latte, mascarpone, salmón, cebolla morada, eneldo, limón y alcaparras.","salmon","Nueva"],
+    ["Camarón",18500,"Bisque de camarón y bechamel, fior di latte, camarones, cebolla morada, perejil, limón y cherry.","camaron"],
+    ["Vegetariana",13990,"Pomodoro, fior di latte, champiñones marinados, cherrys horneados, aceto reducido y albahaca.","vegetariana"],
+    ["Mexicana",13990,"Pomodoro, fior di latte, carne molida, cebolla frita y ají verde.","mexicana"],
+    ["Burger",13990,"Pomodoro, cheddar, carne molida, pepinillo, cebolla morada y tocino.","burger"],
+    ["Árabe",13990,"Pomodoro, fior di latte, carne molida macerada en limón, cebolla morada y salsa labán.","arabe"],
+  ]},
+  "Para compartir": {type:"photos", items:[
+    ["Palitos de queso",6990,"Siete palitos con salsa de ajo.","palitos"],
+    ["Camembert al sartén",9900,"Camembert fundido en sartén de hierro, mermelada de pimentón y pan baguette con romero.","camembert"],
+    ["Provoleta rústica",9900,"Provoleta a las finas hierbas, cherrys horneados y pan baguette al horno.","provoleta"],
+    ["Prosciutto, mango y crema",10900,"Prosciutto o serrano, queso crema, rúcula, mango, miel y aceto reducido."],
+    ["Burrata al horno",11500,"Pan baguette horneado con burrata, cherrys deshidratados, miel y albahaca."],
+    ["Tártar de salmón",13500,"Salmón, palta, cebolla morada, alcaparras y limón.","tartar"],
+    ["Crudo",15900,"200 g de carne de res con cebolla morada, pepinillos, ají verde, alcaparras, mayonesa y tostadas."],
+  ]},
+  "Panuozzos y ensaladas": {type:"photos", items:[
+    ["Panuozzo Barros Luco",11990,"Masa de pizza, carne y queso mantecoso.","barrosluco"],
+    ["Panuozzo pollo césar",11990,"Pollo, lechuga, salsa césar, parmesano y tomate cherry.","panuozzocesar"],
+    ["Panuozzo italiano",11990,"Masa de pizza, carne, tomate, palta y mayonesa casera."],
+    ["César rústica",10900,"Lechuga, cherrys, crutones, aceitunas, salsa césar, queso rallado y pollo.","cesar"],
+    ["Palta burrata",12490,"Palta, tomate cherry, pesto, burrata y ralladura de limón."],
+  ]},
+  "Postres": {type:"photos", items:[
+    ["Pizza Nutella",10900,"Nutella, plátano, frutilla y galleta Oreo.","nutella"],
+    ["Tiramisú",5500,"Receta clásica de la casa.","tiramisu"],
+    ["Panna cotta",4900,"Con salsa y tierra de galleta.","pannacotta"],
+    ["Manjarate",4900,"El de siempre, al estilo Rusti-Co."],
+  ]},
+  "Coctelería": {type:"list", items:[
+    ["Mojito N°7",9900,"De autor. Jack Daniel's, limón, syrup de romero, naranja, pomelo, albahaca y soda.",null,"De autor"],
+    ["Rusti-Co Stout",9900,"De autor. Malibú, triple sec, limón y maracuyá, coronado con Kross Stout.",null,"De autor"],
+    ["14 de Febrero",8900,"De autor. Malibú, cassis, frutilla, limón, marrasquino y espumante.",null,"De autor"],
+    ["Pisco sour tradicional",6490,"Alto del Carmen reservado. De sabores: $6.900."],
+    ["Pisco sour Catedral",7500,"De sabores: desde $8.500."],
+    ["Mojito tradicional",6500,"De sabores: $7.500. Con Corona: $9.500."],
+    ["Aperol spritz",6900,"Aperol, espumante y soda."],
+    ["Gin tonic",6900,"Beefeater London Dry. De pepino o frutos rojos."],
+    ["Espresso martini",6900,"Café espresso, Kahlúa y vodka."],
+    ["Moscow mule",9900,"Vodka, limón, menta y Fentimans ginger beer."],
+    ["Amaretto sour",7900,"Amaretto, limón, goma y albúmina."],
+    ["Piña colada",7900,"Piña, ron, crema de leche y crema de coco."],
+    ["Negroni",6500,"Gin, vermouth y Campari."],
+    ["Caipiriña",6500,"De sabores: $7.900."],
+  ]},
+  "Cervezas": {type:"list", items:[
+    ["Cocholgue Calafate",6500,"Schop 470 cc."],
+    ["Cocholgue Ámbar",6500,"Schop 470 cc."],
+    ["Fuzz Distorsión",6500,"Hazy IPA 6°, schop 470 cc."],
+    ["Fuzz White Rabbit",6500,"Light ale 4°, schop 470 cc."],
+    ["Porteña Flora Nativa",6500,"Calafate 5,5°, schop 470 cc."],
+    ["Chiflón del Diablo",6500,"Scottish ámbar, schop 470 cc."],
+    ["Pröcer Not Juice",7500,"Hazy IPA, schop 470 cc."],
+    ["Mure La Gringa",5900,"American lager 4,6°, schop 470 cc."],
+    ["Delirium Tremens",6900,"También Delirium Red."],
+    ["Guinness Stout",5900,"440 cc."],
+    ["Kunstmann Torobayo",4500,""],
+    ["Austral Calafate",4900,""],
+  ]},
+  "Sin alcohol": {type:"list", items:[
+    ["Limonada",3900,"Menta jengibre: $4.500. De sabores: $4.900."],
+    ["Jugos naturales",3900,"Frambuesa, frutilla o piña. Mango o maracuyá: $4.900."],
+    ["Mojito sin alcohol",4900,"De sabores: $5.900."],
+    ["Piña colada 0°",6500,"También frambuesa colada."],
+    ["Cerveza 0°",3900,"Budweiser, Heineken o Royal Guard."],
+    ["Bebidas",2500,"350 cc."],
+    ["Café espresso",2000,"Capuchino: $3.500. Latte: $4.200."],
+  ]},
+};
+/* ========================================= */
 
-    function updateCountdown() {
-      const now = new Date();
-      const diff = targetDate - now;
+const clp = n => "$" + n.toLocaleString("es-CL");
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+document.getElementById("googleReview").href = GOOGLE_REVIEW_URL;
+document.getElementById("menuDate").textContent = MENU_UPDATED;
+document.getElementById("fudoLink").href = FUDO_MENU_URL;
 
-      if (diff <= 0) {
-        countdown.innerHTML = "¡Ya inauguramos!";
-        return;
-      }
+const tabsEl = document.getElementById("tabs"), menuEl = document.getElementById("menu");
+const names = Object.keys(MENU);
+function head(name, price, tag){
+  return `<div class="row"><h3>${esc(name)}${tag?`<span class="tag">${esc(tag)}</span>`:""}</h3><span class="lead"></span><span class="price">${clp(price)}</span></div>`;
+}
+function render(cat){
+  const {type, items} = MENU[cat];
+  if (type === "pizzas") {
+    const withImg = items.filter(i => i[3]), noImg = items.filter(i => !i[3]);
+    menuEl.innerHTML = `<div class="pizzas">${withImg.map(([n,p,d,img,tag]) => `
+      <article class="pizza">
+        <div class="ph"><img src="img/${img}.jpg" alt="Pizza ${esc(n)}" loading="lazy"></div>
+        ${head(n,p,tag)}<p class="desc">${esc(d)}</p>
+      </article>`).join("")}</div>
+      ${noImg.length ? `<p class="more-title">Más pizzas</p><div class="list">${noImg.map(([n,p,d,,tag]) => `
+        <div class="item">${head(n,p,tag)}<p class="desc">${esc(d)}</p></div>`).join("")}</div>` : ""}`;
+  } else {
+    const photos = type === "photos";
+    menuEl.innerHTML = `<div class="list${photos?" photos":""}">${items.map(([n,p,d,img,tag]) => `
+      <div class="item">${photos?`<div class="thumb">${img?`<img src="img/${img}.jpg" alt="" loading="lazy">`:""}</div>`:""}
+        ${head(n,p,tag)}${d?`<p class="desc">${esc(d)}</p>`:""}
+      </div>`).join("")}</div>`;
+  }
+  [...tabsEl.children].forEach(b => b.setAttribute("aria-selected", b.dataset.cat === cat));
+}
+names.forEach(n => {
+  const b = document.createElement("button");
+  b.className = "tab"; b.type = "button"; b.role = "tab"; b.dataset.cat = n; b.textContent = n;
+  b.addEventListener("click", () => render(n));
+  tabsEl.appendChild(b);
+});
+render(names[0]);
 
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((diff / 1000 / 60) % 60);
-      const seconds = Math.floor((diff / 1000) % 60);
+/* Horario y estado "abierto ahora" en hora de Concepción */
+function nowSantiago(){
+  const parts = new Intl.DateTimeFormat("en-US",{timeZone:"America/Santiago",weekday:"short",hour:"2-digit",minute:"2-digit",hour12:false}).formatToParts(new Date());
+  const get = t => parts.find(p => p.type === t).value;
+  const day = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].indexOf(get("weekday"));
+  return {day, mins: (+get("hour") % 24) * 60 + +get("minute")};
+}
+const toMin = s => { const [h,m] = s.split(":").map(Number); return h*60+m; };
+const {day, mins} = nowSantiago();
+const order = [1,2,3,4,5,6,0];
+document.getElementById("hours").innerHTML = order.map(i =>
+  `<tr class="${i===day?"today":""}"><td>${HOURS[i].d}</td><td>${HOURS[i].open} – ${HOURS[i].close}</td></tr>`).join("");
+const t = HOURS[day], open = mins >= toMin(t.open) && mins < toMin(t.close);
+document.getElementById("pulse").classList.toggle("on", open);
+document.getElementById("statusText").innerHTML = open
+  ? `<b>Abierto ahora</b> · hasta las ${t.close}`
+  : (mins < toMin(t.open) ? `<b>Cerrado</b> · hoy abrimos a las ${t.open}` : `<b>Cerrado</b> · mañana abrimos a las ${HOURS[(day+1)%7].open}`);
+</script>
 
-      countdown.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-    }
-
-    setInterval(updateCountdown, 1000);
-    updateCountdown();
-  </script>
 </body>
 </html>
