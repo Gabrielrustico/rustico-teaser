@@ -82,15 +82,16 @@ p{margin:0}
   .hero-figure figcaption{left:12px}
 }
 
-/* Franja de atributos */
-.facts{border-block:1px solid var(--ink-3)}
-.facts ul{list-style:none;margin:0;display:grid;grid-template-columns:repeat(4,1fr);gap:0;padding-block:0}
-.facts li{padding:26px 22px;border-left:1px solid var(--ink-3)}
-.facts li:first-child{border-left:0;padding-left:0}
-.facts b{display:block;font-weight:600;font-size:.95rem;margin-bottom:4px}
+/* Franja de atributos con foto */
+.facts{padding-block:8px 0}
+.facts ul{list-style:none;margin:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+.facts li{display:grid;gap:12px;align-content:start}
+.facts figure{margin:0;aspect-ratio:4/5;border-radius:999px 999px 14px 14px;overflow:hidden;background:var(--ink-2);max-width:100%}
+.facts img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
+.facts li:hover img{transform:scale(1.04)}
+.facts b{display:block;font-weight:600;font-size:.98rem;margin-bottom:2px}
 .facts span{color:var(--muted);font-size:.86rem;line-height:1.5}
-@media (max-width:860px){.facts ul{grid-template-columns:1fr 1fr}.facts li{border-left:0;padding-left:0;border-top:1px solid var(--ink-3)}.facts li:nth-child(-n+2){border-top:0}}
-@media (max-width:460px){.facts ul{grid-template-columns:1fr}.facts li:nth-child(2){border-top:1px solid var(--ink-3)}}
+@media (max-width:860px){.facts ul{grid-template-columns:repeat(2,minmax(0,1fr));gap:26px 14px}}
 
 /* Secciones */
 section{scroll-margin-top:72px}
@@ -237,10 +238,14 @@ footer nav a:hover{color:var(--cream)}
 
   <div class="facts">
     <ul class="wrap">
-      <li><b>Masa napolitana</b><span>Borde alto y aireado, horneada en minutos.</span></li>
-      <li><b>Coctelería de autor</b><span>Pisco sour de sabores, mojitos y gin.</span></li>
-      <li><b>Cervezas artesanales</b><span>Cocholgue, Fuzz, Pröcer, Porteña y más.</span></li>
-      <li><b>Estacionamiento y delivery</b><span>Llega fácil o pide a tu casa.</span></li>
+      <li><figure><img src="img/pizzero.jpg" alt="Pizzero mostrando una pizza recién salida del horno" loading="lazy"></figure>
+        <div><b>Masa napolitana</b><span>Borde alto y aireado, horneada en minutos.</span></div></li>
+      <li><figure><img src="img/coctel.jpg" alt="Cóctel de autor bajo el letrero de neón" loading="lazy"></figure>
+        <div><b>Coctelería de autor</b><span>Pisco sour de sabores, mojitos y gin.</span></div></li>
+      <li><figure><img src="img/schop.jpg" alt="Schop de cerveza artesanal saliendo del grifo" loading="lazy"></figure>
+        <div><b>Cervezas artesanales</b><span>Cocholgue, Fuzz, Pröcer, Porteña y más.</span></div></li>
+      <li><figure><img src="img/delivery.jpg" alt="Cajas de delivery de Rusti-Co. con pizza" loading="lazy"></figure>
+        <div><b>Estacionamiento y delivery</b><span>Llega fácil o pide a tu casa.</span></div></li>
     </ul>
   </div>
 
@@ -304,8 +309,8 @@ footer nav a:hover{color:var(--cream)}
       <div class="gallery">
         <figure class="tall arch-sm"><img src="img/alas.jpg" alt="Clienta con un cóctel frente a las alas de neón de Rusti-Co." loading="lazy"></figure>
         <figure><img src="img/pareja.jpg" alt="Pareja compartiendo una pizza" loading="lazy"></figure>
-        <figure class="tall"><img src="img/pizzero.jpg" alt="Pizzero mostrando una pizza de rúcula y prosciutto" loading="lazy"></figure>
-        <figure><img src="img/coctel.jpg" alt="Cóctel de autor bajo el letrero de neón" loading="lazy"></figure>
+        <figure class="tall"><img src="img/amigas.jpg" alt="Amigas brindando con cerveza y pizza" loading="lazy"></figure>
+        <figure><img src="img/perro.jpg" alt="Clienta con su perro en Rusti-Co." loading="lazy"></figure>
         <figure><img src="img/nino.jpg" alt="Niño frente a una pizza de Nutella" loading="lazy"></figure>
         <figure><img src="img/provoleta-pull.jpg" alt="Provoleta rústica fundida" loading="lazy"></figure>
       </div>
