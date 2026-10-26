@@ -124,7 +124,7 @@ function caja(){
   <div class="grid2">
     <div class="box stack"><span class="label">Buscar socio</span>
       <input class="search" id="q" placeholder="Teléfono o nombre" value="${esc(query)}" autocomplete="off">
-      <div class="stack">${res.map(r => `<button type="button" class="result" data-id="${r.id}"><span><b>${esc(r.nombre)}</b><br><span class="small muted">${esc(r.telefono)}</span></span>${pill(r)}</button>`).join('') || `<p class="small muted">${q.length>=2?'Sin resultados. Pídele que se registre con el QR de la mesa.':'Escribe al menos 2 letras o 3 números.'}</p>`}</div>
+      <div class="stack">${res.map(r => `<button type="button" class="result" data-id="${r.id}"><span><b>${esc(r.nombre)}</b>${r.regalos.length?' 🎁':''}<br><span class="small muted">${esc(r.telefono)}</span></span>${pill(r)}</button>`).join('') || `<p class="small muted">${q.length>=2?'Sin resultados. Pídele que se registre con el QR de la mesa.':'Escribe al menos 2 letras o 3 números.'}</p>`}</div>
       <p class="small muted">Las visitas se suman solas cuando el garzón asigna al socio a la mesa en Fudo. Usa este botón solo si se le olvidó.</p>
     </div>
     <div class="box">${s ? `<div class="stack">
@@ -133,6 +133,7 @@ function caja(){
       <p class="small">${s.sellos>=N?`<b style="color:var(--gold)">Premio listo:</b> ${esc(D.club.premio)}.`:`Lleva <b>${s.sellos} de ${N}</b>. Última visita: ${fmt(s.ultima)}.`}</p>
       ${esCumpleMes(s)?`<p class="small" style="color:var(--gold)">🎂 De cumpleaños este mes: ${esc(D.club.regaloCumpleanos.toLowerCase())}.</p>`:''}
       ${!s.fudo?'<p class="small" style="color:var(--warn)">Aún no está creado en Fudo. Se reintenta en la próxima revisión.</p>':''}
+      ${s.regalos.length?`<div class="stack" style="gap:8px"><span class="label" style="color:var(--gold)">Regalos por canjear</span>${s.regalos.map(g=>`<div style="display:flex;justify-content:space-between;gap:10px;align-items:center;border:1px solid var(--gold);border-radius:12px;padding:10px 12px"><span>🎁 <b>${esc(g.regalo)}</b><br><span class="small muted">${esc(g.motivo)} · vence ${fmt(g.vence)}</span></span><button class="btn btn-gold btn-sm" type="button" data-g="${g.id}">Canjear</button></div>`).join('')}</div>`:''}
       <div style="display:flex;flex-wrap:wrap;gap:10px">
         <button class="btn btn-gold" type="button" id="add" ${s.ultima===hoy||s.sellos>=N?'disabled':''}>${s.ultima===hoy?'Visita de hoy ya sumada':'Sumar visita'}</button>
         ${s.sellos>=N?'<button class="btn btn-line" type="button" id="redeem">Canjear premio</button>':''}
@@ -142,6 +143,7 @@ function caja(){
   const qi = $('q'); qi.oninput = () => { query = qi.value; const p = qi.selectionStart; caja(); const n = $('q'); n.focus(); n.setSelectionRange(p,p); };
   document.querySelectorAll('[data-id]').forEach(b => b.onclick = () => { sel = b.dataset.id; caja(); });
   if ($('add')) $('add').onclick = async e => { e.target.disabled = true; toast(await call('panelSumarVisita', s.id)); await load(); };
+  document.querySelectorAll('[data-g]').forEach(b => b.onclick = async () => { b.disabled = true; toast(await call('panelCanjearRegalo', b.dataset.g)); await load(); });
   if ($('redeem')) $('redeem').onclick = async e => { e.target.disabled = true; toast(await call('panelCanjear', s.id)); await load(); };
 }
 

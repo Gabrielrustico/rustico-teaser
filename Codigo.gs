@@ -18,6 +18,8 @@ const CLUB = {
   premio: '1 pizza gratis a elección',
   regaloCumpleanos: 'Postre gratis para el cumpleañero, o una Pizza Nutella por cada 6 personas en su mesa',
   bonoReferido: 1,              // visitas extra para ambos cuando el invitado hace su primera visita
+  regaloReferido: '1 pisco sour de regalo', // para el invitado al registrarse y para quien invitó cuando el amigo viene
+  diasRegalo: 60,               // vigencia de los regalos
   diasRiesgo: 30,               // activo ≤ 30 días; en riesgo 31–60; perdido > 60
   diasPerdido: 60,
   versionConsentimiento: '2026-10-25',
@@ -37,6 +39,7 @@ const HOJAS = {
   Consentimientos: ['fecha', 'socio_id', 'telefono', 'version', 'acepta_club', 'acepta_promos', 'mayor_18', 'canal', 'accion'],
   Campanas: ['fecha', 'segmento', 'socios', 'mensaje'],
   Registro: ['fecha', 'tipo', 'detalle'],
+  Regalos: ['id', 'fecha', 'socio_id', 'regalo', 'motivo', 'vence', 'canjeado', 'canjeado_por'],
 };
 
 /* ---------------------------- Instalación ---------------------------- */
@@ -128,8 +131,9 @@ function registrar(b) {
     acepta_club: 'si', acepta_promos: b.acepta_promos === true ? 'si' : 'no', mayor_18: 'si',
     canal: 'web rusti-co.cl/club', accion: 'alta',
   });
+  if (referente) darRegalo_(id, CLUB.regaloReferido, 'Bienvenida: te invitó ' + referente.nombre.split(' ')[0]);
   try { crearClienteFudo_(id); } catch (err) { log_('fudo', 'No se pudo crear el cliente ' + id + ' en Fudo: ' + err); }
-  return { ok: true, token, tarjeta: tarjeta_(buscarSocio_('id', id)) };
+  return { ok: true, token, tarjeta: tarjeta_(buscarSocio_('id', id)), regaloBienvenida: !!referente };
 }
 
 function pedirCodigo(b) {
@@ -206,7 +210,7 @@ function panelDatos() {
     id: s.id, nombre: s.nombre, telefono: s.telefono, email: s.email, cumpleanos: fechaTxt_(s.cumpleanos),
     codigo: s.codigo, sellos: Number(s.sellos) || 0, visitas: Number(s.visitas_total) || 0,
     ultima: fechaTxt_(s.ultima_visita), alta: fechaTxt_(s.fecha_alta), promos: s.acepta_promos === 'si',
-    fudo: !!s.fudo_cliente_id, segmento: segmento_(s),
+    fudo: !!s.fudo_cliente_id, segmento: segmento_(s), regalos: regalosPendientes_(s.id),
   }));
   const nombres = {}; socios.forEach(s => nombres[s.id] = s);
   const calif = leer_('Calificaciones').map(c => ({
@@ -239,6 +243,14 @@ function panelCanjear(id) {
   actualizar_('Socios', s._fila, { sellos: 0 });
   agregar_('Canjes', { fecha: new Date(), socio_id: s.id, premio: CLUB.premio, registrado_por: Session.getActiveUser().getEmail() });
   return 'Premio canjeado. La tarjeta de ' + s.nombre.split(' ')[0] + ' vuelve a 0.';
+}
+
+function panelCanjearRegalo(regaloId) {
+  soloDueno_();
+  const r = leer_('Regalos').find(x => x.id === regaloId);
+  if (!r || r.canjeado) throw new Error('Ese regalo ya fue canjeado o no existe.');
+  actualizar_('Regalos', r._fila, { canjeado: new Date(), canjeado_por: Session.getActiveUser().getEmail() });
+  return 'Regalo canjeado: ' + r.regalo + '.';
 }
 
 function panelContactado(fila) {
@@ -412,7 +424,10 @@ function sumarVisita_(s, ventaFudo, origen, cuando) {
   if (total === 1 && s.referido_por) {
     sellos = Math.min(sellos + CLUB.bonoReferido, CLUB.visitasParaPremio);
     const ref = buscarSocio_('id', s.referido_por);
-    if (ref && ref.estado === 'activo') actualizar_('Socios', ref._fila, { sellos: Math.min((Number(ref.sellos) || 0) + CLUB.bonoReferido, CLUB.visitasParaPremio) });
+    if (ref && ref.estado === 'activo') {
+      actualizar_('Socios', ref._fila, { sellos: Math.min((Number(ref.sellos) || 0) + CLUB.bonoReferido, CLUB.visitasParaPremio) });
+      darRegalo_(ref.id, CLUB.regaloReferido, 'Tu amigo ' + s.nombre.split(' ')[0] + ' vino por primera vez');
+    }
   }
   actualizar_('Socios', s._fila, { sellos, visitas_total: total, ultima_visita: cuando });
   if (CLUB.enviarCorreoCalificar && s.email) {
@@ -434,6 +449,17 @@ function eliminarSocio_(s, canal) {
   }
   actualizar_('Socios', s._fila, { nombre: 'Eliminado', telefono: '', email: '', cumpleanos: '', estado: 'eliminado', token: '', acepta_promos: 'no' });
   agregar_('Consentimientos', { fecha: new Date(), socio_id: s.id, telefono: '', version: CLUB.versionConsentimiento, acepta_club: 'no', acepta_promos: 'no', mayor_18: '', canal, accion: 'retira consentimiento y elimina datos' });
+}
+
+function darRegalo_(socioId, regalo, motivo) {
+  const vence = new Date(Date.now() + CLUB.diasRegalo * 864e5);
+  agregar_('Regalos', { id: 'R' + Utilities.getUuid().slice(0, 8).toUpperCase(), fecha: new Date(), socio_id: socioId, regalo, motivo, vence, canjeado: '', canjeado_por: '' });
+}
+
+function regalosPendientes_(socioId) {
+  const hoy = Utilities.formatDate(new Date(), CLUB.zona, 'yyyy-MM-dd');
+  return leer_('Regalos').filter(r => r.socio_id === socioId && !r.canjeado && fechaTxt_(r.vence) >= hoy)
+    .map(r => ({ id: r.id, regalo: r.regalo, motivo: r.motivo, vence: fechaTxt_(r.vence) }));
 }
 
 /** Una vez al día: elimina los datos de socios sin visitas en 24 meses (lo promete la política de privacidad). */
@@ -462,7 +488,7 @@ function tarjeta_(s) {
     nombre: s.nombre, telefono: s.telefono, email: s.email, codigo: s.codigo, sellos: Number(s.sellos) || 0,
     visitasTotal: Number(s.visitas_total) || 0, alta: fechaTxt_(s.fecha_alta), cumpleanos: fechaTxt_(s.cumpleanos),
     aceptaPromos: s.acepta_promos === 'si', visitas, calificarVisita: pend ? fechaTxt_(pend.fecha) : null,
-    segmento: segmento_(s), club: datosPublicos_(segmento_(s)),
+    segmento: segmento_(s), club: datosPublicos_(segmento_(s)), regalos: regalosPendientes_(s.id),
   };
 }
 
@@ -471,7 +497,7 @@ function datosPublicos_(segmento) {
   const promos = leer_('Promociones').filter(p => p.activa === 'si' && (!p.hasta || fechaTxt_(p.hasta) >= hoy))
     .filter(p => p.para !== 'En riesgo' || segmento === 'risk')
     .map(p => ({ titulo: p.titulo, detalle: p.detalle, hasta: fechaTxt_(p.hasta), novedad: p.novedad === 'si', foto: p.foto }));
-  return { visitasParaPremio: CLUB.visitasParaPremio, premio: CLUB.premio, regaloCumpleanos: CLUB.regaloCumpleanos, bonoReferido: CLUB.bonoReferido, promos };
+  return { visitasParaPremio: CLUB.visitasParaPremio, premio: CLUB.premio, regaloCumpleanos: CLUB.regaloCumpleanos, bonoReferido: CLUB.bonoReferido, regaloReferido: CLUB.regaloReferido, promos };
 }
 
 function segmento_(s) {
@@ -510,7 +536,16 @@ function avisarCalificacionBaja_(s, estrellas, comentario) {
 /* ------------------------------ Hojas ------------------------------ */
 
 let ss__ = null;
-function hoja_(n) { ss__ = ss__ || SpreadsheetApp.openById(HOJA_ID); return ss__.getSheetByName(n); }
+function hoja_(n) {
+  ss__ = ss__ || SpreadsheetApp.openById(HOJA_ID);
+  let sh = ss__.getSheetByName(n);
+  if (!sh && HOJAS[n]) {
+    sh = ss__.insertSheet(n);
+    sh.getRange(1, 1, 1, HOJAS[n].length).setValues([HOJAS[n]]).setFontWeight('bold').setBackground('#ffd700');
+    sh.setFrozenRows(1);
+  }
+  return sh;
+}
 
 function leer_(n) {
   const sh = hoja_(n);
