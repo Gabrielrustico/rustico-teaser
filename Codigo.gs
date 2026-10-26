@@ -402,6 +402,34 @@ function sincronizarFudo() {
   return msg;
 }
 
+/** Repara teléfonos que Sheets guardó como fórmula (#ERROR!) y corrige el cliente en Fudo. Correr desde el editor. */
+function repararTelefonos() {
+  const sh = hoja_('Socios');
+  const col = HOJAS.Socios.indexOf('telefono') + 1;
+  const filas = sh.getLastRow();
+  if (filas < 2) return 'Sin socios.';
+  const formulas = sh.getRange(2, col, filas - 1, 1).getFormulas();
+  const out = [];
+  formulas.forEach((f, i) => {
+    if (!f[0]) return;
+    const tel = normTel_(f[0].replace(/^=/, ''));
+    const fila = i + 2;
+    sh.getRange(fila, col).setValue(tel ? "'" + tel : '');
+    const s = leer_('Socios').find(x => x._fila === fila);
+    out.push(s.nombre + ' → ' + (tel || 'sin teléfono válido'));
+    if (s.fudo_cliente_id && tel && credencialesFudo_()) {
+      try {
+        fudo_('patch', '/customers/' + s.fudo_cliente_id, { data: { id: String(s.fudo_cliente_id), type: 'Customer',
+          attributes: { name: (s.nombre + ' · ' + tel.slice(-4)).slice(0, 90), phone: tel },
+          relationships: { paymentMethod: { data: { type: 'PaymentMethod', id: String(medioPagoFudo_()) } } } } });
+        out.push('  Fudo corregido');
+      } catch (err) { out.push('  Fudo: ' + err); }
+    }
+  });
+  Logger.log(out.join('\n') || 'Nada que reparar');
+  return out.join('\n') || 'Nada que reparar';
+}
+
 /** Para revisar cómo viene una venta de Fudo (correr desde el editor y mirar el registro de ejecución). */
 function probarFudo() {
   const r = fudo_('get', '/sales?page[size]=3&sort=-id');
@@ -559,9 +587,12 @@ function leer_(n) {
   });
 }
 
+/** Evita que Sheets lea como fórmula un texto que empieza con + = - @ (por ejemplo, +56 9 ...). */
+function celda_(v) { return typeof v === 'string' && /^[=+\-@]/.test(v) ? "'" + v : v; }
+
 function agregar_(n, obj) {
   const enc = HOJAS[n];
-  hoja_(n).appendRow(enc.map(k => obj[k] === undefined ? '' : obj[k]));
+  hoja_(n).appendRow(enc.map(k => obj[k] === undefined ? '' : celda_(obj[k])));
 }
 
 function actualizar_(n, fila, cambios) {
@@ -569,7 +600,7 @@ function actualizar_(n, fila, cambios) {
   const sh = hoja_(n);
   Object.keys(cambios).forEach(k => {
     const col = enc.indexOf(k);
-    if (col >= 0) sh.getRange(fila, col + 1).setValue(cambios[k]);
+    if (col >= 0) sh.getRange(fila, col + 1).setValue(celda_(cambios[k]));
   });
 }
 
