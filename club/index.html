@@ -87,6 +87,9 @@ textarea{width:100%;min-height:70px;background:var(--ink);border:1px solid var(-
 .promo p{font-size:.82rem;color:var(--muted)}
 .pill{display:inline-block;font-size:.66rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--info);border:1px solid currentColor;border-radius:999px;padding:.15em .6em;margin-bottom:4px}
 .code-row{display:flex;gap:10px;align-items:center;margin-top:10px}
+.gift{display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:center;border-color:var(--gold);background:linear-gradient(160deg,#241b0b,#141009)}
+.gift-ico{width:44px;height:44px;border-radius:50%;background:var(--gold);display:grid;place-items:center;font-size:1.3rem}
+.gift h3{font-size:1rem;font-weight:600}
 .code-row code{flex:1;background:var(--ink);border:1px dashed var(--gold);color:var(--gold);border-radius:12px;padding:.7em;text-align:center;font:700 1.05rem var(--font);letter-spacing:.12em}
 .history{list-style:none;padding:0;margin:0}
 .history li{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line);font-size:.85rem}
@@ -145,7 +148,7 @@ function welcome(){
     <ul class="perks">
       <li><i></i><span><b>10 visitas = 1 pizza gratis</b> a elección.</span></li>
       <li><i></i><span><b>Regalo de cumpleaños:</b> postre gratis, o una Pizza Nutella por cada 6 personas en tu mesa.</span></li>
-      <li><i></i><span><b>Invita a un amigo</b> y los dos suman una visita extra.</span></li>
+      <li><i></i><span><b>Invita a un amigo:</b> los dos ganan un pisco sour de regalo y una visita extra.</span></li>
       <li><i></i><span><b>Pruebas primero</b> las pizzas nuevas.</span></li>
     </ul>
     <div class="stack">
@@ -192,7 +195,7 @@ function register(){
       });
       if (!r.ok) return fail(r.error);
       if (r.yaExiste) { toast(r.mensaje); return code($("tel").value); }
-      setToken(r.token); card(r.tarjeta); toast("¡Bienvenido al Club! Ya tienes tu tarjeta.");
+      setToken(r.token); card(r.tarjeta); toast(r.regaloBienvenida ? "¡Bienvenido! Tienes un pisco sour de regalo para tu primera visita." : "¡Bienvenido al Club! Ya tienes tu tarjeta.");
     });
   });
 }
@@ -253,6 +256,9 @@ function card(t){
     </div>
     <p class="note" style="margin-top:10px">Al pedir, dile al garzón tu nombre o teléfono para sumar tu sello.</p>
 
+    ${(t.regalos||[]).length ? `<div class="section"><h2>Tus regalos</h2><span class="label">${t.regalos.length}</span></div>
+    <div class="stack">${t.regalos.map(g=>`<div class="box gift"><span class="gift-ico" aria-hidden="true">🎁</span><div><h3>${esc(g.regalo.charAt(0).toUpperCase()+g.regalo.slice(1))}</h3><p class="small muted">${esc(g.motivo)}. Muéstralo al garzón · vence el ${esc(fmt(g.vence))}</p></div></div>`).join("")}</div>` : ""}
+
     ${t.calificarVisita ? `<div class="box" id="rate" style="margin-top:16px;border-color:var(--gold)">
       <span class="label" style="color:var(--gold)">Tu visita del ${esc(fmt(t.calificarVisita))}</span>
       <h3 style="margin:6px 0 12px">¿Cómo estuvo todo?</h3>
@@ -271,7 +277,7 @@ function card(t){
       <div>${p.novedad?'<span class="pill">Primero tú</span>':""}<h3>${esc(p.titulo)}</h3><p>${esc(p.detalle)}</p>${p.hasta?`<p class="small">Hasta el ${esc(fmt(p.hasta))}</p>`:""}</div></div>`).join("") || '<p class="small muted">Pronto tendrás beneficios exclusivos aquí.</p>'}</div>
 
     <div class="section"><h2>Invita a un amigo</h2></div>
-    <div class="box"><p class="small muted">Cuando tu amigo se registra con tu código y hace su primera visita, los dos suman ${t.club.bonoReferido} visita extra.</p>
+    <div class="box"><p class="small muted">Tu amigo recibe <b>${esc(t.club.regaloReferido||"un pisco sour de regalo")}</b> apenas se registra con tu código. Cuando venga por primera vez, tú recibes el tuyo y los dos suman ${t.club.bonoReferido} visita extra.</p>
       <div class="code-row"><code>${esc(t.codigo)}</code><button class="btn btn-line btn-sm" type="button" id="copy">Copiar link</button></div></div>
 
     <div class="section"><h2>¿Te gustó? Cuéntalo en Google</h2></div>
