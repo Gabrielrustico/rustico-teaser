@@ -39,6 +39,7 @@ p{margin:0}
 @media (max-width:860px){.grid2{grid-template-columns:1fr}}
 .kpis,.segs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:22px}
 @media (max-width:760px){.kpis,.segs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpis{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
 .kpi,.seg{background:var(--ink-2);border:1px solid var(--line);border-radius:16px;padding:16px}
 .kpi b,.seg b{display:block;font-size:1.8rem;font-weight:300;margin-top:6px;font-variant-numeric:tabular-nums}
 .kpi small{color:var(--muted);font-size:.75rem}
@@ -98,6 +99,8 @@ const SEG = {new:['Nuevo','s-new'], active:['Activo','s-active'], risk:['En ries
 const pill = s => `<span class="pill ${SEG[s.segmento][1]}">${SEG[s.segmento][0]}</span>`;
 const mesActual = () => new Date().getMonth() + 1;
 const esCumpleMes = s => s.cumpleanos && +s.cumpleanos.slice(5, 7) === mesActual();
+const clp = n => '$' + Math.round(n||0).toLocaleString('es-CL');
+function gustosTxt(g){ return [g.pizza&&('🍕 '+g.pizza), g.bebida&&('🥤 '+g.bebida)].filter(Boolean).join(' · '); }
 function toast(m){ const t=$('toast'); t.textContent=m; t.hidden=false; clearTimeout(toast.t); toast.t=setTimeout(()=>t.hidden=true,3000); }
 function call(fn, ...args){
   return new Promise((ok, ko) => google.script.run.withSuccessHandler(ok).withFailureHandler(e => { toast(e.message || 'Error'); ko(e); })[fn](...args));
@@ -132,6 +135,10 @@ function caja(){
       <div class="mini">${Array.from({length:N},(_,i)=>`<i class="${i<s.sellos?'on':''}"></i>`).join('')}</div>
       <p class="small">${s.sellos>=N?`<b style="color:var(--gold)">Premio listo:</b> ${esc(D.club.premio)}.`:`Lleva <b>${s.sellos} de ${N}</b>. Última visita: ${fmt(s.ultima)}.`}</p>
       ${esCumpleMes(s)?`<p class="small" style="color:var(--gold)">🎂 De cumpleaños este mes: ${esc(D.club.regaloCumpleanos.toLowerCase())}.</p>`:''}
+      ${s.gustos.top.length||s.gustos.gasto?`<div class="stack" style="gap:6px"><span class="label">Sus gustos</span>
+        ${gustosTxt(s.gustos)?`<p class="small">${esc(gustosTxt(s.gustos))}</p>`:''}
+        ${s.gustos.top.length?`<p class="small muted">Lo que más pide: ${esc(s.gustos.top.join(', '))}</p>`:''}
+        ${s.gustos.gasto?`<p class="small muted">Gasto promedio ${clp(s.gustos.ticket)} por visita · ${clp(s.gustos.gasto)} en total</p>`:''}</div>`:''}
       ${!s.fudo?'<p class="small" style="color:var(--warn)">Aún no está creado en Fudo. Se reintenta en la próxima revisión.</p>':''}
       ${s.regalos.length?`<div class="stack" style="gap:8px"><span class="label" style="color:var(--gold)">Regalos por canjear</span>${s.regalos.map(g=>`<div style="display:flex;justify-content:space-between;gap:10px;align-items:center;border:1px solid var(--gold);border-radius:12px;padding:10px 12px"><span>🎁 <b>${esc(g.regalo)}</b><br><span class="small muted">${esc(g.motivo)} · vence ${fmt(g.vence)}</span></span><button class="btn btn-gold btn-sm" type="button" data-g="${g.id}">Canjear</button></div>`).join('')}</div>`:''}
       <div style="display:flex;flex-wrap:wrap;gap:10px">
@@ -157,12 +164,14 @@ function resumen(){
   <div class="kpis">
     <div class="kpi"><small>Socios</small><b>${cs.length}</b><small>${cs.filter(s=>s.alta.startsWith(mes)).length} nuevos este mes</small></div>
     <div class="kpi"><small>Visitas este mes</small><b>${D.visitasMes}</b><small>de socios del Club</small></div>
+    <div class="kpi"><small>Consumo de socios este mes</small><b>${clp(D.gastoMes)}</b><small>según Fudo</small></div>
     <div class="kpi"><small>Calificación promedio</small><b>${avg ? avg.toFixed(1).replace('.',',') : '—'}</b><small>${D.calif.length} calificaciones</small></div>
     <div class="kpi"><small>En riesgo</small><b style="color:var(--warn)">${cs.filter(s=>s.segmento==='risk').length}</b><small>31 a 60 días sin venir</small></div>
   </div>
   <div class="grid2">
     <div class="box stack"><span class="label">Calificaciones</span><div class="bars">${dist.map(([n,c])=>`<div><span>${n} ★</span><span class="track"><i style="width:${c/max*100}%"></i></span><span class="num">${c}</span></div>`).join('')}</div></div>
     <div class="box stack"><span class="label">Cumpleaños este mes</span>${cs.filter(esCumpleMes).map(s=>`<p style="display:flex;justify-content:space-between"><span>${esc(s.nombre)}</span><span class="muted">${fmt(new Date().getFullYear()+s.cumpleanos.slice(4))}</span></p>`).join('')||'<p class="small muted">Nadie este mes.</p>'}</div>
+    <div class="box stack"><span class="label">Lo más pedido por los socios</span>${(D.ranking||[]).map((r,i)=>`<p style="display:flex;justify-content:space-between;gap:10px"><span>${i+1}. ${esc(r.producto)}</span><span class="muted num">${r.cantidad}</span></p>`).join('')||'<p class="small muted">Aparecerá cuando los socios tengan visitas registradas en Fudo.</p>'}</div>
     <div class="box stack"><span class="label">Premios</span>
       <p><b style="font-size:1.4rem;font-weight:300">${cs.filter(s=>s.sellos>=N).length}</b> <span class="small muted">con pizza gratis lista para canjear</span></p>
       <p><b style="font-size:1.4rem;font-weight:300">${cs.filter(s=>s.sellos>=N-2&&s.sellos<N).length}</b> <span class="small muted">a 1 o 2 visitas del premio</span></p></div>
@@ -191,8 +200,8 @@ function segmentos(){
   <p style="margin:-8px 0 18px"><button class="linkbtn" type="button" id="bday">Ver cumpleaños del mes (${g.bday.length})</button></p>
   <div class="grid2">
     <div class="box stack"><span class="label">${seg==='bday'?'Cumpleaños este mes':info[seg][0]} · ${lista.length} socios</span>
-      <div class="table-wrap"><table><thead><tr><th>Socio</th><th>Teléfono</th><th>Última visita</th><th>Promos</th></tr></thead>
-      <tbody>${lista.map(s=>`<tr><td>${esc(s.nombre)}</td><td>${esc(s.telefono)}</td><td>${s.ultima?`hace ${dias(s.ultima)} días`:'—'}</td><td>${s.promos?'Sí':'No'}</td></tr>`).join('')||'<tr><td colspan="4" class="muted">Nadie en este grupo.</td></tr>'}</tbody></table></div>
+      <div class="table-wrap"><table><thead><tr><th>Socio</th><th>Teléfono</th><th>Última visita</th><th>Le gusta</th><th>Promos</th></tr></thead>
+      <tbody>${lista.map(s=>`<tr><td>${esc(s.nombre)}</td><td>${esc(s.telefono)}</td><td>${s.ultima?`hace ${dias(s.ultima)} días`:'—'}</td><td>${esc(gustosTxt(s.gustos))||'—'}</td><td>${s.promos?'Sí':'No'}</td></tr>`).join('')||'<tr><td colspan="5" class="muted">Nadie en este grupo.</td></tr>'}</tbody></table></div>
     </div>
     <div class="box stack"><span class="label">Mensaje sugerido</span>
       <textarea class="msg" id="tpl">${esc(TPL[seg])}</textarea>
@@ -251,8 +260,8 @@ function socios(){
   const cs = D.socios.slice().sort((a,b) => (b.ultima||'').localeCompare(a.ultima||''));
   const N = D.club.visitasParaPremio;
   $('body').innerHTML = cs.length ? `<div class="table-wrap"><table>
-    <thead><tr><th>Socio</th><th>Teléfono</th><th>Correo</th><th>Estado</th><th class="num">Sellos</th><th class="num">Visitas</th><th>Última</th><th>Cumpleaños</th><th>Promos</th><th>Fudo</th><th></th></tr></thead>
-    <tbody>${cs.map(s=>`<tr><td>${esc(s.nombre)}</td><td>${esc(s.telefono)}</td><td>${esc(s.email)}</td><td>${pill(s)}</td><td class="num">${s.sellos}/${N}</td><td class="num">${s.visitas}</td><td>${fmt(s.ultima)}</td><td>${s.cumpleanos?fmt(new Date().getFullYear()+s.cumpleanos.slice(4)):'—'}</td><td>${s.promos?'Sí':'No'}</td><td>${s.fudo?'Sí':'Pendiente'}</td><td><button class="linkbtn" type="button" data-del="${s.id}">Eliminar datos</button></td></tr>`).join('')}</tbody>
+    <thead><tr><th>Socio</th><th>Teléfono</th><th>Correo</th><th>Estado</th><th class="num">Sellos</th><th class="num">Visitas</th><th>Le gusta</th><th class="num">Gasto prom.</th><th class="num">Gasto total</th><th>Última</th><th>Cumpleaños</th><th>Promos</th><th>Fudo</th><th></th></tr></thead>
+    <tbody>${cs.map(s=>`<tr><td>${esc(s.nombre)}</td><td>${esc(s.telefono)}</td><td>${esc(s.email)}</td><td>${pill(s)}</td><td class="num">${s.sellos}/${N}</td><td class="num">${s.visitas}</td><td>${esc(gustosTxt(s.gustos))||'—'}</td><td class="num">${s.gustos.ticket?clp(s.gustos.ticket):'—'}</td><td class="num">${s.gustos.gasto?clp(s.gustos.gasto):'—'}</td><td>${fmt(s.ultima)}</td><td>${s.cumpleanos?fmt(new Date().getFullYear()+s.cumpleanos.slice(4)):'—'}</td><td>${s.promos?'Sí':'No'}</td><td>${s.fudo?'Sí':'Pendiente'}</td><td><button class="linkbtn" type="button" data-del="${s.id}">Eliminar datos</button></td></tr>`).join('')}</tbody>
   </table></div>
   <p class="small muted" style="margin-top:12px">${cs.length} socios. La lista completa está en la hoja de cálculo, pestaña Socios. "Eliminar datos" es para cuando un cliente lo pide por correo o en el local.</p>
   <div class="box" id="confirm" hidden style="margin-top:14px"><p id="confirmTxt"></p><div style="display:flex;gap:10px;margin-top:12px"><button class="btn btn-gold btn-sm" type="button" id="yes">Sí, eliminar</button><button class="btn btn-line btn-sm" type="button" id="no">Cancelar</button></div></div>`

@@ -32,7 +32,8 @@ const CLUB = {
 const HOJAS = {
   Socios: ['id', 'nombre', 'telefono', 'email', 'cumpleanos', 'codigo', 'referido_por', 'fudo_cliente_id',
     'sellos', 'visitas_total', 'ultima_visita', 'fecha_alta', 'acepta_promos', 'estado', 'token'],
-  Visitas: ['fecha', 'socio_id', 'venta_fudo', 'origen', 'cuenta_sello', 'calificada'],
+  Visitas: ['fecha', 'socio_id', 'venta_fudo', 'origen', 'cuenta_sello', 'calificada', 'monto'],
+  Consumos: ['fecha', 'socio_id', 'venta_fudo', 'producto', 'categoria', 'cantidad', 'precio', 'subtotal'],
   Canjes: ['fecha', 'socio_id', 'premio', 'registrado_por'],
   Calificaciones: ['fecha', 'socio_id', 'fecha_visita', 'estrellas', 'temas', 'comentario', 'contactado'],
   Promociones: ['id', 'titulo', 'detalle', 'para', 'hasta', 'novedad', 'foto', 'activa'],
@@ -212,6 +213,8 @@ function panelDatos() {
     ultima: fechaTxt_(s.ultima_visita), alta: fechaTxt_(s.fecha_alta), promos: s.acepta_promos === 'si',
     fudo: !!s.fudo_cliente_id, segmento: segmento_(s), regalos: regalosPendientes_(s.id),
   }));
+  const gu = gustos_();
+  socios.forEach(s => s.gustos = gu.porSocio[s.id] || { top: [], pizza: '', bebida: '', gasto: 0, ticket: 0 });
   const nombres = {}; socios.forEach(s => nombres[s.id] = s);
   const calif = leer_('Calificaciones').map(c => ({
     fila: c._fila, fecha: fechaTxt_(c.fecha), socio: (nombres[c.socio_id] || {}).nombre || 'Ex socio',
@@ -225,7 +228,8 @@ function panelDatos() {
   const mes = Utilities.formatDate(new Date(), CLUB.zona, 'yyyy-MM');
   const visitasMes = leer_('Visitas').filter(v => fechaTxt_(v.fecha).slice(0, 7) === mes && v.cuenta_sello === 'si').length;
   const ultimoSync = PropertiesService.getScriptProperties().getProperty('ULTIMO_SYNC') || '';
-  return { club: CLUB, socios, calif, promos, campanas, visitasMes, ultimoSync, fudoConfigurado: !!credencialesFudo_() };
+  const gastoMes = leer_('Visitas').filter(v => fechaTxt_(v.fecha).slice(0, 7) === mes && !isNaN(Number(v.monto)) && v.monto !== '').reduce((t, v) => t + Number(v.monto), 0);
+  return { club: CLUB, socios, calif, promos, campanas, visitasMes, gastoMes, ranking: gu.ranking, ultimoSync, fudoConfigurado: !!credencialesFudo_() };
 }
 
 function panelSumarVisita(id) {
@@ -395,11 +399,106 @@ function sincronizarFudo() {
     if (ventas.length < 500) break;
     pagina++;
   }
+  const conDetalle = completarConsumos_(40);
   limpiarInactivos_();
-  const msg = 'Fudo: ' + revisadas + ' ventas revisadas, ' + nuevas + ' visitas nuevas de socios.';
+  const msg = 'Fudo: ' + revisadas + ' ventas revisadas, ' + nuevas + ' visitas nuevas de socios' + (conDetalle ? ', ' + conDetalle + ' consumos guardados' : '') + '.';
   PropertiesService.getScriptProperties().setProperty('ULTIMO_SYNC', Utilities.formatDate(new Date(), CLUB.zona, 'dd-MM-yyyy HH:mm') + ' · ' + msg);
   if (nuevas) log_('sync', msg);
   return msg;
+}
+
+/**
+ * Guarda el monto y los productos de las visitas de socios que vienen de Fudo.
+ * Revisa las visitas que todavía no tienen monto (así también recupera las anteriores).
+ */
+function completarConsumos_(max) {
+  const pendientes = leer_('Visitas').filter(v => v.venta_fudo && v.monto === '' && v.socio_id).slice(0, max || 40);
+  if (!pendientes.length) return 0;
+  const yaGuardadas = {};
+  leer_('Consumos').forEach(c => yaGuardadas[String(c.venta_fudo)] = true);
+  let n = 0;
+  pendientes.forEach(v => {
+    try {
+      const d = detalleVentaFudo_(v.venta_fudo);
+      if (!yaGuardadas[String(v.venta_fudo)]) {
+        d.lineas.forEach(l => agregar_('Consumos', {
+          fecha: v.fecha, socio_id: v.socio_id, venta_fudo: String(v.venta_fudo), producto: l.producto,
+          categoria: l.categoria, cantidad: l.cantidad, precio: l.precio, subtotal: l.cantidad * l.precio,
+        }));
+        yaGuardadas[String(v.venta_fudo)] = true;
+      }
+      actualizar_('Visitas', v._fila, { monto: d.total });
+      n++;
+    } catch (err) {
+      log_('fudo', 'Detalle de venta ' + v.venta_fudo + ': ' + err);
+      if (/→ 404/.test(String(err))) actualizar_('Visitas', v._fila, { monto: 'sin datos' });
+    }
+  });
+  return n;
+}
+
+function detalleVentaFudo_(id) {
+  let r;
+  try { r = fudo_('get', '/sales/' + id + '?include=items.product.productCategory'); }
+  catch (err) { r = fudo_('get', '/sales/' + id + '?include=items.product'); }
+  const inc = r.included || [];
+  const porTipo = t => { const m = {}; inc.filter(x => x.type === t).forEach(x => m[x.id] = x); return m; };
+  const productos = porTipo('Product'), categorias = porTipo('ProductCategory');
+  const rel = (o, k) => ((((o || {}).relationships || {})[k] || {}).data || {}).id;
+  const lineas = inc.filter(x => x.type === 'Item' && !(x.attributes || {}).canceled).map(it => {
+    const a = it.attributes || {};
+    const p = productos[rel(it, 'product')] || {};
+    const c = categorias[rel(p, 'productCategory')] || {};
+    return {
+      producto: (p.attributes || {}).name || 'Producto ' + (rel(it, 'product') || '?'),
+      categoria: (c.attributes || {}).name || '',
+      cantidad: Number(a.quantity) || 1,
+      precio: Number(a.price) || 0,
+    };
+  });
+  const total = Number(((r.data || {}).attributes || {}).total);
+  return { total: isNaN(total) ? lineas.reduce((t, l) => t + l.cantidad * l.precio, 0) : total, lineas };
+}
+
+/** Correr una vez desde el editor: guarda montos y productos de todas las visitas anteriores. */
+function recuperarConsumos() {
+  let total = 0, n;
+  do { n = completarConsumos_(40); total += n; } while (n > 0 && total < 1000);
+  Logger.log('Visitas completadas con su consumo: ' + total);
+  return total;
+}
+
+/** Gustos de cada socio a partir de la pestaña Consumos. */
+function gustos_() {
+  const g = {};
+  const top = (m, k) => Object.keys(m).sort((a, b) => m[b] - m[a]).slice(0, k);
+  leer_('Consumos').forEach(c => {
+    const s = g[c.socio_id] = g[c.socio_id] || { prod: {}, pizza: {}, bebida: {} };
+    const q = Number(c.cantidad) || 1, cat = String(c.categoria || '').toLowerCase(), nom = String(c.producto);
+    s.prod[nom] = (s.prod[nom] || 0) + q;
+    if (/pizza/.test(cat) || /^pizza/i.test(nom)) s.pizza[nom] = (s.pizza[nom] || 0) + q;
+    else if (/bebida|cerveza|schop|coctel|cóctel|cocteler|trago|vino|jugo|limonada|alcohol|bar/.test(cat) ||
+      /schop|cerveza|coca|fanta|sprite|jugo|limonada|sour|spritz|mojito|gin|vino|agua|red bull|negroni|caf[eé]|kunstmann|cocholgue|fuzz/i.test(nom)) s.bebida[nom] = (s.bebida[nom] || 0) + q;
+  });
+  const gasto = {};
+  leer_('Visitas').forEach(v => {
+    const m = Number(v.monto);
+    if (v.monto === '' || isNaN(m)) return;
+    const x = gasto[v.socio_id] = gasto[v.socio_id] || { total: 0, n: 0 };
+    x.total += m; x.n++;
+  });
+  const out = {};
+  Object.keys(g).concat(Object.keys(gasto)).forEach(id => {
+    const s = g[id] || { prod: {}, pizza: {}, bebida: {} }, x = gasto[id] || { total: 0, n: 0 };
+    out[id] = {
+      top: top(s.prod, 3).map(p => p + ' (' + s.prod[p] + ')'),
+      pizza: top(s.pizza, 1)[0] || '', bebida: top(s.bebida, 1)[0] || '',
+      gasto: x.total, ticket: x.n ? Math.round(x.total / x.n) : 0,
+    };
+  });
+  const global = {};
+  leer_('Consumos').forEach(c => global[c.producto] = (global[c.producto] || 0) + (Number(c.cantidad) || 1));
+  return { porSocio: out, ranking: top(global, 10).map(p => ({ producto: p, cantidad: global[p] })) };
 }
 
 /** Repara teléfonos que Sheets guardó como fórmula (#ERROR!) y corrige el cliente en Fudo. Correr desde el editor. */
@@ -571,9 +670,17 @@ function hoja_(n) {
     sh = ss__.insertSheet(n);
     sh.getRange(1, 1, 1, HOJAS[n].length).setValues([HOJAS[n]]).setFontWeight('bold').setBackground('#ffd700');
     sh.setFrozenRows(1);
+  } else if (sh && HOJAS[n] && !hojasRevisadas__[n]) {
+    // Si agregamos columnas nuevas, completa el encabezado de una pestaña que ya existía.
+    hojasRevisadas__[n] = true;
+    const enc = HOJAS[n];
+    if (sh.getLastColumn() < enc.length) {
+      sh.getRange(1, 1, 1, enc.length).setValues([enc]).setFontWeight('bold').setBackground('#ffd700');
+    }
   }
   return sh;
 }
+const hojasRevisadas__ = {};
 
 function leer_(n) {
   const sh = hoja_(n);
