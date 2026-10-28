@@ -4,7 +4,8 @@
  * Vive pegado a una hoja de cálculo de administracion@rusti-co.cl.
  *  - La web (rusti-co.cl/club) le habla por POST para registrar socios, mostrar su tarjeta y calificar.
  *  - El panel del local se abre en la misma URL con ?panel=1 y solo funciona para la cuenta dueña.
- *  - Cada hora revisa en Fudo las ventas cerradas con cliente asignado y suma sellos.
+ *  - Cada 15 minutos revisa en Fudo las mesas con cliente asignado y suma sellos: la visita queda
+ *    registrada al abrir la mesa y se confirma al cerrarla (si la venta se anula, el sello se descuenta).
  *
  * Claves de Fudo: Configuración del proyecto → Propiedades de la secuencia de comandos →
  *   FUDO_API_KEY y FUDO_API_SECRET. Nunca se escriben en este archivo.
@@ -23,7 +24,9 @@ const CLUB = {
   diasRiesgo: 30,               // activo ≤ 30 días; en riesgo 31–60; perdido > 60
   diasPerdido: 60,
   versionConsentimiento: '2026-10-25',
-  enviarCorreoCalificar: true,  // correo "¿Cómo estuvo tu visita?" después de cada visita
+  enviarCorreoCalificar: true,  // correo "¿Cómo estuvo tu visita?" después de cada visita (al cerrar la mesa)
+  visitaAlAbrir: true,          // true: el sello aparece apenas se abre la mesa a nombre del socio; false: recién al cerrarla
+  minutosSync: 15,              // cada cuántos minutos se revisa Fudo (1, 5, 10, 15 o 30)
   urlClub: 'https://www.rusti-co.cl/club/',
   zona: 'America/Santiago',
 };
@@ -61,9 +64,17 @@ function instalar() {
   const hoja1 = ss.getSheetByName('Hoja 1') || ss.getSheetByName('Sheet1');
   if (hoja1 && hoja1.getLastRow() === 0 && ss.getSheets().length > 1) ss.deleteSheet(hoja1);
   ScriptApp.getProjectTriggers().forEach(t => ScriptApp.deleteTrigger(t));
-  ScriptApp.newTrigger('sincronizarFudo').timeBased().everyHours(1).create();
-  log_('instalacion', 'Pestañas y disparador horario listos');
+  instalarDisparador();
+  log_('instalacion', 'Pestañas y disparador listos');
   return 'Listo';
+}
+
+/** Correr una vez desde el editor después de cambiar CLUB.minutosSync: deja un solo disparador de sincronizarFudo. */
+function instalarDisparador() {
+  ScriptApp.getProjectTriggers().filter(t => t.getHandlerFunction() === 'sincronizarFudo').forEach(t => ScriptApp.deleteTrigger(t));
+  ScriptApp.newTrigger('sincronizarFudo').timeBased().everyMinutes(CLUB.minutosSync).create();
+  log_('instalacion', 'Disparador de Fudo cada ' + CLUB.minutosSync + ' minutos');
+  return 'Fudo se revisará cada ' + CLUB.minutosSync + ' minutos.';
 }
 
 /* ------------------------------ Web ------------------------------ */
@@ -364,62 +375,98 @@ function crearClienteFudo_(socioId) {
 }
 
 /**
- * Corre cada hora: lee en Fudo las ventas cerradas de las últimas 36 horas que tienen cliente,
- * y suma una visita al socio (máximo una por día).
+ * Corre cada CLUB.minutosSync minutos: lee en Fudo las ventas de las últimas 36 horas que tienen cliente.
+ *  - Mesa abierta a nombre de un socio → suma la visita al tiro (si CLUB.visitaAlAbrir), sin correo todavía.
+ *  - Mesa cerrada → suma la visita si no estaba; completarConsumos_ guarda el consumo y, si venía de mesa abierta, manda el correo.
+ *  - Venta anulada o con otro cliente → completarConsumos_ anula la visita y descuenta el sello.
+ * Máximo un sello por día.
  */
 function sincronizarFudo() {
   if (!credencialesFudo_()) return 'Fudo no está configurado todavía.';
-  // Reintenta crear en Fudo a los socios que quedaron pendientes.
-  leer_('Socios').filter(s => s.estado === 'activo' && !s.fudo_cliente_id).slice(0, 10).forEach(s => {
-    try { crearClienteFudo_(s.id); } catch (err) { log_('fudo', 'Pendiente ' + s.id + ': ' + err); }
-  });
-  const desde = new Date(Date.now() - 36 * 3600 * 1000).toISOString().slice(0, 19) + 'Z';
-  const hasta = new Date().toISOString().slice(0, 19) + 'Z';
-  const porFudo = {};
-  leer_('Socios').forEach(s => { if (s.fudo_cliente_id && s.estado === 'activo') porFudo[String(s.fudo_cliente_id)] = s; });
-  const vistas = {};
-  leer_('Visitas').forEach(v => { if (v.venta_fudo) vistas[String(v.venta_fudo)] = true; });
-  let pagina = 1, nuevas = 0, revisadas = 0;
-  while (pagina < 20) {
-    const res = fudo_('get', '/sales?filter[createdAt]=' + encodeURIComponent('and(gte.' + desde + ',lte.' + hasta + ')') +
-      '&page[size]=500&page[number]=' + pagina);
-    const ventas = res.data || [];
-    ventas.forEach(v => {
-      revisadas++;
-      const a = v.attributes || {};
-      const cliente = (((v.relationships || {}).customer || {}).data || {}).id;
-      const cerrada = a.saleState ? a.saleState === 'CLOSED' : !!a.closedAt;
-      if (!cliente || !cerrada || vistas[String(v.id)]) return;
-      const s = porFudo[String(cliente)];
-      if (!s) return;
-      sumarVisita_(buscarSocio_('id', s.id), String(v.id), 'fudo', a.closedAt ? new Date(a.closedAt) : new Date());
-      vistas[String(v.id)] = true;
-      nuevas++;
+  // Evita que el disparador y el botón del panel corran al mismo tiempo y dupliquen visitas.
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(30000)) return 'Ya hay una revisión de Fudo en curso. Intenta de nuevo en un minuto.';
+  try {
+    // Reintenta crear en Fudo a los socios que quedaron pendientes.
+    leer_('Socios').filter(s => s.estado === 'activo' && !s.fudo_cliente_id).slice(0, 10).forEach(s => {
+      try { crearClienteFudo_(s.id); } catch (err) { log_('fudo', 'Pendiente ' + s.id + ': ' + err); }
     });
-    if (ventas.length < 500) break;
-    pagina++;
+    const desde = new Date(Date.now() - 36 * 3600 * 1000).toISOString().slice(0, 19) + 'Z';
+    const hasta = new Date().toISOString().slice(0, 19) + 'Z';
+    const porFudo = {};
+    leer_('Socios').forEach(s => { if (s.fudo_cliente_id && s.estado === 'activo') porFudo[String(s.fudo_cliente_id)] = s; });
+    const vistas = {};
+    leer_('Visitas').forEach(v => { if (v.venta_fudo && v.cuenta_sello !== 'anulada') vistas[String(v.venta_fudo)] = true; });
+    let pagina = 1, nuevas = 0, revisadas = 0;
+    while (pagina < 20) {
+      const res = fudo_('get', '/sales?filter[createdAt]=' + encodeURIComponent('and(gte.' + desde + ',lte.' + hasta + ')') +
+        '&page[size]=500&page[number]=' + pagina);
+      const ventas = res.data || [];
+      ventas.forEach(v => {
+        revisadas++;
+        const a = v.attributes || {};
+        const cliente = (((v.relationships || {}).customer || {}).data || {}).id;
+        const estado = estadoVenta_(a);
+        if (!cliente || vistas[String(v.id)] || estado === 'anulada') return;
+        if (estado === 'abierta' && !CLUB.visitaAlAbrir) return;
+        const s = porFudo[String(cliente)];
+        if (!s) return;
+        if (estado === 'cerrada') {
+          sumarVisita_(buscarSocio_('id', s.id), String(v.id), 'fudo', a.closedAt ? new Date(a.closedAt) : new Date());
+        } else {
+          sumarVisita_(buscarSocio_('id', s.id), String(v.id), 'fudo (mesa abierta)', a.createdAt ? new Date(a.createdAt) : new Date(), { correo: false });
+        }
+        vistas[String(v.id)] = true;
+        nuevas++;
+      });
+      if (ventas.length < 500) break;
+      pagina++;
+    }
+    const r = completarConsumos_(40);
+    limpiarInactivos_();
+    const msg = 'Fudo: ' + revisadas + ' ventas revisadas, ' + nuevas + ' visitas nuevas de socios' +
+      (r.cerradas ? ', ' + r.cerradas + ' consumos guardados' : '') + (r.anuladas ? ', ' + r.anuladas + ' visitas anuladas' : '') + '.';
+    PropertiesService.getScriptProperties().setProperty('ULTIMO_SYNC', Utilities.formatDate(new Date(), CLUB.zona, 'dd-MM-yyyy HH:mm') + ' · ' + msg);
+    if (nuevas || r.anuladas) log_('sync', msg);
+    return msg;
+  } finally {
+    lock.releaseLock();
   }
-  const conDetalle = completarConsumos_(40);
-  limpiarInactivos_();
-  const msg = 'Fudo: ' + revisadas + ' ventas revisadas, ' + nuevas + ' visitas nuevas de socios' + (conDetalle ? ', ' + conDetalle + ' consumos guardados' : '') + '.';
-  PropertiesService.getScriptProperties().setProperty('ULTIMO_SYNC', Utilities.formatDate(new Date(), CLUB.zona, 'dd-MM-yyyy HH:mm') + ' · ' + msg);
-  if (nuevas) log_('sync', msg);
-  return msg;
+}
+
+/** 'cerrada', 'anulada' o 'abierta' según lo que diga Fudo de la venta. */
+function estadoVenta_(a) {
+  const e = String(a.saleState || '').toUpperCase();
+  if (e === 'CLOSED' || (!e && a.closedAt)) return 'cerrada';
+  if (/CANCEL/.test(e)) return 'anulada';
+  return 'abierta';
 }
 
 /**
- * Guarda el monto y los productos de las visitas de socios que vienen de Fudo.
- * Revisa las visitas que todavía no tienen monto (así también recupera las anteriores).
+ * Revisa las visitas de Fudo que todavía no tienen monto (así también recupera las anteriores):
+ *  - venta cerrada → guarda monto y productos; si la visita venía de una mesa abierta, la confirma y manda el correo;
+ *  - venta anulada, o la mesa quedó a nombre de otro cliente → anula la visita;
+ *  - mesa todavía abierta → la deja para la próxima revisión.
  */
 function completarConsumos_(max) {
   const pendientes = leer_('Visitas').filter(v => v.venta_fudo && v.monto === '' && v.socio_id).slice(0, max || 40);
-  if (!pendientes.length) return 0;
+  const r = { cerradas: 0, anuladas: 0 };
+  if (!pendientes.length) return r;
   const yaGuardadas = {};
   leer_('Consumos').forEach(c => yaGuardadas[String(c.venta_fudo)] = true);
-  let n = 0;
+  const socios = {};
+  leer_('Socios').forEach(s => socios[s.id] = s);
   pendientes.forEach(v => {
     try {
       const d = detalleVentaFudo_(v.venta_fudo);
+      const s = socios[v.socio_id];
+      const otroCliente = s && s.fudo_cliente_id && d.cliente !== String(s.fudo_cliente_id);
+      if (d.estado === 'anulada' || otroCliente) {
+        anularVisita_(v, d.estado === 'anulada' ? 'venta anulada en Fudo' : 'la mesa quedó a nombre de otro cliente');
+        r.anuladas++;
+        return;
+      }
+      if (d.estado !== 'cerrada') return;
       if (!yaGuardadas[String(v.venta_fudo)]) {
         d.lineas.forEach(l => agregar_('Consumos', {
           fecha: v.fecha, socio_id: v.socio_id, venta_fudo: String(v.venta_fudo), producto: l.producto,
@@ -427,14 +474,16 @@ function completarConsumos_(max) {
         }));
         yaGuardadas[String(v.venta_fudo)] = true;
       }
-      actualizar_('Visitas', v._fila, { monto: d.total });
-      n++;
+      actualizar_('Visitas', v._fila, { monto: d.total, origen: 'fudo' });
+      // El correo para calificar sale al cerrar la mesa, no mientras el socio sigue comiendo.
+      if (v.origen === 'fudo (mesa abierta)' && v.cuenta_sello === 'si' && s && s.estado === 'activo') correoCalificar_(buscarSocio_('id', s.id));
+      r.cerradas++;
     } catch (err) {
       log_('fudo', 'Detalle de venta ' + v.venta_fudo + ': ' + err);
       if (/→ 404/.test(String(err))) actualizar_('Visitas', v._fila, { monto: 'sin datos' });
     }
   });
-  return n;
+  return r;
 }
 
 function detalleVentaFudo_(id) {
@@ -456,14 +505,18 @@ function detalleVentaFudo_(id) {
       precio: Number(a.price) || 0,
     };
   });
-  const total = Number(((r.data || {}).attributes || {}).total);
-  return { total: isNaN(total) ? lineas.reduce((t, l) => t + l.cantidad * l.precio, 0) : total, lineas };
+  const venta = r.data || {};
+  const total = Number((venta.attributes || {}).total);
+  return {
+    total: isNaN(total) ? lineas.reduce((t, l) => t + l.cantidad * l.precio, 0) : total, lineas,
+    estado: estadoVenta_(venta.attributes || {}), cliente: String(rel(venta, 'customer') || ''),
+  };
 }
 
 /** Correr una vez desde el editor: guarda montos y productos de todas las visitas anteriores. */
 function recuperarConsumos() {
   let total = 0, n;
-  do { n = completarConsumos_(40); total += n; } while (n > 0 && total < 1000);
+  do { n = completarConsumos_(40).cerradas; total += n; } while (n > 0 && total < 1000);
   Logger.log('Visitas completadas con su consumo: ' + total);
   return total;
 }
@@ -540,8 +593,9 @@ function probarFudo() {
 
 /* ------------------------------ Lógica ------------------------------ */
 
-function sumarVisita_(s, ventaFudo, origen, cuando) {
+function sumarVisita_(s, ventaFudo, origen, cuando, opciones) {
   cuando = cuando || new Date();
+  const correo = !opciones || opciones.correo !== false;
   const dia = Utilities.formatDate(cuando, CLUB.zona, 'yyyy-MM-dd');
   const yaHoy = fechaTxt_(s.ultima_visita) === dia;
   agregar_('Visitas', { fecha: cuando, socio_id: s.id, venta_fudo: ventaFudo, origen, cuenta_sello: yaHoy ? 'no' : 'si', calificada: yaHoy ? 'si' : '' });
@@ -557,16 +611,42 @@ function sumarVisita_(s, ventaFudo, origen, cuando) {
     }
   }
   actualizar_('Socios', s._fila, { sellos, visitas_total: total, ultima_visita: cuando });
-  if (CLUB.enviarCorreoCalificar && s.email) {
-    try {
-      MailApp.sendEmail({
-        to: s.email, name: 'Rusti-Co.', subject: '¿Cómo estuvo tu visita a Rusti-Co.?',
-        htmlBody: '<p>Hola ' + esc_(s.nombre.split(' ')[0]) + ',</p><p>Sumaste un sello: llevas <b>' + sellos + ' de ' + CLUB.visitasParaPremio +
-          '</b> para tu ' + esc_(CLUB.premio) + '.</p><p>¿Nos cuentas cómo estuvo todo? Toma 10 segundos: <a href="' + CLUB.urlClub + '">califica tu visita</a>.</p><p>Rusti-Co. · Momentos que saben bien</p>',
-      });
-    } catch (err) { log_('correo', String(err)); }
-  }
+  if (correo) correoCalificar_(Object.assign({}, s, { sellos }));
   return sellos >= CLUB.visitasParaPremio ? '¡' + s.nombre.split(' ')[0] + ' completó su tarjeta!' : 'Visita sumada: ' + sellos + ' de ' + CLUB.visitasParaPremio + '.';
+}
+
+function correoCalificar_(s) {
+  if (!CLUB.enviarCorreoCalificar || !s || !s.email) return;
+  try {
+    MailApp.sendEmail({
+      to: s.email, name: 'Rusti-Co.', subject: '¿Cómo estuvo tu visita a Rusti-Co.?',
+      htmlBody: '<p>Hola ' + esc_(s.nombre.split(' ')[0]) + ',</p><p>Sumaste un sello: llevas <b>' + (Number(s.sellos) || 0) + ' de ' + CLUB.visitasParaPremio +
+        '</b> para tu ' + esc_(CLUB.premio) + '.</p><p>¿Nos cuentas cómo estuvo todo? Toma 10 segundos: <a href="' + CLUB.urlClub + '">califica tu visita</a>.</p><p>Rusti-Co. · Momentos que saben bien</p>',
+    });
+  } catch (err) { log_('correo', String(err)); }
+}
+
+/**
+ * Deshace una visita de Fudo que no corresponde (venta anulada o mesa cambiada a otro cliente).
+ * Si ese día el socio tenía otra visita sin sello, el sello pasa a esa y no se descuenta.
+ */
+function anularVisita_(v, motivo) {
+  actualizar_('Visitas', v._fila, { cuenta_sello: 'anulada', monto: 'anulada', calificada: 'si' });
+  log_('fudo', 'Visita anulada (' + motivo + '): venta ' + v.venta_fudo + ', socio ' + v.socio_id);
+  if (v.cuenta_sello !== 'si') return;
+  const dia = fechaTxt_(v.fecha);
+  const visitas = leer_('Visitas').filter(x => x.socio_id === v.socio_id && x._fila !== v._fila);
+  const otra = visitas.find(x => x.cuenta_sello === 'no' && fechaTxt_(x.fecha) === dia);
+  if (otra) { actualizar_('Visitas', otra._fila, { cuenta_sello: 'si', calificada: '' }); return; }
+  const s = buscarSocio_('id', v.socio_id);
+  if (!s) return;
+  const total = Math.max((Number(s.visitas_total) || 0) - 1, 0);
+  const conSello = visitas.filter(x => x.cuenta_sello === 'si');
+  actualizar_('Socios', s._fila, {
+    sellos: Math.max((Number(s.sellos) || 0) - 1, 0), visitas_total: total,
+    ultima_visita: conSello.length ? conSello[conSello.length - 1].fecha : '',
+  });
+  if (total === 0 && s.referido_por) log_('fudo', 'Revisar a mano: se anuló la primera visita de ' + s.nombre + ', que tenía bono por invitación.');
 }
 
 function eliminarSocio_(s, canal) {
@@ -604,7 +684,8 @@ function limpiarInactivos_() {
 
 function visitaPendiente_(socioId) {
   const limite = Date.now() - 7 * 864e5;
-  const vs = leer_('Visitas').filter(v => v.socio_id === socioId && v.cuenta_sello === 'si' && v.calificada !== 'si' && new Date(v.fecha).getTime() > limite);
+  const vs = leer_('Visitas').filter(v => v.socio_id === socioId && v.cuenta_sello === 'si' && v.calificada !== 'si' &&
+    v.origen !== 'fudo (mesa abierta)' && new Date(v.fecha).getTime() > limite);
   return vs.length ? vs[vs.length - 1] : null;
 }
 
