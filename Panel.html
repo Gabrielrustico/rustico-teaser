@@ -111,10 +111,10 @@ function render(){
   const low = D.calif.filter(c => c.estrellas <= 3 && c.contactado !== 'si').length;
   $('fudo').classList.toggle('on', D.fudoConfigurado);
   $('fudoTxt').textContent = D.fudoConfigurado ? (D.ultimoSync ? 'Última revisión: ' + D.ultimoSync.split(' · ')[0] : 'Fudo conectado') : 'Faltan las claves de Fudo';
-  const tabs = [['caja','Sumar visita'],['resumen','Resumen'],['segmentos','Segmentos'],['calif','Calificaciones'],['promos','Promociones'],['socios','Socios']];
-  $('tabs').innerHTML = tabs.map(([k,t]) => `<button role="tab" type="button" data-t="${k}" aria-selected="${k===tab}">${t}${k==='calif'&&low?` <span class="pill s-lost">${low}</span>`:''}</button>`).join('');
+  const tabs = [['caja','Sumar visita'],['resumen','Resumen'],['segmentos','Segmentos'],['calif','Calificaciones'],['promos','Promociones'],['socios','Socios'],['control','Control']];
+  $('tabs').innerHTML = tabs.map(([k,t]) => `<button role="tab" type="button" data-t="${k}" aria-selected="${k===tab}">${t}${k==='calif'&&low?` <span class="pill s-lost">${low}</span>`:''}${k==='control'&&D.control.alertas.length?` <span class="pill s-lost">${D.control.alertas.length}</span>`:''}</button>`).join('');
   $('tabs').querySelectorAll('button').forEach(b => b.onclick = () => { tab = b.dataset.t; render(); });
-  ({caja, resumen, segmentos, calif, promos, socios})[tab]();
+  ({caja, resumen, segmentos, calif, promos, socios, control})[tab]();
 }
 
 function caja(){
@@ -275,6 +275,22 @@ function socios(){
 
 $('syncBtn').onclick = async e => { e.target.disabled = true; try { toast(await call('panelSincronizar')); await load(); } finally { e.target.disabled = false; } };
 load();
+
+function control(){
+  const C = D.control;
+  const est = e => e==='sello'||e==='mesa abierta' ? `<span class="pill s-active">${esc(e)}</span>` : e==='bajo mínimo'||e==='anulada' ? `<span class="pill s-lost">${esc(e)}</span>` : `<span class="pill s-new">${esc(e)}</span>`;
+  $('body').innerHTML = `<div class="stack">
+    <div class="box stack"><span class="label">Alertas · últimos 30 días</span>
+      ${C.alertas.length ? C.alertas.map(a=>`<p class="small">⚠️ ${esc(a)}</p>`).join('') : '<p class="small muted">Sin alertas. Nada raro en las visitas de socios.</p>'}
+      <p class="small muted">Una mesa con total menor a ${clp(D.club.montoMinimoSello)} no da sello. Si la venta se anula o la mesa cambia de cliente, el sello se descuenta solo.</p>
+    </div>
+    ${C.garzones.length?`<div class="table-wrap"><table><thead><tr><th>Garzón</th><th class="num">Visitas con sello</th><th class="num">Bajo mínimo</th><th class="num">Anuladas</th></tr></thead>
+      <tbody>${C.garzones.map(g=>`<tr><td>${esc(g.garzon)}</td><td class="num">${g.sellos}</td><td class="num">${g.bajoMinimo}</td><td class="num">${g.anuladas}</td></tr>`).join('')}</tbody></table></div>`:''}
+    ${C.visitas.length?`<div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Socio</th><th>Mesa</th><th>Garzón</th><th class="num">Total mesa</th><th>Estado</th></tr></thead>
+      <tbody>${C.visitas.map(v=>`<tr><td>${esc(v.fecha)}</td><td>${esc(v.socio)}</td><td>${esc(v.mesa)}</td><td>${esc(v.garzon)}</td><td class="num">${v.monto===null?'—':clp(v.monto)}</td><td>${est(v.estado)}</td></tr>`).join('')}</tbody></table></div>`
+      :'<div class="box empty">Todavía no hay visitas desde Fudo en los últimos 30 días.</div>'}
+  </div>`;
+}
 </script>
 </body>
 </html>
