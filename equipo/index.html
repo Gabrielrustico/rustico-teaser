@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Equipo Rusti-Co.</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0d0a08">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Apartado de empleados: misma marca que el Club. Una columna en celular, más ancho para administración. */
+:root{
+  --ink:#0d0a08; --ink-2:#17120e; --ink-3:#2a2119; --line:#2f251c;
+  --cream:#f4ede2; --muted:#ab9f90; --gold:#ffd700; --gold-ink:#1a1405; --bad:#ff6b5a; --ok:#7fd49a; --info:#7fb2ff;
+  --font:"Montserrat","Segoe UI",system-ui,-apple-system,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{background:var(--ink);color:var(--cream);font-family:var(--font);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+[hidden]{display:none!important}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:6px}
+h1,h2,h3{margin:0;font-weight:600;text-wrap:balance}
+p{margin:0}
+a{color:var(--gold)}
+.app{max-width:1100px;margin:0 auto;padding-block:18px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.app.narrow{max-width:460px}
+.head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.head img{height:28px;width:auto}
+.head .who{display:flex;gap:12px;align-items:center;font-size:.8rem;color:var(--muted)}
+.label{font-size:.68rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.muted{color:var(--muted)} .small{font-size:.82rem}
+.stack{display:grid;gap:14px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5em;border:1px solid transparent;border-radius:999px;padding:.75em 1.2em;font-weight:600;font-size:.88rem;cursor:pointer;text-decoration:none;background:none}
+.btn-gold{background:var(--gold);color:var(--gold-ink)}
+.btn-line{border-color:var(--line);color:var(--cream)}
+.btn-block{width:100%}
+.btn-sm{padding:.45em .9em;font-size:.78rem}
+.btn[disabled]{opacity:.5;cursor:wait}
+.linkbtn{background:none;border:0;color:var(--gold);font-size:.82rem;cursor:pointer;padding:2px 0;font-weight:600}
+.linkbtn.bad{color:var(--bad)}
+.box{background:var(--ink-2);border:1px solid var(--line);border-radius:16px;padding:16px;min-width:0}
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:18px;overflow-x:auto}
+.tabs button{background:none;border:0;border-bottom:2px solid transparent;color:var(--muted);padding:.7em 1em;font-weight:600;font-size:.85rem;cursor:pointer;white-space:nowrap}
+.tabs button[aria-current="page"]{color:var(--cream);border-bottom-color:var(--gold)}
+.grid2{display:grid;grid-template-columns:minmax(0,380px) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:860px){.grid2{grid-template-columns:minmax(0,1fr)}}
+.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 12px}
+.fields .full{grid-column:1/-1}
+.field{display:grid;gap:5px;min-width:0}
+.field label{font-size:.75rem;font-weight:500;color:var(--muted)}
+.field input,.field select,.field textarea{background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:.65em .8em;width:100%;min-width:0}
+.field input[type="number"]{font-family:var(--mono);text-align:right}
+.check{display:flex;gap:8px;align-items:center;font-size:.85rem}
+.check input{accent-color:var(--gold);width:18px;height:18px}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.status{font-size:.82rem;min-height:1.2em;margin-top:8px;color:var(--ok)}
+.status.err{color:var(--bad)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 2px;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.row .name{font-weight:600}
+.row .meta{color:var(--muted);font-size:.8rem}
+.pill{display:inline-block;font-size:.64rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border:1px solid currentColor;border-radius:999px;padding:.15em .6em;color:var(--ok)}
+.pill.warn{color:var(--gold)} .pill.off{color:var(--muted)} .pill.bad{color:var(--bad)}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;font-size:.86rem;vertical-align:top}
+th{font-size:.66rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600}
+.empty{color:var(--muted);padding:16px 2px;font-size:.88rem}
+h2{font-size:1rem;margin-bottom:10px}
+h3{font-size:.68rem;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin:18px 0 8px}
+.big{font-family:var(--mono);font-size:2rem;font-weight:600}
+.reloj{text-align:center;padding:26px 16px}
+.reloj .big{font-size:2.6rem;margin:6px 0 18px}
+.btn-marca{width:100%;padding:1.2em;font-size:1.05rem}
+.kpis{display:flex;flex-wrap:wrap;gap:8px 26px}
+.kpis div{display:grid}
+.kpis b{font-family:var(--mono);font-size:1.3rem}
+.kpis span{font-size:.66rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+.loading{display:grid;place-items:center;min-height:50vh;color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--cream);color:var(--ink);padding:.8em 1.2em;border-radius:999px;font-weight:600;font-size:.85rem;z-index:50;max-width:calc(100% - 32px);text-align:center}
+
+/* Liquidación: papel blanco, también al imprimir */
+.paper{background:#fff;color:#1b1714;border-radius:6px;padding:26px 24px;min-width:0;font-size:14px}
+.paper .doc-head{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;border-bottom:2px solid #1b1714;padding-bottom:10px}
+.paper .doc-title{font-weight:700;font-size:1.05rem;letter-spacing:.03em}
+.paper .emp{font-size:.8rem;color:#5c534b}
+.paper .periodo{text-align:right;font-size:.8rem}
+.paper .periodo b{display:block;font-size:1rem}
+.paper .ident{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 18px;margin:12px 0 4px;font-size:.84rem}
+.paper .ident div{display:flex;gap:6px;min-width:0}
+.paper .ident .wide{grid-column:1/-1}
+.paper .ident span{color:#6b6158;min-width:92px}
+.paper .cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:10px}
+@media (max-width:620px){.paper .cols,.paper .ident{grid-template-columns:minmax(0,1fr)}}
+.paper .sec{font-size:.66rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#7a5c00;border-bottom:1px solid #ddd5c9;padding-bottom:3px;margin:10px 0 4px}
+.paper .ln{display:flex;justify-content:space-between;gap:10px;font-size:.85rem;padding:2px 0}
+.paper .ln small{color:#7a7068}
+.paper .ln.tot{font-weight:700;border-top:1px solid #ddd5c9;margin-top:4px;padding-top:5px}
+.paper .liquido{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px;background:#fff4bf;padding:12px 14px;margin-top:16px;border-radius:4px;font-weight:600}
+.paper .liquido b{font-family:var(--mono);font-size:1.3rem}
+.paper .palabras{font-size:.78rem;color:#5c534b;margin-top:6px;font-style:italic}
+.paper .vacline{font-size:.78rem;color:#5c534b;margin-top:10px}
+.paper .alerta{background:#ffe9e5;color:#8a2a1e;font-size:.8rem;padding:6px 10px;border-radius:4px;margin-top:10px}
+.paper .costo{margin-top:16px;border:1px dashed #b3a99d;padding:8px 12px;border-radius:4px}
+.paper .costo .sec{margin-top:0}
+.paper .costo .ln{font-size:.8rem}
+.paper .firmas{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:44px;font-size:.76rem;text-align:center;color:#5c534b}
+.paper .firmas div{border-top:1px solid #1b1714;padding-top:4px}
+@media print{
+  body{background:#fff}
+  body *{visibility:hidden}
+  .paper,.paper *{visibility:visible}
+  .paper{position:absolute;left:0;top:0;width:100%;padding:0}
+  .paper .costo{display:none}
+}
+</style>
+</head>
+<body>
+<main class="app narrow" id="app"><div class="loading">Cargando…</div></main>
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="rrhh.js"></script>
+<script>
+/* ===== Ajustes ===== */
+// Datos del proyecto Supabase (Project Settings → API). La clave "anon" es pública por diseño:
+// lo que cada persona puede ver lo deciden las reglas de supabase/schema.sql.
+const SUPABASE_URL = "";
+const SUPABASE_ANON_KEY = "";
+const IMG = "../img/";
+/* =================== */
+
+const { clp, esc, mesNombre, fecha, CONTRATO } = RRHH;
+const $ = id => document.getElementById(id);
+const app = $("app");
+const sb = SUPABASE_URL && window.supabase ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+const S = { admin: false, yo: null, tab: null, trab: [], vac: [], liq: [], docs: [], marcas: [], par: RRHH.conParametros(null), editId: null };
+
+function toast(m){ const t = $("toast"); t.textContent = m; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => t.hidden = true, 3200); }
+const say = (id, msg, err) => { const el = $(id); if (el) { el.textContent = msg; el.classList.toggle("err", !!err); } };
+const num = id => { const v = parseFloat($(id)?.value); return isFinite(v) ? v : 0; };
+const hoyMes = () => { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0"); };
+const hora = iso => new Date(iso).toLocaleTimeString("es-CL", { hour: "2-digit", minute: "2-digit", hour12: false });
+const dia = iso => new Date(iso).toLocaleDateString("es-CL", { weekday: "short", day: "numeric", month: "short" });
+const diaClave = iso => { const d = new Date(iso); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
+async function q(promesa){ const { data, error } = await promesa; if (error) throw error; return data; }
+const head = extra => `<div class="head"><a href="../"><img src="${IMG}logo-color.png" alt="Rusti-Co."></a>
+  <div class="who">${extra || ""}<span class="label">Equipo</span></div></div>`;
+
+/* ---------- Sesión ---------- */
+function pantallaLogin(msg){
+  app.className = "app narrow";
+  app.innerHTML = `${head()}
+    <div class="stack">
+      <h1 style="font-size:1.4rem">Apartado de empleados</h1>
+      <p class="muted">Entra con el correo que registraste en Rusti-Co. Te enviamos un enlace para ingresar, sin contraseña.</p>
+      <form class="box stack" id="fLogin">
+        <div class="field"><label for="l-email">Correo</label><input id="l-email" type="email" required autocomplete="email" placeholder="nombre@correo.cl"></div>
+        <button class="btn btn-gold btn-block" id="l-btn">Enviarme el enlace</button>
+        <div class="status" id="l-status">${esc(msg || "")}</div>
+      </form>
+    </div>`;
+  $("fLogin").onsubmit = async e => {
+    e.preventDefault();
+    $("l-btn").disabled = true;
+    const { error } = await sb.auth.signInWithOtp({ email: $("l-email").value.trim().toLowerCase(), options: { emailRedirectTo: location.origin + location.pathname } });
+    $("l-btn").disabled = false;
+    if (error) say("l-status", "No pudimos enviar el enlace: " + error.message, true);
+    else say("l-status", "Listo. Revisa tu correo y abre el enlace desde este mismo teléfono o computador.");
+  };
+}
+
+let iniciado = false;
+async function iniciar(){
+  if (iniciado) return;
+  if (!sb) { app.innerHTML = `${head()}<div class="box">Falta configurar la conexión con Supabase (SUPABASE_URL y SUPABASE_ANON_KEY en equipo/index.html).</div>`; return; }
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) return pantallaLogin();
+  iniciado = true;
+  try {
+    const tid = await q(sb.rpc("vincular_usuario"));
+    S.admin = await q(sb.rpc("es_admin"));
+    const par = await q(sb.from("parametros").select("datos").eq("id", 1).maybeSingle());
+    S.par = RRHH.conParametros(par && par.datos);
+    if (tid) S.yo = await q(sb.from("trabajadores").select("*").eq("id", tid).single());
+    if (!S.admin && !S.yo) {
+      app.innerHTML = `${head(salirBtn())}<div class="box stack"><p>Tu correo <b>${esc(session.user.email)}</b> no está asociado a ninguna ficha.</p><p class="muted small">Pídele al administrador que registre este correo en tu ficha y vuelve a entrar.</p></div>`;
+      return bindSalir();
+    }
+    S.tab = S.admin ? "equipo" : "marcar";
+    await cargar(); pintar();
+  } catch (err) { app.innerHTML = `${head(salirBtn())}<div class="box">No pudimos cargar tus datos: ${esc(err.message)}</div>`; bindSalir(); }
+}
+const salirBtn = () => `<button class="linkbtn" id="salir">Salir</button>`;
+function bindSalir(){ const b = $("salir"); if (b) b.onclick = async () => { await sb.auth.signOut(); location.reload(); }; }
+sb && sb.auth.onAuthStateChange(ev => { if (ev === "SIGNED_IN") iniciar(); });
+
+/* ---------- Datos ---------- */
+async function cargar(){
+  const desde = new Date(); desde.setDate(desde.getDate() - 62);
+  const [trab, vac, liq, docs, marcas] = await Promise.all([
+    S.admin ? q(sb.from("trabajadores").select("*").order("nombre")) : Promise.resolve(S.yo ? [S.yo] : []),
+    q(sb.from("vacaciones").select("*").order("desde", { ascending: false })),
+    q(sb.from("liquidaciones").select("*").order("mes", { ascending: false })),
+    q(sb.from("documentos").select("*").order("subido", { ascending: false })),
+    q(sb.from("marcas").select("*").gte("momento", desde.toISOString()).order("momento", { ascending: false }).limit(2000)),
+  ]);
+  Object.assign(S, { trab, vac, liq, docs, marcas });
+  if (S.yo) S.yo = trab.find(t => t.id === S.yo.id) || S.yo;
+}
+const trabPor = id => S.trab.find(t => t.id === id);
+const vacDe = id => S.vac.filter(v => v.trabajador_id === id);
+
+/* ---------- Estructura ---------- */
+const TABS_ADMIN = [["equipo","Equipo"],["liquidaciones","Liquidaciones"],["vacaciones","Vacaciones"],["asistencia","Asistencia"],["documentos","Documentos"],["parametros","Parámetros"]];
+const TABS_TRAB = [["marcar","Asistencia"],["misliq","Liquidaciones"],["misvac","Vacaciones"],["misdocs","Documentos"],["misdatos","Mis datos"]];
+function pintar(){
+  const tabs = S.admin ? TABS_ADMIN : TABS_TRAB;
+  app.className = S.admin ? "app" : "app narrow";
+  const nombre = S.admin ? "Administración" : (S.yo?.nombre || "").split(" ")[0];
+  app.innerHTML = `${head(`<span>${esc(nombre)}</span>${salirBtn()}`)}
+    <nav class="tabs">${tabs.map(([k, n]) => `<button data-tab="${k}" ${k === S.tab ? 'aria-current="page"' : ""}>${n}</button>`).join("")}</nav>
+    <section id="vista"></section>`;
+  bindSalir();
+  app.querySelector(".tabs").onclick = e => { const k = e.target.dataset.tab; if (k) { S.tab = k; pintar(); } };
+  VISTAS[S.tab]();
+}
+
+/* ======================= VISTAS TRABAJADOR ======================= */
+const VISTAS = {};
+VISTAS.marcar = () => {
+  const t = S.yo;
+  const mias = S.marcas.filter(m => m.trabajador_id === t.id);
+  const hoy = mias.filter(m => diaClave(m.momento) === diaClave(new Date().toISOString())).sort((a, b) => a.momento.localeCompare(b.momento));
+  const sigue = hoy.length && hoy[hoy.length - 1].tipo === "entrada" ? "salida" : "entrada";
+  $("vista").innerHTML = `
+    <div class="box reloj">
+      <div class="label">${new Date().toLocaleDateString("es-CL", { weekday: "long", day: "numeric", month: "long" })}</div>
+      <div class="big" id="reloj">${hora(new Date().toISOString())}</div>
+      <button class="btn btn-gold btn-marca" id="marcar">Marcar ${sigue}</button>
+      <div class="status" id="m-status"></div>
+    </div>
+    <h3>Hoy</h3>
+    <div class="box">${hoy.length ? hoy.map(m => `<div class="row"><span>${m.tipo === "entrada" ? "Entrada" : "Salida"}</span><span class="num">${hora(m.momento)}</span></div>`).join("") : `<div class="empty">Aún no marcas hoy.</div>`}</div>
+    <h3>Últimos días</h3>
+    <div class="box">${tablaDias(mias, 10)}</div>
+    <p class="small muted" style="margin-top:12px">Estas marcas son un control interno de Rusti-Co. La hora la registra el servidor.</p>`;
+  clearInterval(VISTAS.reloj); VISTAS.reloj = setInterval(() => { const r = $("reloj"); if (r) r.textContent = hora(new Date().toISOString()); else clearInterval(VISTAS.reloj); }, 10000);
+  $("marcar").onclick = async e => {
+    e.target.disabled = true;
+    try {
+      await q(sb.from("marcas").insert({ trabajador_id: t.id, tipo: sigue }));
+      await cargar(); pintar(); toast(sigue === "entrada" ? "Entrada registrada" : "Salida registrada");
+    } catch (err) { say("m-status", "No se pudo marcar: " + err.message, true); e.target.disabled = false; }
+  };
+};
+// Agrupa marcas por día y empareja entrada → salida para sumar horas.
+function resumenDias(marcas){
+  const porDia = {};
+  [...marcas].sort((a, b) => a.momento.localeCompare(b.momento)).forEach(m => (porDia[diaClave(m.momento)] ||= []).push(m));
+  return Object.entries(porDia).sort((a, b) => b[0].localeCompare(a[0])).map(([k, ms]) => {
+    let min = 0, abierta = null;
+    ms.forEach(m => { if (m.tipo === "entrada") abierta = m; else if (abierta) { min += (new Date(m.momento) - new Date(abierta.momento)) / 60000; abierta = null; } });
+    return { dia: k, marcas: ms, minutos: Math.round(min), incompleto: !!abierta || ms[0].tipo === "salida" };
+  });
+}
+const hhmm = min => Math.floor(min / 60) + ":" + String(min % 60).padStart(2, "0");
+function tablaDias(marcas, max){
+  const dias = resumenDias(marcas).slice(0, max);
+  if (!dias.length) return `<div class="empty">Sin marcas registradas.</div>`;
+  return `<div class="tablewrap"><table><thead><tr><th>Día</th><th>Marcas</th><th class="num">Horas</th></tr></thead><tbody>${dias.map(d => `
+    <tr><td>${dia(d.dia + "T12:00:00")}</td><td>${d.marcas.map(m => `${m.tipo === "entrada" ? "E" : "S"} ${hora(m.momento)}`).join(" · ")}${d.incompleto ? ` <span class="pill warn">incompleto</span>` : ""}</td><td class="num">${hhmm(d.minutos)}</td></tr>`).join("")}</tbody></table></div>`;
+}
+
+VISTAS.misliq = () => {
+  const ls = S.liq.filter(l => l.trabajador_id === S.yo.id);
+  $("vista").innerHTML = `<div class="stack">
+    <div class="box">${ls.length ? ls.map(l => `<div class="row"><div><div class="name">${esc(mesNombre(l.mes))}</div><div class="meta">Líquido ${clp(l.resultado?.liquido)}</div></div><button class="linkbtn" data-ver="${l.id}">Ver</button></div>`).join("") : `<div class="empty">Todavía no hay liquidaciones publicadas.</div>`}</div>
+    <div id="docliq"></div></div>`;
+  $("vista").onclick = e => {
+    const l = ls.find(x => x.id === e.target.dataset.ver); if (!l) return;
+    const p = RRHH.conParametros(l.parametros);
+    $("docliq").innerHTML = `<div class="paper">${RRHH.liquidacionHTML(S.yo, l.variables, l.resultado, p, l.mes, null, false)}</div>
+      <div class="actions"><button class="btn btn-line" onclick="window.print()">Imprimir o guardar PDF</button></div>`;
+    $("docliq").scrollIntoView({ behavior: "smooth" });
+  };
+};
+
+VISTAS.misvac = () => {
+  const t = S.yo, s = RRHH.saldoVac(t, vacDe(t.id));
+  const est = { aprobada: "", solicitada: "warn", rechazada: "bad" };
+  $("vista").innerHTML = `<div class="stack">
+    <div class="box">${s ? `<div class="kpis"><div><b>${s.saldo.toLocaleString("es-CL")}</b><span>Días disponibles</span></div><div><b>${s.acumulados.toLocaleString("es-CL")}</b><span>Acumulados</span></div><div><b>${s.tomados.toLocaleString("es-CL")}</b><span>Tomados</span></div></div>` : `<div class="empty">Falta tu fecha de ingreso en la ficha. Avísale al administrador.</div>`}</div>
+    <form class="box" id="fSol"><h2>Solicitar vacaciones</h2>
+      <div class="fields">
+        <div class="field"><label for="s-desde">Desde</label><input id="s-desde" type="date" required></div>
+        <div class="field"><label for="s-hasta">Hasta</label><input id="s-hasta" type="date" required></div>
+        <div class="field full"><label for="s-obs">Comentario</label><input id="s-obs"></div>
+      </div>
+      <p class="small muted" style="margin-top:8px" id="s-dias">Días hábiles: 0</p>
+      <div class="actions"><button class="btn btn-gold">Enviar solicitud</button></div>
+      <div class="status" id="s-status"></div>
+    </form>
+    <div class="box"><h2>Historial</h2>${vacDe(t.id).map(v => `<div class="row"><div><div>${fecha(v.desde)} al ${fecha(v.hasta)}</div><div class="meta">${v.dias} días hábiles${v.obs ? " · " + esc(v.obs) : ""}</div></div><span class="pill ${est[v.estado]}">${v.estado}</span></div>`).join("") || `<div class="empty">Sin registros.</div>`}</div>
+  </div>`;
+  const calc = () => { $("s-dias").textContent = "Días hábiles: " + RRHH.diasHabiles($("s-desde").value, $("s-hasta").value); };
+  $("s-desde").onchange = calc; $("s-hasta").onchange = calc;
+  $("fSol").onsubmit = async e => {
+    e.preventDefault();
+    const dias = RRHH.diasHabiles($("s-desde").value, $("s-hasta").value);
+    if (!dias) return say("s-status", "Revisa las fechas.", true);
+    try { await q(sb.from("vacaciones").insert({ trabajador_id: t.id, desde: $("s-desde").value, hasta: $("s-hasta").value, dias, obs: $("s-obs").value.trim(), estado: "solicitada" })); await cargar(); pintar(); toast("Solicitud enviada"); }
+    catch (err) { say("s-status", "No se pudo enviar: " + err.message, true); }
+  };
+};
+
+VISTAS.misdocs = () => { $("vista").innerHTML = `<div class="box">${listaDocs(S.docs, false)}</div>`; bindDocs(); };
+
+VISTAS.misdatos = () => {
+  const t = S.yo;
+  const f = (k, v) => `<div class="row"><span class="muted">${k}</span><span>${esc(v) || "—"}</span></div>`;
+  $("vista").innerHTML = `<div class="box">${f("Nombre", t.nombre)}${f("RUT", t.rut)}${f("Cargo", t.cargo)}${f("Contrato", CONTRATO[t.contrato])}${f("Ingreso", fecha(t.ingreso))}${f("Jornada", t.jornada + " horas semanales")}${f("AFP", t.afp)}${f("Salud", t.salud === "isapre" ? "Isapre" : "Fonasa")}${f("Correo", t.email)}</div>
+    <p class="small muted" style="margin-top:12px">Si algún dato está mal, avísale al administrador.</p>`;
+};
+
+/* ======================= DOCUMENTOS (ambos) ======================= */
+const TIPOS_DOC = { contrato: "Contrato", anexo: "Anexo de contrato", finiquito: "Finiquito", liquidacion_firmada: "Liquidación firmada", reglamento: "Reglamento interno", amonestacion: "Amonestación", otro: "Otro" };
+function listaDocs(docs, conNombre){
+  if (!docs.length) return `<div class="empty">No hay documentos.</div>`;
+  return docs.map(d => `<div class="row"><div><div class="name">${esc(d.titulo)}</div><div class="meta">${TIPOS_DOC[d.tipo]}${d.fecha ? " · " + fecha(d.fecha) : ""}${conNombre ? " · " + esc(trabPor(d.trabajador_id)?.nombre || "") : ""}</div></div>
+    <div style="display:flex;gap:12px"><span id="abrir-${d.id}"><button class="linkbtn" data-abrir="${d.id}">Ver</button></span>${S.admin ? `<button class="linkbtn bad" data-borrardoc="${d.id}">Borrar</button>` : ""}</div></div>`).join("");
+}
+function bindDocs(){
+  $("vista").addEventListener("click", async e => {
+    const id = e.target.dataset.abrir;
+    if (id) {
+      const d = S.docs.find(x => x.id === id);
+      const { data, error } = await sb.storage.from("documentos").createSignedUrl(d.ruta, 300);
+      if (error) return toast("No se pudo abrir el archivo");
+      $("abrir-" + id).innerHTML = `<a href="${data.signedUrl}" target="_blank" rel="noopener">Abrir</a>`;
+    }
+    const b = e.target.dataset.borrardoc;
+    if (b) {
+      if (e.target.dataset.ok !== "1") { e.target.dataset.ok = "1"; e.target.textContent = "¿Seguro?"; return; }
+      const d = S.docs.find(x => x.id === b);
+      try { await sb.storage.from("documentos").remove([d.ruta]); await q(sb.from("documentos").delete().eq("id", b)); await cargar(); pintar(); toast("Documento borrado"); }
+      catch (err) { toast("No se pudo borrar: " + err.message); }
+    }
+  });
+}
+
+/* ======================= VISTAS ADMIN ======================= */
+const opcionesTrab = (sel, soloActivos = true) => S.trab.filter(t => !soloActivos || t.activo).map(t => `<option value="${t.id}" ${t.id === sel ? "selected" : ""}>${esc(t.nombre)}</option>`).join("");
+
+VISTAS.equipo = () => {
+  $("vista").innerHTML = `<div class="grid2">
+    <div class="box"><div class="row" style="padding-top:0"><h2 style="margin:0">Equipo</h2><button class="btn btn-gold btn-sm" id="t-nuevo">Agregar</button></div>
+      ${S.trab.map(t => `<div class="row"><div><div class="name">${esc(t.nombre)}</div><div class="meta">${esc(t.cargo || "Sin cargo")} · ${clp(t.sueldo)}${t.user_id ? "" : " · aún no entra"}</div></div>
+        <div style="display:flex;gap:10px;align-items:center">${!t.activo ? `<span class="pill off">Inactivo</span>` : t.contrato === "sin_contrato" ? `<span class="pill bad">Sin contrato</span>` : ""}<button class="linkbtn" data-edit="${t.id}">Editar</button></div></div>`).join("") || `<div class="empty">Agrega la primera ficha.</div>`}
+    </div>
+    <form class="box" id="fTrab"></form></div>`;
+  ficha(trabPor(S.editId));
+  $("t-nuevo").onclick = () => ficha(null);
+  $("vista").querySelector(".box").onclick = e => { if (e.target.dataset.edit) ficha(trabPor(e.target.dataset.edit)); };
+};
+function ficha(t){
+  S.editId = t ? t.id : null;
+  const v = (k, d = "") => esc(t ? (t[k] ?? d) : d);
+  const opt = (obj, cur) => Object.entries(obj).map(([k, n]) => `<option value="${k}" ${k === cur ? "selected" : ""}>${n}</option>`).join("");
+  const afps = Object.fromEntries(Object.keys(S.par.afp).map(k => [k, k]));
+  $("fTrab").innerHTML = `<h2>${t ? "Editar ficha" : "Nueva ficha"}</h2>
+    <div class="fields">
+      <div class="field full"><label for="t-nombre">Nombre completo</label><input id="t-nombre" required value="${v("nombre")}"></div>
+      <div class="field full"><label for="t-email">Correo para entrar a la app</label><input id="t-email" type="email" value="${v("email")}"></div>
+      <div class="field"><label for="t-rut">RUT</label><input id="t-rut" value="${v("rut")}"></div>
+      <div class="field"><label for="t-cargo">Cargo</label><input id="t-cargo" value="${v("cargo")}"></div>
+      <div class="field"><label for="t-contrato">Contrato</label><select id="t-contrato">${opt(CONTRATO, t?.contrato || "indefinido")}</select></div>
+      <div class="field"><label for="t-ingreso">Fecha de ingreso</label><input id="t-ingreso" type="date" value="${v("ingreso")}"></div>
+      <div class="field"><label for="t-jornada">Jornada semanal (horas)</label><input id="t-jornada" type="number" step="0.5" value="${v("jornada", 42)}"></div>
+      <div class="field"><label for="t-sueldo">Sueldo base</label><input id="t-sueldo" type="number" value="${v("sueldo", 0)}"></div>
+      <div class="field"><label for="t-grat">Gratificación</label><select id="t-grat">${opt({ art50: "25% con tope (art. 50)", no: "No paga mensual" }, t?.grat || "art50")}</select></div>
+      <div class="field"><label for="t-afp">AFP</label><select id="t-afp">${opt(afps, t?.afp || "PlanVital")}</select></div>
+      <div class="field"><label for="t-salud">Salud</label><select id="t-salud">${opt({ fonasa: "Fonasa", isapre: "Isapre" }, t?.salud || "fonasa")}</select></div>
+      <div class="field"><label for="t-planuf">Plan Isapre (UF)</label><input id="t-planuf" type="number" step="0.01" value="${v("plan_uf", 0)}"></div>
+      <div class="field"><label for="t-col">Colación mensual</label><input id="t-col" type="number" value="${v("colacion", 0)}"></div>
+      <div class="field"><label for="t-mov">Movilización mensual</label><input id="t-mov" type="number" value="${v("movilizacion", 0)}"></div>
+      <div class="field"><label for="t-prev">Años cotizados con otros empleadores</label><input id="t-prev" type="number" min="0" max="10" value="${v("anios_previos", 0)}"></div>
+      <div class="field"><label for="t-tomprev">Vacaciones tomadas antes de la app (días)</label><input id="t-tomprev" type="number" step="0.5" value="${v("tomados_previos", 0)}"></div>
+      <div class="field full"><label for="t-lugar">Lugar de trabajo</label><input id="t-lugar" value="${v("lugar", "Ramón Carrasco 99, local 7")}"></div>
+      <label class="check full"><input id="t-activo" type="checkbox" ${!t || t.activo ? "checked" : ""}> Activo</label>
+    </div>
+    <div class="actions"><button class="btn btn-gold">Guardar ficha</button></div>
+    <div class="status" id="t-status"></div>`;
+  $("fTrab").onsubmit = async e => {
+    e.preventDefault();
+    const body = { nombre: $("t-nombre").value.trim(), email: $("t-email").value.trim().toLowerCase() || null, rut: $("t-rut").value.trim(), cargo: $("t-cargo").value.trim(),
+      contrato: $("t-contrato").value, ingreso: $("t-ingreso").value || null, jornada: num("t-jornada") || 42, sueldo: Math.round(num("t-sueldo")), grat: $("t-grat").value,
+      afp: $("t-afp").value, salud: $("t-salud").value, plan_uf: num("t-planuf"), colacion: Math.round(num("t-col")), movilizacion: Math.round(num("t-mov")),
+      anios_previos: Math.round(num("t-prev")), tomados_previos: num("t-tomprev"), lugar: $("t-lugar").value.trim(), activo: $("t-activo").checked };
+    try {
+      const fila = S.editId ? await q(sb.from("trabajadores").update(body).eq("id", S.editId).select().single()) : await q(sb.from("trabajadores").insert(body).select().single());
+      S.editId = fila.id; await cargar(); pintar(); toast("Ficha guardada");
+    } catch (err) { say("t-status", "No se pudo guardar: " + err.message, true); }
+  };
+}
+
+VISTAS.liquidaciones = () => {
+  const activos = S.trab.filter(t => t.activo);
+  S.lqTrab = S.lqTrab && trabPor(S.lqTrab) ? S.lqTrab : activos[0]?.id;
+  S.lqMes = S.lqMes || hoyMes();
+  $("vista").innerHTML = `<div class="grid2">
+    <div class="stack"><form class="box" id="fLiq"><h2>Datos del mes</h2>
+      <div class="fields">
+        <div class="field full"><label for="lq-trab">Trabajador</label><select id="lq-trab">${opcionesTrab(S.lqTrab)}</select></div>
+        <div class="field"><label for="lq-mes">Mes</label><input id="lq-mes" type="month" value="${S.lqMes}"></div>
+        <div class="field"><label for="lq-dias">Días trabajados</label><input id="lq-dias" type="number" min="0" max="30"></div>
+        <div class="field"><label for="lq-hext">Horas extra</label><input id="lq-hext" type="number" step="0.5" min="0"></div>
+        <div class="field"><label for="lq-bonos">Bonos imponibles</label><input id="lq-bonos" type="number" min="0"></div>
+        <div class="field"><label for="lq-col">Colación</label><input id="lq-col" type="number" min="0"></div>
+        <div class="field"><label for="lq-mov">Movilización</label><input id="lq-mov" type="number" min="0"></div>
+        <div class="field"><label for="lq-ant">Anticipos</label><input id="lq-ant" type="number" min="0"></div>
+        <div class="field"><label for="lq-otros">Otros descuentos</label><input id="lq-otros" type="number" min="0"></div>
+        <div class="field full"><label for="lq-det">Detalle otros descuentos</label><input id="lq-det" placeholder="Ej: consumo en local"></div>
+      </div>
+      <p class="small muted" style="margin-top:8px" id="lq-hint"></p>
+      <div class="actions"><button class="btn btn-gold">Guardar y publicar</button><button type="button" class="btn btn-line" onclick="window.print()">Imprimir</button></div>
+      <div class="status" id="lq-status"></div></form>
+      <div class="box"><h2>Resumen del mes</h2><div id="lq-resumen"></div></div>
+    </div>
+    <div class="paper" id="lq-doc"></div></div>`;
+  const leer = () => ({ dias: num("lq-dias"), hext: num("lq-hext"), bonos: num("lq-bonos"), col: num("lq-col"), mov: num("lq-mov"), ant: num("lq-ant"), otros: num("lq-otros"), otrosDet: $("lq-det").value.trim() });
+  const pintarDoc = () => {
+    const t = trabPor($("lq-trab").value);
+    if (!t) { $("lq-doc").innerHTML = `<p style="color:#6b6158">Agrega trabajadores en la pestaña Equipo.</p>`; return; }
+    const v = leer();
+    $("lq-doc").innerHTML = RRHH.liquidacionHTML(t, v, RRHH.calcular(t, v, S.par), S.par, $("lq-mes").value, RRHH.saldoVac(t, vacDe(t.id)), true);
+  };
+  const cargarForm = () => {
+    S.lqTrab = $("lq-trab").value; S.lqMes = $("lq-mes").value;
+    const t = trabPor(S.lqTrab);
+    const saved = S.liq.find(l => l.trabajador_id === S.lqTrab && l.mes === S.lqMes);
+    const v = saved ? saved.variables : { dias: 30, hext: 0, bonos: 0, col: t?.colacion || 0, mov: t?.movilizacion || 0, ant: 0, otros: 0, otrosDet: "" };
+    [["lq-dias","dias"],["lq-hext","hext"],["lq-bonos","bonos"],["lq-col","col"],["lq-mov","mov"],["lq-ant","ant"],["lq-otros","otros"],["lq-det","otrosDet"]].forEach(([id, k]) => $(id).value = v[k] ?? "");
+    // Horas registradas en el mes, como referencia para horas extra.
+    const ms = S.marcas.filter(m => m.trabajador_id === S.lqTrab && m.momento.startsWith(S.lqMes));
+    const min = resumenDias(ms).reduce((s, d) => s + d.minutos, 0);
+    $("lq-hint").textContent = (saved ? "Liquidación ya guardada; si la cambias se reemplaza. " : "") + (ms.length ? `Marcas del mes: ${hhmm(min)} horas registradas.` : "");
+    pintarDoc(); resumen();
+  };
+  const resumen = () => {
+    const ls = S.liq.filter(l => l.mes === S.lqMes);
+    $("lq-resumen").innerHTML = ls.length ? `<div class="kpis" style="margin-bottom:10px"><div><b>${clp(ls.reduce((s, l) => s + l.resultado.liquido, 0))}</b><span>Líquidos</span></div><div><b>${clp(ls.reduce((s, l) => s + l.resultado.costo, 0))}</b><span>Costo empresa</span></div></div>` +
+      ls.map(l => `<div class="row"><span>${esc(trabPor(l.trabajador_id)?.nombre)}</span><span class="num">${clp(l.resultado.liquido)}</span></div>`).join("") : `<div class="empty">Sin liquidaciones guardadas en ${esc(mesNombre(S.lqMes))}.</div>`;
+  };
+  $("fLiq").oninput = e => { if (e.target.id !== "lq-trab" && e.target.id !== "lq-mes") pintarDoc(); };
+  $("lq-trab").onchange = cargarForm; $("lq-mes").onchange = cargarForm;
+  $("fLiq").onsubmit = async e => {
+    e.preventDefault();
+    const t = trabPor($("lq-trab").value); if (!t) return;
+    const v = leer();
+    try {
+      await q(sb.from("liquidaciones").upsert({ trabajador_id: t.id, mes: $("lq-mes").value, variables: v, resultado: RRHH.calcular(t, v, S.par), parametros: S.par, guardada: new Date().toISOString() }, { onConflict: "trabajador_id,mes" }));
+      await cargar(); resumen(); say("lq-status", "Guardada. " + t.nombre.split(" ")[0] + " ya la puede ver en su cuenta.");
+    } catch (err) { say("lq-status", "No se pudo guardar: " + err.message, true); }
+  };
+  cargarForm();
+};
+
+VISTAS.vacaciones = () => {
+  const pend = S.vac.filter(v => v.estado === "solicitada");
+  $("vista").innerHTML = `<div class="grid2">
+    <div class="stack">
+      ${pend.length ? `<div class="box"><h2>Solicitudes pendientes</h2>${pend.map(v => `<div class="row"><div><div class="name">${esc(trabPor(v.trabajador_id)?.nombre)}</div><div class="meta">${fecha(v.desde)} al ${fecha(v.hasta)} · ${v.dias} días${v.obs ? " · " + esc(v.obs) : ""}</div></div>
+        <div style="display:flex;gap:12px"><button class="linkbtn" data-estado="aprobada" data-id="${v.id}">Aprobar</button><button class="linkbtn bad" data-estado="rechazada" data-id="${v.id}">Rechazar</button></div></div>`).join("")}</div>` : ""}
+      <form class="box" id="fVac"><h2>Registrar vacaciones</h2>
+        <div class="fields">
+          <div class="field full"><label for="v-trab">Trabajador</label><select id="v-trab">${opcionesTrab()}</select></div>
+          <div class="field"><label for="v-desde">Desde</label><input id="v-desde" type="date" required></div>
+          <div class="field"><label for="v-hasta">Hasta</label><input id="v-hasta" type="date" required></div>
+          <div class="field"><label for="v-dias">Días hábiles</label><input id="v-dias" type="number" step="0.5" min="0.5" required></div>
+          <div class="field"><label for="v-obs">Observación</label><input id="v-obs"></div>
+        </div>
+        <p class="small muted" style="margin-top:8px">Se cuentan de lunes a viernes. Si hay feriados, réstalos a mano.</p>
+        <div class="actions"><button class="btn btn-gold">Registrar</button></div><div class="status" id="v-status"></div>
+      </form>
+    </div>
+    <div class="box"><h2>Saldos</h2><div class="tablewrap"><table><thead><tr><th>Trabajador</th><th>Ingreso</th><th class="num">Acumulados</th><th class="num">Tomados</th><th class="num">Saldo</th></tr></thead><tbody>
+      ${S.trab.filter(t => t.activo).map(t => { const s = RRHH.saldoVac(t, vacDe(t.id)); return s ? `<tr><td>${esc(t.nombre)}${s.progAnual ? ` <span class="pill">+${s.progAnual}</span>` : ""}</td><td>${fecha(t.ingreso)}</td><td class="num">${s.acumulados.toLocaleString("es-CL")}</td><td class="num">${s.tomados.toLocaleString("es-CL")}</td><td class="num"><b>${s.saldo.toLocaleString("es-CL")}</b></td></tr>` : `<tr><td>${esc(t.nombre)}</td><td colspan="4" class="muted">Falta fecha de ingreso</td></tr>`; }).join("")}
+      </tbody></table></div>
+      <h3>Historial</h3>
+      ${S.vac.filter(v => v.estado !== "solicitada").map(v => `<div class="row"><div><div>${esc(trabPor(v.trabajador_id)?.nombre)}</div><div class="meta">${fecha(v.desde)} al ${fecha(v.hasta)} · ${v.dias} días</div></div><div style="display:flex;gap:10px;align-items:center"><span class="pill ${v.estado === "rechazada" ? "bad" : ""}">${v.estado}</span><button class="linkbtn bad" data-borrarvac="${v.id}">Quitar</button></div></div>`).join("") || `<div class="empty">Sin registros.</div>`}
+    </div></div>`;
+  const auto = () => { $("v-dias").value = RRHH.diasHabiles($("v-desde").value, $("v-hasta").value) || ""; };
+  $("v-desde").onchange = auto; $("v-hasta").onchange = auto;
+  $("fVac").onsubmit = async e => {
+    e.preventDefault();
+    try { await q(sb.from("vacaciones").insert({ trabajador_id: $("v-trab").value, desde: $("v-desde").value, hasta: $("v-hasta").value, dias: num("v-dias"), obs: $("v-obs").value.trim(), estado: "aprobada" })); await cargar(); pintar(); toast("Vacaciones registradas"); }
+    catch (err) { say("v-status", "No se pudo registrar: " + err.message, true); }
+  };
+  $("vista").addEventListener("click", async e => {
+    const { estado, id, borrarvac } = e.target.dataset;
+    try {
+      if (estado) { await q(sb.from("vacaciones").update({ estado }).eq("id", id)); await cargar(); pintar(); toast(estado === "aprobada" ? "Aprobada" : "Rechazada"); }
+      if (borrarvac) {
+        if (e.target.dataset.ok !== "1") { e.target.dataset.ok = "1"; e.target.textContent = "¿Seguro?"; return; }
+        await q(sb.from("vacaciones").delete().eq("id", borrarvac)); await cargar(); pintar();
+      }
+    } catch (err) { toast("No se pudo: " + err.message); }
+  });
+};
+
+VISTAS.asistencia = () => {
+  S.asTrab = S.asTrab && trabPor(S.asTrab) ? S.asTrab : S.trab.find(t => t.activo)?.id;
+  const ms = S.marcas.filter(m => m.trabajador_id === S.asTrab);
+  const dias = resumenDias(ms);
+  const semana = new Date(); semana.setDate(semana.getDate() - 7);
+  const minSemana = dias.filter(d => new Date(d.dia + "T12:00:00") >= semana).reduce((s, d) => s + d.minutos, 0);
+  const t = trabPor(S.asTrab);
+  $("vista").innerHTML = `<div class="grid2">
+    <div class="stack">
+      <div class="box"><div class="field"><label for="a-trab">Trabajador</label><select id="a-trab">${opcionesTrab(S.asTrab)}</select></div>
+        <div class="kpis" style="margin-top:14px"><div><b>${hhmm(minSemana)}</b><span>Últimos 7 días</span></div><div><b>${t ? t.jornada : "—"}</b><span>Jornada pactada</span></div><div><b>${dias.filter(d => d.incompleto).length}</b><span>Días incompletos</span></div></div></div>
+      <form class="box" id="fMarca"><h2>Agregar marca manual</h2>
+        <div class="fields">
+          <div class="field"><label for="a-tipo">Tipo</label><select id="a-tipo"><option value="entrada">Entrada</option><option value="salida">Salida</option></select></div>
+          <div class="field"><label for="a-momento">Fecha y hora</label><input id="a-momento" type="datetime-local" required></div>
+          <div class="field full"><label for="a-nota">Motivo</label><input id="a-nota" required placeholder="Ej: olvidó marcar la salida"></div>
+        </div>
+        <div class="actions"><button class="btn btn-gold">Agregar</button></div><div class="status" id="a-status"></div>
+      </form>
+      <p class="small muted">Las marcas son control interno. El registro legal sigue siendo el libro de asistencia mientras no usen un sistema certificado por la Dirección del Trabajo.</p>
+    </div>
+    <div class="box"><h2>Últimos 60 días</h2>${tablaDias(ms, 60)}</div></div>`;
+  $("a-trab").onchange = e => { S.asTrab = e.target.value; pintar(); };
+  $("fMarca").onsubmit = async e => {
+    e.preventDefault();
+    try { await q(sb.from("marcas").insert({ trabajador_id: S.asTrab, tipo: $("a-tipo").value, momento: new Date($("a-momento").value).toISOString(), nota: $("a-nota").value.trim() })); await cargar(); pintar(); toast("Marca agregada"); }
+    catch (err) { say("a-status", "No se pudo agregar: " + err.message, true); }
+  };
+};
+
+VISTAS.documentos = () => {
+  $("vista").innerHTML = `<div class="grid2">
+    <form class="box" id="fDoc"><h2>Subir documento firmado</h2>
+      <div class="fields">
+        <div class="field full"><label for="d-trab">Trabajador</label><select id="d-trab">${opcionesTrab(null, false)}</select></div>
+        <div class="field"><label for="d-tipo">Tipo</label><select id="d-tipo">${Object.entries(TIPOS_DOC).map(([k, n]) => `<option value="${k}">${n}</option>`).join("")}</select></div>
+        <div class="field"><label for="d-fecha">Fecha de firma</label><input id="d-fecha" type="date"></div>
+        <div class="field full"><label for="d-titulo">Título</label><input id="d-titulo" required placeholder="Ej: Contrato indefinido"></div>
+        <div class="field full"><label for="d-archivo">Archivo (PDF o foto)</label><input id="d-archivo" type="file" accept="application/pdf,image/*" required></div>
+      </div>
+      <div class="actions"><button class="btn btn-gold" id="d-btn">Subir</button></div><div class="status" id="d-status"></div>
+      <p class="small muted" style="margin-top:8px">Cada trabajador ve solo sus propios documentos.</p>
+    </form>
+    <div class="box"><h2>Archivo</h2>
+      <div class="field" style="margin-bottom:8px"><label for="d-filtro">Mostrar</label><select id="d-filtro"><option value="">Todos</option>${opcionesTrab(S.docFiltro, false)}</select></div>
+      ${listaDocs(S.docs.filter(d => !S.docFiltro || d.trabajador_id === S.docFiltro), true)}</div></div>`;
+  $("d-filtro").value = S.docFiltro || "";
+  $("d-filtro").onchange = e => { S.docFiltro = e.target.value; pintar(); };
+  bindDocs();
+  $("fDoc").onsubmit = async e => {
+    e.preventDefault();
+    const f = $("d-archivo").files[0]; if (!f) return;
+    const tid = $("d-trab").value;
+    const ruta = `${tid}/${Date.now()}-${f.name.normalize("NFD").replace(/[^\w.\-]+/g, "_")}`;
+    $("d-btn").disabled = true;
+    try {
+      const { error } = await sb.storage.from("documentos").upload(ruta, f, { contentType: f.type });
+      if (error) throw error;
+      await q(sb.from("documentos").insert({ trabajador_id: tid, tipo: $("d-tipo").value, titulo: $("d-titulo").value.trim(), fecha: $("d-fecha").value || null, ruta }));
+      await cargar(); pintar(); toast("Documento subido");
+    } catch (err) { say("d-status", "No se pudo subir: " + err.message, true); $("d-btn").disabled = false; }
+  };
+};
+
+VISTAS.parametros = () => {
+  const p = S.par;
+  const inp = (id, lab, val, step = "any") => `<div class="field"><label for="${id}">${lab}</label><input id="${id}" type="number" step="${step}" value="${val}"></div>`;
+  $("vista").innerHTML = `<form class="box" id="fPar"><h2>Parámetros legales y de la empresa</h2>
+    <p class="small muted">Revísalos cada mes con Previred o el contador. Cada liquidación guarda los parámetros con que se calculó.</p>
+    <h3>Empresa</h3><div class="fields">
+      <div class="field"><label for="p-razon">Razón social</label><input id="p-razon" value="${esc(p.razon)}"></div>
+      <div class="field"><label for="p-rut">RUT empresa</label><input id="p-rut" value="${esc(p.rutEmpresa)}"></div>
+      ${inp("p-mutual", "Mutual / Ley 16.744 (%)", p.mutual)}${inp("p-sis", "SIS empleador (%)", p.sis)}${inp("p-reforma", "Aporte empleador reforma previsional (%)", p.reforma)}</div>
+    <h3>Indicadores del mes</h3><div class="fields">
+      ${inp("p-uf", "UF ($)", p.uf)}${inp("p-utm", "UTM ($)", p.utm)}${inp("p-imm", "Ingreso mínimo ($)", p.imm)}${inp("p-topeafp", "Tope imponible AFP y salud (UF)", p.topeAfpUF)}${inp("p-topeafc", "Tope seguro de cesantía (UF)", p.topeAfcUF)}</div>
+    <h3>Comisión AFP (% sobre el 10% obligatorio)</h3><div class="fields">
+      ${Object.entries(p.afp).map(([k, v]) => `<div class="field"><label for="p-afp-${k}">${k}</label><input id="p-afp-${k}" data-afp="${k}" type="number" step="any" value="${v}"></div>`).join("")}</div>
+    <div class="actions"><button class="btn btn-gold">Guardar parámetros</button></div><div class="status" id="p-status"></div></form>`;
+  $("fPar").onsubmit = async e => {
+    e.preventDefault();
+    const afp = {}; document.querySelectorAll("[data-afp]").forEach(i => afp[i.dataset.afp] = parseFloat(i.value) || 0);
+    const datos = { razon: $("p-razon").value.trim(), rutEmpresa: $("p-rut").value.trim(), mutual: num("p-mutual"), sis: num("p-sis"), reforma: num("p-reforma"),
+      uf: num("p-uf"), utm: num("p-utm"), imm: num("p-imm"), topeAfpUF: num("p-topeafp"), topeAfcUF: num("p-topeafc"), afp };
+    try { await q(sb.from("parametros").upsert({ id: 1, datos, actualizado: new Date().toISOString() })); S.par = RRHH.conParametros(datos); say("p-status", "Parámetros guardados."); }
+    catch (err) { say("p-status", "No se pudo guardar: " + err.message, true); }
+  };
+};
+
+iniciar();
+</script>
+</body>
+</html>
