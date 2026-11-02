@@ -326,7 +326,7 @@ VISTAS.misdocs = () => { $("vista").innerHTML = `<div class="box">${listaDocs(S.
 VISTAS.misdatos = () => {
   const t = S.yo;
   const f = (k, v) => `<div class="row"><span class="muted">${k}</span><span>${esc(v) || "—"}</span></div>`;
-  $("vista").innerHTML = `<div class="box">${f("Nombre", t.nombre)}${f("RUT", t.rut)}${f("Cargo", t.cargo)}${f("Contrato", CONTRATO[t.contrato])}${f("Ingreso", fecha(t.ingreso))}${f("Jornada", t.jornada + " horas semanales")}${f("AFP", t.afp)}${f("Salud", t.salud === "isapre" ? "Isapre" : "Fonasa")}${f("Correo", t.email)}</div>
+  $("vista").innerHTML = `<div class="box">${f("Nombre", t.nombre)}${f("RUT", t.rut)}${f("Cargo", t.cargo)}${f("Contrato", CONTRATO[t.contrato])}${f("Ingreso", fecha(t.ingreso))}${f("Jornada", t.jornada + " horas semanales")}${f("AFP", t.afp)}${f("Salud", t.salud === "isapre" ? "Isapre" : "Fonasa")}${f("Dirección", [t.direccion, t.comuna].filter(Boolean).join(", "))}${f("Teléfono", t.telefono)}${f("Contacto de emergencia", t.contacto_emergencia)}${f("Correo", t.email)}</div>
     <p class="small muted" style="margin-top:12px">Si algún dato está mal, avísale al administrador.</p>`;
 };
 
@@ -393,6 +393,12 @@ function ficha(t){
       <div class="field"><label for="t-mov">Movilización mensual</label><input id="t-mov" type="number" value="${v("movilizacion", 0)}"></div>
       <div class="field"><label for="t-prev">Años cotizados con otros empleadores</label><input id="t-prev" type="number" min="0" max="10" value="${v("anios_previos", 0)}"></div>
       <div class="field"><label for="t-tomprev">Vacaciones tomadas antes de la app (días)</label><input id="t-tomprev" type="number" step="0.5" value="${v("tomados_previos", 0)}"></div>
+      <div class="field"><label for="t-nac">Fecha de nacimiento</label><input id="t-nac" type="date" value="${v("fecha_nacimiento")}"></div>
+      <div class="field"><label for="t-nacionalidad">Nacionalidad</label><input id="t-nacionalidad" value="${v("nacionalidad", "Chilena")}"></div>
+      <div class="field full"><label for="t-dir">Dirección</label><input id="t-dir" value="${v("direccion")}" placeholder="Calle, número, depto."></div>
+      <div class="field"><label for="t-comuna">Comuna</label><input id="t-comuna" value="${v("comuna")}"></div>
+      <div class="field"><label for="t-tel">Teléfono</label><input id="t-tel" type="tel" value="${v("telefono")}"></div>
+      <div class="field full"><label for="t-emerg">Contacto de emergencia</label><input id="t-emerg" value="${v("contacto_emergencia")}" placeholder="Nombre y teléfono"></div>
       <div class="field full"><label for="t-lugar">Lugar de trabajo</label><input id="t-lugar" value="${v("lugar", "Ramón Carrasco 99, local 7")}"></div>
       <label class="check full"><input id="t-activo" type="checkbox" ${!t || t.activo ? "checked" : ""}> Activo</label>
     </div>
@@ -403,7 +409,9 @@ function ficha(t){
     const body = { nombre: $("t-nombre").value.trim(), email: $("t-email").value.trim().toLowerCase() || null, rut: $("t-rut").value.trim(), cargo: $("t-cargo").value.trim(),
       contrato: $("t-contrato").value, ingreso: $("t-ingreso").value || null, jornada: num("t-jornada") || 42, sueldo: Math.round(num("t-sueldo")), grat: $("t-grat").value,
       afp: $("t-afp").value, salud: $("t-salud").value, plan_uf: num("t-planuf"), colacion: Math.round(num("t-col")), movilizacion: Math.round(num("t-mov")),
-      anios_previos: Math.round(num("t-prev")), tomados_previos: num("t-tomprev"), lugar: $("t-lugar").value.trim(), activo: $("t-activo").checked };
+      anios_previos: Math.round(num("t-prev")), tomados_previos: num("t-tomprev"), lugar: $("t-lugar").value.trim(),
+      fecha_nacimiento: $("t-nac").value || null, nacionalidad: $("t-nacionalidad").value.trim(), direccion: $("t-dir").value.trim(),
+      comuna: $("t-comuna").value.trim(), telefono: $("t-tel").value.trim(), contacto_emergencia: $("t-emerg").value.trim(), activo: $("t-activo").checked };
     try {
       const fila = S.editId ? await q(sb.from("trabajadores").update(body).eq("id", S.editId).select().single()) : await q(sb.from("trabajadores").insert(body).select().single());
       S.editId = fila.id; await cargar(); pintar(); toast("Ficha guardada");

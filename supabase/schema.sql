@@ -35,6 +35,12 @@ create table if not exists public.trabajadores (
   anios_previos integer not null default 0,
   tomados_previos numeric not null default 0,
   lugar text,
+  fecha_nacimiento date,
+  nacionalidad text,
+  direccion text,
+  comuna text,
+  telefono text,
+  contacto_emergencia text,
   activo boolean not null default true,
   creado timestamptz not null default now()
 );
