@@ -148,7 +148,7 @@ function welcome(){
     <ul class="perks">
       <li><i></i><span><b>10 visitas = 1 pizza gratis</b> a elección.</span></li>
       <li><i></i><span><b>Regalo de cumpleaños:</b> postre gratis, o una Pizza Nutella por cada 6 personas en tu mesa.</span></li>
-      <li><i></i><span><b>Invita a un amigo:</b> los dos ganan un pisco sour de regalo y una visita extra.</span></li>
+      <li><i></i><span><b>Invita a un amigo:</b> los dos ganan un pisco sour de regalo, y tú sumas una visita extra cuando tu amigo viene por primera vez.</span></li>
       <li><i></i><span><b>Pruebas primero</b> las pizzas nuevas.</span></li>
     </ul>
     <div class="stack">
@@ -277,7 +277,7 @@ function card(t){
       <div>${p.novedad?'<span class="pill">Primero tú</span>':""}<h3>${esc(p.titulo)}</h3><p>${esc(p.detalle)}</p>${p.hasta?`<p class="small">Hasta el ${esc(fmt(p.hasta))}</p>`:""}</div></div>`).join("") || '<p class="small muted">Pronto tendrás beneficios exclusivos aquí.</p>'}</div>
 
     <div class="section"><h2>Invita a un amigo</h2></div>
-    <div class="box"><p class="small muted">Tu amigo recibe <b>${esc(t.club.regaloReferido||"un pisco sour de regalo")}</b> apenas se registra con tu código. Cuando venga por primera vez, tú recibes el tuyo y los dos suman ${t.club.bonoReferido} visita extra.</p>
+    <div class="box"><p class="small muted">Tu amigo recibe <b>${esc(t.club.regaloReferido||"un pisco sour de regalo")}</b> apenas se registra con tu código. Cuando venga por primera vez, tú recibes el tuyo y sumas ${t.club.bonoReferido} visita extra.</p>
       <div class="code-row"><code>${esc(t.codigo)}</code><button class="btn btn-line btn-sm" type="button" id="copy">Copiar link</button></div></div>
 
     <div class="section"><h2>¿Te gustó? Cuéntalo en Google</h2></div>
