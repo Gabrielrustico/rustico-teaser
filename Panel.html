@@ -76,7 +76,7 @@ tr:last-child td{border-bottom:0}
 .empty{padding:40px 0;text-align:center;color:var(--muted)}
 </style>
 </head>
-<body>
+<body data-modo="<?= modo ?>">
 <div class="panel">
   <div class="head">
     <img src="https://www.rusti-co.cl/img/logo-color.png" alt="Rusti-Co.">
@@ -84,12 +84,23 @@ tr:last-child td{border-bottom:0}
     <span class="fudo" id="fudo"><i></i><span id="fudoTxt">Cargando…</span></span>
     <button class="btn btn-line btn-sm" type="button" id="syncBtn">Revisar Fudo ahora</button>
   </div>
+  <form class="box stack" id="login" hidden style="max-width:380px;margin:40px auto">
+    <h3>Entrar al panel</h3>
+    <label class="label" for="lNombre">Tu nombre</label>
+    <input class="search" id="lNombre" autocomplete="off" maxlength="40" required>
+    <label class="label" for="lPin">PIN del local</label>
+    <input class="search" id="lPin" type="password" inputmode="numeric" autocomplete="off" required>
+    <button class="btn btn-gold" id="lBtn">Entrar</button>
+    <p class="small muted">Lo que hagas en el panel queda registrado con tu nombre.</p>
+  </form>
   <div class="tabs" role="tablist" id="tabs"></div>
   <div id="body"><p class="empty">Cargando socios…</p></div>
 </div>
 <div class="toast" id="toast" hidden></div>
 
 <script>
+const MODO = document.body.dataset.modo;
+let TOK = '';
 let D = null, tab = 'caja', seg = 'risk', query = '', sel = null;
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -103,6 +114,7 @@ const clp = n => '$' + Math.round(n||0).toLocaleString('es-CL');
 function gustosTxt(g){ return [g.pizza&&('🍕 '+g.pizza), g.bebida&&('🥤 '+g.bebida)].filter(Boolean).join(' · '); }
 function toast(m){ const t=$('toast'); t.textContent=m; t.hidden=false; clearTimeout(toast.t); toast.t=setTimeout(()=>t.hidden=true,3000); }
 function call(fn, ...args){
+  if (fn !== 'equipoEntrar') args.unshift(TOK);
   return new Promise((ok, ko) => google.script.run.withSuccessHandler(ok).withFailureHandler(e => { toast(e.message || 'Error'); ko(e); })[fn](...args));
 }
 async function load(){ D = await call('panelDatos'); render(); }
@@ -111,8 +123,9 @@ function render(){
   const low = D.calif.filter(c => c.estrellas <= 3 && c.contactado !== 'si').length;
   $('fudo').classList.toggle('on', D.fudoConfigurado);
   $('fudoTxt').textContent = D.fudoConfigurado ? (D.ultimoSync ? 'Última revisión: ' + D.ultimoSync.split(' · ')[0] : 'Fudo conectado') : 'Faltan las claves de Fudo';
-  const tabs = [['caja','Sumar visita'],['resumen','Resumen'],['segmentos','Segmentos'],['calif','Calificaciones'],['promos','Promociones'],['socios','Socios'],['control','Control']];
-  $('tabs').innerHTML = tabs.map(([k,t]) => `<button role="tab" type="button" data-t="${k}" aria-selected="${k===tab}">${t}${k==='calif'&&low?` <span class="pill s-lost">${low}</span>`:''}${k==='control'&&D.control.alertas.length?` <span class="pill s-lost">${D.control.alertas.length}</span>`:''}</button>`).join('');
+  const tabs = [['caja','Sumar visita'],['resumen','Resumen'],['segmentos','Segmentos'],['calif','Calificaciones'],['promos','Promociones'],['socios','Socios']];
+  if (D.esDueno) tabs.push(['control','Control']); else if (tab === 'control') tab = 'caja';
+  $('tabs').innerHTML = tabs.map(([k,t]) => `<button role="tab" type="button" data-t="${k}" aria-selected="${k===tab}">${t}${k==='calif'&&low?` <span class="pill s-lost">${low}</span>`:''}${k==='control'&&D.control&&D.control.alertas.length?` <span class="pill s-lost">${D.control.alertas.length}</span>`:''}</button>`).join('');
   $('tabs').querySelectorAll('button').forEach(b => b.onclick = () => { tab = b.dataset.t; render(); });
   ({caja, resumen, segmentos, calif, promos, socios, control})[tab]();
 }
@@ -274,11 +287,22 @@ function socios(){
 }
 
 $('syncBtn').onclick = async e => { e.target.disabled = true; try { toast(await call('panelSincronizar')); await load(); } finally { e.target.disabled = false; } };
-load();
+if (MODO === 'equipo') {
+  $('body').hidden = true; $('login').hidden = false;
+  try { $('lNombre').value = localStorage.getItem('equipoNombre') || ''; } catch (e) {}
+  $('login').onsubmit = async ev => {
+    ev.preventDefault(); $('lBtn').disabled = true;
+    try {
+      TOK = await call('equipoEntrar', $('lNombre').value, $('lPin').value);
+      try { localStorage.setItem('equipoNombre', $('lNombre').value.trim()); } catch (e) {}
+      $('login').hidden = true; $('body').hidden = false; await load();
+    } catch (e) {} finally { $('lBtn').disabled = false; $('lPin').value = ''; }
+  };
+} else load();
 
 function control(){
   const C = D.control;
-  const est = e => e==='sello'||e==='mesa abierta' ? `<span class="pill s-active">${esc(e)}</span>` : e==='bajo mínimo'||e==='anulada' ? `<span class="pill s-lost">${esc(e)}</span>` : `<span class="pill s-new">${esc(e)}</span>`;
+  const est = e => e==='sello'||e==='mesa abierta'||e==='a mano' ? `<span class="pill s-active">${esc(e)}</span>` : e==='bajo mínimo'||e==='anulada' ? `<span class="pill s-lost">${esc(e)}</span>` : `<span class="pill s-new">${esc(e)}</span>`;
   $('body').innerHTML = `<div class="stack">
     <div class="box stack"><span class="label">Alertas · últimos 30 días</span>
       ${C.alertas.length ? C.alertas.map(a=>`<p class="small">⚠️ ${esc(a)}</p>`).join('') : '<p class="small muted">Sin alertas. Nada raro en las visitas de socios.</p>'}
@@ -288,7 +312,7 @@ function control(){
       <tbody>${C.garzones.map(g=>`<tr><td>${esc(g.garzon)}</td><td class="num">${g.sellos}</td><td class="num">${g.bajoMinimo}</td><td class="num">${g.anuladas}</td></tr>`).join('')}</tbody></table></div>`:''}
     ${C.visitas.length?`<div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Socio</th><th>Mesa</th><th>Garzón</th><th class="num">Total mesa</th><th>Estado</th></tr></thead>
       <tbody>${C.visitas.map(v=>`<tr><td>${esc(v.fecha)}</td><td>${esc(v.socio)}</td><td>${esc(v.mesa)}</td><td>${esc(v.garzon)}</td><td class="num">${v.monto===null?'—':clp(v.monto)}</td><td>${est(v.estado)}</td></tr>`).join('')}</tbody></table></div>`
-      :'<div class="box empty">Todavía no hay visitas desde Fudo en los últimos 30 días.</div>'}
+      :'<div class="box empty">Todavía no hay visitas en los últimos 30 días.</div>'}
   </div>`;
 }
 </script>

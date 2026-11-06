@@ -4,8 +4,8 @@
  * Vive pegado a una hoja de cálculo de administracion@rusti-co.cl.
  *  - La web (rusti-co.cl/club) le habla por POST para registrar socios, mostrar su tarjeta y calificar.
  *  - El panel del local se abre en la misma URL con ?panel=1 y solo funciona para la cuenta dueña.
- *  - La vista garzona se abre con ?garzona=1 en la implementación de clientes: con el PIN del local
- *    deja buscar socios y canjear sus regalos y premios, nada más. PIN: propiedad GARZONA_PIN.
+ *  - El equipo (garzonas) abre el mismo panel con ?equipo=1 en la implementación de clientes, con su
+ *    nombre y el PIN del local (propiedad EQUIPO_PIN). Ven todo menos la pestaña Control.
  *  - Cada 15 minutos revisa en Fudo las mesas con cliente asignado y suma sellos: la visita queda
  *    registrada al abrir la mesa y se confirma al cerrarla (si la venta se anula, el sello se descuenta).
  *
@@ -83,15 +83,11 @@ function instalarDisparador() {
 /* ------------------------------ Web ------------------------------ */
 
 function doGet(e) {
-  if (e && e.parameter && e.parameter.panel) {
-    return HtmlService.createTemplateFromFile('Panel').evaluate()
+  if (e && e.parameter && (e.parameter.panel || e.parameter.equipo)) {
+    const t = HtmlService.createTemplateFromFile('Panel');
+    t.modo = e.parameter.equipo ? 'equipo' : 'dueno';
+    return t.evaluate()
       .setTitle('Panel del Club Rusti-Co.')
-      .addMetaTag('viewport', 'width=device-width, initial-scale=1')
-      .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.DEFAULT);
-  }
-  if (e && e.parameter && e.parameter.garzona) {
-    return HtmlService.createTemplateFromFile('Garzona').evaluate()
-      .setTitle('Club Rusti-Co. · Canjes')
       .addMetaTag('viewport', 'width=device-width, initial-scale=1')
       .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.DEFAULT);
   }
@@ -217,90 +213,43 @@ function eliminarme(b) {
   return { ok: true };
 }
 
-/* ---------------------------- Vista garzona ---------------------------- */
-/*
- * Solo buscar socios y canjear lo que ya tienen en su tarjeta. No suma visitas ni muestra el control.
- * El PIN vive en Propiedades de la secuencia de comandos → GARZONA_PIN (lo define el dueño).
- * Tras 5 PIN incorrectos seguidos se bloquea 15 minutos.
+/* ---------------------------- Panel del local ---------------------------- */
+
+/**
+ * Quién usa el panel: la cuenta del local (dueño) o alguien del equipo que entró con su nombre y el PIN.
+ * El PIN vive en Propiedades de la secuencia de comandos → EQUIPO_PIN (lo define el dueño).
+ * Tras 5 PIN incorrectos seguidos la entrada del equipo se bloquea 15 minutos. La sesión dura 6 horas (máximo de CacheService).
  */
-function pinGarzona_(pin) {
+function acceso_(tok) {
+  const yo = Session.getActiveUser().getEmail();
+  if (yo && yo === Session.getEffectiveUser().getEmail()) return { dueno: true, quien: yo };
+  const nombre = tok && /^[\w-]{30,}$/.test(String(tok)) ? CacheService.getScriptCache().get('EQUIPO_' + tok) : null;
+  if (!nombre) throw new Error('Tu sesión venció. Recarga la página y vuelve a entrar con el PIN.');
+  return { dueno: false, quien: 'equipo: ' + nombre };
+}
+
+function equipoEntrar(nombre, pin) {
+  const n = limpiar_(nombre, 40);
+  if (n.length < 2) throw new Error('Escribe tu nombre.');
   const cache = CacheService.getScriptCache();
   const fallos = Number(cache.get('PIN_FALLOS') || 0);
   if (fallos >= 5) throw new Error('Demasiados intentos. Espera 15 minutos o avisa al encargado.');
-  const real = PropertiesService.getScriptProperties().getProperty('GARZONA_PIN');
+  const real = PropertiesService.getScriptProperties().getProperty('EQUIPO_PIN');
   if (!real) throw new Error('Falta configurar el PIN del local. Avisa al encargado.');
   if (String(pin || '') !== String(real)) {
     cache.put('PIN_FALLOS', String(fallos + 1), 900);
-    if (fallos + 1 >= 5) log_('garzona', 'Vista garzona bloqueada 15 min por PIN incorrecto');
+    if (fallos + 1 >= 5) log_('equipo', 'Entrada del equipo bloqueada 15 min por PIN incorrecto');
     throw new Error('PIN incorrecto.');
   }
   cache.remove('PIN_FALLOS');
+  const tok = Utilities.getUuid() + Utilities.getUuid();
+  cache.put('EQUIPO_' + tok, n, 21600);
+  log_('equipo', n + ' entró al panel');
+  return tok;
 }
 
-function nombreGarzona_(g) {
-  const n = limpiar_(g, 40);
-  if (n.length < 2) throw new Error('Escribe tu nombre antes de canjear.');
-  return n;
-}
-
-function garzonaEntrar(pin) {
-  pinGarzona_(pin);
-  return true;
-}
-
-/** Busca por los últimos 4 dígitos del teléfono o por nombre (3 letras o más). */
-function garzonaBuscar(pin, q) {
-  pinGarzona_(pin);
-  const t = String(q || '').trim();
-  const sinTilde = x => String(x).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-  let socios = leer_('Socios').filter(s => s.estado === 'activo');
-  if (/^\d{4}$/.test(t)) socios = socios.filter(s => String(s.telefono).replace(/\D/g, '').slice(-4) === t);
-  else if (t.length >= 3) socios = socios.filter(s => sinTilde(s.nombre).includes(sinTilde(t)));
-  else throw new Error('Escribe los últimos 4 dígitos del teléfono o al menos 3 letras del nombre.');
-  return socios.slice(0, 10).map(s => ({
-    id: s.id, nombre: s.nombre, tel4: String(s.telefono).replace(/\D/g, '').slice(-4),
-    sellos: Number(s.sellos) || 0, meta: CLUB.visitasParaPremio, premio: CLUB.premio,
-    regalos: regalosPendientes_(s.id),
-  }));
-}
-
-function garzonaCanjearRegalo(pin, garzona, regaloId) {
-  pinGarzona_(pin);
-  const quien = nombreGarzona_(garzona);
-  const lock = LockService.getScriptLock(); lock.waitLock(20000);
-  try {
-    const r = leer_('Regalos').find(x => x.id === regaloId);
-    if (!r || r.canjeado) throw new Error('Ese regalo ya fue canjeado o no existe.');
-    if (fechaTxt_(r.vence) < Utilities.formatDate(new Date(), CLUB.zona, 'yyyy-MM-dd')) throw new Error('Ese regalo ya venció.');
-    actualizar_('Regalos', r._fila, { canjeado: new Date(), canjeado_por: 'garzona: ' + quien });
-    return 'Listo: ' + r.regalo + ' canjeado.';
-  } finally { lock.releaseLock(); }
-}
-
-function garzonaCanjearPremio(pin, garzona, socioId) {
-  pinGarzona_(pin);
-  const quien = nombreGarzona_(garzona);
-  const lock = LockService.getScriptLock(); lock.waitLock(20000);
-  try {
-    const s = buscarSocio_('id', socioId);
-    if (!s || s.estado !== 'activo') throw new Error('Socio no encontrado.');
-    if (Number(s.sellos) < CLUB.visitasParaPremio) throw new Error('Este socio aún no completa su tarjeta.');
-    actualizar_('Socios', s._fila, { sellos: 0 });
-    agregar_('Canjes', { fecha: new Date(), socio_id: s.id, premio: CLUB.premio, registrado_por: 'garzona: ' + quien });
-    return 'Listo: premio canjeado. La tarjeta de ' + s.nombre.split(' ')[0] + ' vuelve a 0.';
-  } finally { lock.releaseLock(); }
-}
-
-/* ---------------------------- Panel del local ---------------------------- */
-
-function soloDueno_() {
-  const yo = Session.getActiveUser().getEmail();
-  const dueno = Session.getEffectiveUser().getEmail();
-  if (!yo || yo !== dueno) throw new Error('Solo la cuenta del local puede usar el panel.');
-}
-
-function panelDatos() {
-  soloDueno_();
+function panelDatos(tok) {
+  const yo = acceso_(tok);
   const socios = leer_('Socios').filter(s => s.estado !== 'eliminado').map(s => ({
     id: s.id, nombre: s.nombre, telefono: s.telefono, email: s.email, cumpleanos: fechaTxt_(s.cumpleanos),
     codigo: s.codigo, sellos: Number(s.sellos) || 0, visitas: Number(s.visitas_total) || 0,
@@ -324,7 +273,7 @@ function panelDatos() {
   const ultimoSync = PropertiesService.getScriptProperties().getProperty('ULTIMO_SYNC') || '';
   const gastoMes = leer_('Visitas').filter(v => fechaTxt_(v.fecha).slice(0, 7) === mes && !isNaN(Number(v.monto)) && v.monto !== '').reduce((t, v) => t + Number(v.monto), 0);
   return { club: CLUB, socios, calif, promos, campanas, visitasMes, gastoMes, ranking: gu.ranking, ultimoSync, fudoConfigurado: !!credencialesFudo_(),
-    control: control_(nombres) };
+    esDueno: yo.dueno, quien: yo.quien, control: yo.dueno ? control_(nombres) : null };
 }
 
 /**
@@ -333,16 +282,16 @@ function panelDatos() {
  */
 function control_(nombres) {
   const desde = Date.now() - 30 * 864e5;
-  const vs = leer_('Visitas').filter(v => v.venta_fudo && new Date(v.fecha).getTime() > desde).map(v => ({
+  const vs = leer_('Visitas').filter(v => (v.venta_fudo || String(v.origen).indexOf('manual') === 0) && new Date(v.fecha).getTime() > desde).map(v => ({
     fecha: Utilities.formatDate(new Date(v.fecha), CLUB.zona, 'yyyy-MM-dd HH:mm'), socioId: v.socio_id,
     socio: (nombres[v.socio_id] || {}).nombre || 'Ex socio', mesa: v.mesa || '—', garzon: v.garzon || '—',
     monto: isNaN(Number(v.monto)) || v.monto === '' ? null : Number(v.monto),
-    estado: v.cuenta_sello === 'si' ? (v.monto === '' ? 'mesa abierta' : 'sello') : v.cuenta_sello === 'no' ? 'ya tenía sello ese día' : v.cuenta_sello,
+    estado: v.cuenta_sello === 'si' && !v.venta_fudo ? 'a mano' : v.cuenta_sello === 'si' ? (v.monto === '' ? 'mesa abierta' : 'sello') : v.cuenta_sello === 'no' ? 'ya tenía sello ese día' : v.cuenta_sello,
   })).reverse();
   const porGarzon = {}, pares = {}, malas = {};
   vs.forEach(v => {
     const g = porGarzon[v.garzon] = porGarzon[v.garzon] || { garzon: v.garzon, sellos: 0, bajoMinimo: 0, anuladas: 0 };
-    if (v.estado === 'sello' || v.estado === 'mesa abierta') {
+    if (v.estado === 'sello' || v.estado === 'mesa abierta' || v.estado === 'a mano') {
       g.sellos++;
       const k = v.garzon + '|' + v.socioId;
       pares[k] = pares[k] || { garzon: v.garzon, socio: v.socio, n: 0 };
@@ -363,39 +312,39 @@ function control_(nombres) {
   return { visitas: vs.slice(0, 200), garzones: Object.values(porGarzon).sort((a, b) => b.sellos - a.sellos), alertas };
 }
 
-function panelSumarVisita(id) {
-  soloDueno_();
+function panelSumarVisita(tok, id) {
+  const yo = acceso_(tok);
   const s = buscarSocio_('id', id);
   if (!s) throw new Error('Socio no encontrado.');
-  const r = sumarVisita_(s, '', 'manual (panel)');
+  const r = sumarVisita_(s, '', 'manual (panel)', null, { garzon: yo.quien, mesa: 'a mano' });
   return r;
 }
 
-function panelCanjear(id) {
-  soloDueno_();
+function panelCanjear(tok, id) {
+  const yo = acceso_(tok);
   const s = buscarSocio_('id', id);
   if (Number(s.sellos) < CLUB.visitasParaPremio) throw new Error('Este socio aún no completa su tarjeta.');
   actualizar_('Socios', s._fila, { sellos: 0 });
-  agregar_('Canjes', { fecha: new Date(), socio_id: s.id, premio: CLUB.premio, registrado_por: Session.getActiveUser().getEmail() });
+  agregar_('Canjes', { fecha: new Date(), socio_id: s.id, premio: CLUB.premio, registrado_por: yo.quien });
   return 'Premio canjeado. La tarjeta de ' + s.nombre.split(' ')[0] + ' vuelve a 0.';
 }
 
-function panelCanjearRegalo(regaloId) {
-  soloDueno_();
+function panelCanjearRegalo(tok, regaloId) {
+  const yo = acceso_(tok);
   const r = leer_('Regalos').find(x => x.id === regaloId);
   if (!r || r.canjeado) throw new Error('Ese regalo ya fue canjeado o no existe.');
-  actualizar_('Regalos', r._fila, { canjeado: new Date(), canjeado_por: Session.getActiveUser().getEmail() });
+  actualizar_('Regalos', r._fila, { canjeado: new Date(), canjeado_por: yo.quien });
   return 'Regalo canjeado: ' + r.regalo + '.';
 }
 
-function panelContactado(fila) {
-  soloDueno_();
+function panelContactado(tok, fila) {
+  const yo = acceso_(tok);
   actualizar_('Calificaciones', fila, { contactado: 'si' });
   return 'Marcado como contactado.';
 }
 
-function panelGuardarPromo(p) {
-  soloDueno_();
+function panelGuardarPromo(tok, p) {
+  const yo = acceso_(tok);
   if (!p.titulo || !p.detalle) throw new Error('Completa el título y el detalle.');
   agregar_('Promociones', {
     id: 'P' + Date.now(), titulo: limpiar_(p.titulo, 80), detalle: limpiar_(p.detalle, 300),
@@ -405,28 +354,28 @@ function panelGuardarPromo(p) {
   return 'Publicada. Ya aparece en la app de los socios.';
 }
 
-function panelQuitarPromo(id) {
-  soloDueno_();
+function panelQuitarPromo(tok, id) {
+  const yo = acceso_(tok);
   const p = leer_('Promociones').find(x => x.id === id);
   if (p) actualizar_('Promociones', p._fila, { activa: 'no' });
   return 'Promoción quitada.';
 }
 
-function panelRegistrarCampana(segmento, n, mensaje) {
-  soloDueno_();
+function panelRegistrarCampana(tok, segmento, n, mensaje) {
+  const yo = acceso_(tok);
   agregar_('Campanas', { fecha: new Date(), segmento, socios: n, mensaje: limpiar_(mensaje, 500) });
   return 'Registrado.';
 }
 
-function panelSincronizar() {
-  soloDueno_();
+function panelSincronizar(tok) {
+  const yo = acceso_(tok);
   return sincronizarFudo();
 }
 
-function panelEliminarSocio(id) {
-  soloDueno_();
+function panelEliminarSocio(tok, id) {
+  const yo = acceso_(tok);
   const s = buscarSocio_('id', id);
-  if (s) eliminarSocio_(s, 'solicitud al local (' + Session.getActiveUser().getEmail() + ')');
+  if (s) eliminarSocio_(s, 'solicitud al local (' + yo.quien + ')');
   return 'Datos personales eliminados.';
 }
 
