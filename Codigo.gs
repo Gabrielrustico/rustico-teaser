@@ -4,7 +4,10 @@
  * Vive pegado a una hoja de cálculo de administracion@rusti-co.cl.
  *  - La web (rusti-co.cl/club) le habla por POST para registrar socios, mostrar su tarjeta y calificar.
  *  - El panel del local se abre en la misma URL con ?panel=1 y solo funciona para la cuenta dueña.
- *  - Cada hora revisa en Fudo las ventas cerradas con cliente asignado y suma sellos.
+ *  - El equipo (garzonas) abre el mismo panel con ?equipo=1 en la implementación de clientes, con su
+ *    nombre y el PIN del local (propiedad EQUIPO_PIN). Solo miran y canjean; no ven la pestaña Control.
+ *  - Cada 15 minutos revisa en Fudo las mesas con cliente asignado y suma sellos: la visita queda
+ *    registrada al abrir la mesa y se confirma al cerrarla (si la venta se anula, el sello se descuenta).
  *
  * Claves de Fudo: Configuración del proyecto → Propiedades de la secuencia de comandos →
  *   FUDO_API_KEY y FUDO_API_SECRET. Nunca se escriben en este archivo.
@@ -17,13 +20,16 @@ const CLUB = {
   visitasParaPremio: 10,
   premio: '1 pizza gratis a elección',
   regaloCumpleanos: 'Postre gratis para el cumpleañero, o una Pizza Nutella por cada 6 personas en su mesa',
-  bonoReferido: 1,              // visitas extra para ambos cuando el invitado hace su primera visita
+  bonoReferido: 1,              // visita extra para quien invitó, cuando el invitado hace su primera visita
   regaloReferido: '1 pisco sour de regalo', // para el invitado al registrarse y para quien invitó cuando el amigo viene
   diasRegalo: 60,               // vigencia de los regalos
   diasRiesgo: 30,               // activo ≤ 30 días; en riesgo 31–60; perdido > 60
   diasPerdido: 60,
   versionConsentimiento: '2026-10-25',
-  enviarCorreoCalificar: true,  // correo "¿Cómo estuvo tu visita?" después de cada visita
+  enviarCorreoCalificar: true,  // correo "¿Cómo estuvo tu visita?" después de cada visita (al cerrar la mesa)
+  visitaAlAbrir: true,          // true: el sello aparece apenas se abre la mesa a nombre del socio; false: recién al cerrarla
+  minutosSync: 15,              // cada cuántos minutos se revisa Fudo (1, 5, 10, 15 o 30)
+  montoMinimoSello: 15000,      // una mesa con un total menor no da sello (se revisa al cerrarla)
   urlClub: 'https://www.rusti-co.cl/club/',
   zona: 'America/Santiago',
 };
@@ -32,7 +38,7 @@ const CLUB = {
 const HOJAS = {
   Socios: ['id', 'nombre', 'telefono', 'email', 'cumpleanos', 'codigo', 'referido_por', 'fudo_cliente_id',
     'sellos', 'visitas_total', 'ultima_visita', 'fecha_alta', 'acepta_promos', 'estado', 'token'],
-  Visitas: ['fecha', 'socio_id', 'venta_fudo', 'origen', 'cuenta_sello', 'calificada', 'monto'],
+  Visitas: ['fecha', 'socio_id', 'venta_fudo', 'origen', 'cuenta_sello', 'calificada', 'monto', 'garzon', 'mesa'],
   Consumos: ['fecha', 'socio_id', 'venta_fudo', 'producto', 'categoria', 'cantidad', 'precio', 'subtotal'],
   Canjes: ['fecha', 'socio_id', 'premio', 'registrado_por'],
   Calificaciones: ['fecha', 'socio_id', 'fecha_visita', 'estrellas', 'temas', 'comentario', 'contactado'],
@@ -61,16 +67,26 @@ function instalar() {
   const hoja1 = ss.getSheetByName('Hoja 1') || ss.getSheetByName('Sheet1');
   if (hoja1 && hoja1.getLastRow() === 0 && ss.getSheets().length > 1) ss.deleteSheet(hoja1);
   ScriptApp.getProjectTriggers().forEach(t => ScriptApp.deleteTrigger(t));
-  ScriptApp.newTrigger('sincronizarFudo').timeBased().everyHours(1).create();
-  log_('instalacion', 'Pestañas y disparador horario listos');
+  instalarDisparador();
+  log_('instalacion', 'Pestañas y disparador listos');
   return 'Listo';
+}
+
+/** Correr una vez desde el editor después de cambiar CLUB.minutosSync: deja un solo disparador de sincronizarFudo. */
+function instalarDisparador() {
+  ScriptApp.getProjectTriggers().filter(t => t.getHandlerFunction() === 'sincronizarFudo').forEach(t => ScriptApp.deleteTrigger(t));
+  ScriptApp.newTrigger('sincronizarFudo').timeBased().everyMinutes(CLUB.minutosSync).create();
+  log_('instalacion', 'Disparador de Fudo cada ' + CLUB.minutosSync + ' minutos');
+  return 'Fudo se revisará cada ' + CLUB.minutosSync + ' minutos.';
 }
 
 /* ------------------------------ Web ------------------------------ */
 
 function doGet(e) {
-  if (e && e.parameter && e.parameter.panel) {
-    return HtmlService.createTemplateFromFile('Panel').evaluate()
+  if (e && e.parameter && (e.parameter.panel || e.parameter.equipo)) {
+    const t = HtmlService.createTemplateFromFile('Panel');
+    t.modo = e.parameter.equipo ? 'equipo' : 'dueno';
+    return t.evaluate()
       .setTitle('Panel del Club Rusti-Co.')
       .addMetaTag('viewport', 'width=device-width, initial-scale=1')
       .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.DEFAULT);
@@ -199,14 +215,48 @@ function eliminarme(b) {
 
 /* ---------------------------- Panel del local ---------------------------- */
 
-function soloDueno_() {
+/**
+ * Quién usa el panel: la cuenta del local (dueño) o alguien del equipo que entró con su nombre y el PIN.
+ * El PIN vive en Propiedades de la secuencia de comandos → EQUIPO_PIN (lo define el dueño).
+ * Tras 5 PIN incorrectos seguidos la entrada del equipo se bloquea 15 minutos. La sesión dura 6 horas (máximo de CacheService).
+ */
+function acceso_(tok) {
   const yo = Session.getActiveUser().getEmail();
-  const dueno = Session.getEffectiveUser().getEmail();
-  if (!yo || yo !== dueno) throw new Error('Solo la cuenta del local puede usar el panel.');
+  if (yo && yo === Session.getEffectiveUser().getEmail()) return { dueno: true, quien: yo };
+  const nombre = tok && /^[\w-]{30,}$/.test(String(tok)) ? CacheService.getScriptCache().get('EQUIPO_' + tok) : null;
+  if (!nombre) throw new Error('Tu sesión venció. Recarga la página y vuelve a entrar con el PIN.');
+  return { dueno: false, quien: 'equipo: ' + nombre };
 }
 
-function panelDatos() {
-  soloDueno_();
+/** Cambios que solo hace el dueño. El equipo solo mira y canjea premios y regalos. */
+function soloDueno_(tok) {
+  const yo = acceso_(tok);
+  if (!yo.dueno) throw new Error('Eso lo hace solo el encargado. Desde aquí puedes mirar y canjear.');
+  return yo;
+}
+
+function equipoEntrar(nombre, pin) {
+  const n = limpiar_(nombre, 40);
+  if (n.length < 2) throw new Error('Escribe tu nombre.');
+  const cache = CacheService.getScriptCache();
+  const fallos = Number(cache.get('PIN_FALLOS') || 0);
+  if (fallos >= 5) throw new Error('Demasiados intentos. Espera 15 minutos o avisa al encargado.');
+  const real = PropertiesService.getScriptProperties().getProperty('EQUIPO_PIN');
+  if (!real) throw new Error('Falta configurar el PIN del local. Avisa al encargado.');
+  if (String(pin || '') !== String(real)) {
+    cache.put('PIN_FALLOS', String(fallos + 1), 900);
+    if (fallos + 1 >= 5) log_('equipo', 'Entrada del equipo bloqueada 15 min por PIN incorrecto');
+    throw new Error('PIN incorrecto.');
+  }
+  cache.remove('PIN_FALLOS');
+  const tok = Utilities.getUuid() + Utilities.getUuid();
+  cache.put('EQUIPO_' + tok, n, 21600);
+  log_('equipo', n + ' entró al panel');
+  return tok;
+}
+
+function panelDatos(tok) {
+  const yo = acceso_(tok);
   const socios = leer_('Socios').filter(s => s.estado !== 'eliminado').map(s => ({
     id: s.id, nombre: s.nombre, telefono: s.telefono, email: s.email, cumpleanos: fechaTxt_(s.cumpleanos),
     codigo: s.codigo, sellos: Number(s.sellos) || 0, visitas: Number(s.visitas_total) || 0,
@@ -229,42 +279,79 @@ function panelDatos() {
   const visitasMes = leer_('Visitas').filter(v => fechaTxt_(v.fecha).slice(0, 7) === mes && v.cuenta_sello === 'si').length;
   const ultimoSync = PropertiesService.getScriptProperties().getProperty('ULTIMO_SYNC') || '';
   const gastoMes = leer_('Visitas').filter(v => fechaTxt_(v.fecha).slice(0, 7) === mes && !isNaN(Number(v.monto)) && v.monto !== '').reduce((t, v) => t + Number(v.monto), 0);
-  return { club: CLUB, socios, calif, promos, campanas, visitasMes, gastoMes, ranking: gu.ranking, ultimoSync, fudoConfigurado: !!credencialesFudo_() };
+  return { club: CLUB, socios, calif, promos, campanas, visitasMes, gastoMes, ranking: gu.ranking, ultimoSync, fudoConfigurado: !!credencialesFudo_(),
+    esDueno: yo.dueno, quien: yo.quien, control: yo.dueno ? control_(nombres) : null };
 }
 
-function panelSumarVisita(id) {
-  soloDueno_();
+/**
+ * Control de visitas de los últimos 30 días: lista con mesa, garzón y monto, resumen por garzón y alertas.
+ * Alertas: el mismo garzón le carga 3 o más visitas con sello a un socio, o un socio junta 2 o más visitas anuladas o bajo el mínimo.
+ */
+function control_(nombres) {
+  const desde = Date.now() - 30 * 864e5;
+  const vs = leer_('Visitas').filter(v => (v.venta_fudo || String(v.origen).indexOf('manual') === 0) && new Date(v.fecha).getTime() > desde).map(v => ({
+    fecha: Utilities.formatDate(new Date(v.fecha), CLUB.zona, 'yyyy-MM-dd HH:mm'), socioId: v.socio_id,
+    socio: (nombres[v.socio_id] || {}).nombre || 'Ex socio', mesa: v.mesa || '—', garzon: v.garzon || '—',
+    monto: isNaN(Number(v.monto)) || v.monto === '' ? null : Number(v.monto),
+    estado: v.cuenta_sello === 'si' && !v.venta_fudo ? 'a mano' : v.cuenta_sello === 'si' ? (v.monto === '' ? 'mesa abierta' : 'sello') : v.cuenta_sello === 'no' ? 'ya tenía sello ese día' : v.cuenta_sello,
+  })).reverse();
+  const porGarzon = {}, pares = {}, malas = {};
+  vs.forEach(v => {
+    const g = porGarzon[v.garzon] = porGarzon[v.garzon] || { garzon: v.garzon, sellos: 0, bajoMinimo: 0, anuladas: 0 };
+    if (v.estado === 'sello' || v.estado === 'mesa abierta' || v.estado === 'a mano') {
+      g.sellos++;
+      const k = v.garzon + '|' + v.socioId;
+      pares[k] = pares[k] || { garzon: v.garzon, socio: v.socio, n: 0 };
+      pares[k].n++;
+    }
+    if (v.estado === 'bajo mínimo') g.bajoMinimo++;
+    if (v.estado === 'anulada') g.anuladas++;
+    if (v.estado === 'bajo mínimo' || v.estado === 'anulada') {
+      malas[v.socioId] = malas[v.socioId] || { socio: v.socio, n: 0 };
+      malas[v.socioId].n++;
+    }
+  });
+  const alertas = [];
+  Object.values(pares).filter(p => p.garzon !== '—' && p.n >= 3).forEach(p =>
+    alertas.push(p.garzon + ' le cargó ' + p.n + ' visitas con sello a ' + p.socio + ' en 30 días.'));
+  Object.values(malas).filter(m => m.n >= 2).forEach(m =>
+    alertas.push(m.socio + ' tiene ' + m.n + ' visitas anuladas o bajo el mínimo en 30 días.'));
+  return { visitas: vs.slice(0, 200), garzones: Object.values(porGarzon).sort((a, b) => b.sellos - a.sellos), alertas };
+}
+
+function panelSumarVisita(tok, id) {
+  const yo = soloDueno_(tok);
   const s = buscarSocio_('id', id);
   if (!s) throw new Error('Socio no encontrado.');
-  const r = sumarVisita_(s, '', 'manual (panel)');
+  const r = sumarVisita_(s, '', 'manual (panel)', null, { garzon: yo.quien, mesa: 'a mano' });
   return r;
 }
 
-function panelCanjear(id) {
-  soloDueno_();
+function panelCanjear(tok, id) {
+  const yo = acceso_(tok);
   const s = buscarSocio_('id', id);
   if (Number(s.sellos) < CLUB.visitasParaPremio) throw new Error('Este socio aún no completa su tarjeta.');
   actualizar_('Socios', s._fila, { sellos: 0 });
-  agregar_('Canjes', { fecha: new Date(), socio_id: s.id, premio: CLUB.premio, registrado_por: Session.getActiveUser().getEmail() });
+  agregar_('Canjes', { fecha: new Date(), socio_id: s.id, premio: CLUB.premio, registrado_por: yo.quien });
   return 'Premio canjeado. La tarjeta de ' + s.nombre.split(' ')[0] + ' vuelve a 0.';
 }
 
-function panelCanjearRegalo(regaloId) {
-  soloDueno_();
+function panelCanjearRegalo(tok, regaloId) {
+  const yo = acceso_(tok);
   const r = leer_('Regalos').find(x => x.id === regaloId);
   if (!r || r.canjeado) throw new Error('Ese regalo ya fue canjeado o no existe.');
-  actualizar_('Regalos', r._fila, { canjeado: new Date(), canjeado_por: Session.getActiveUser().getEmail() });
+  actualizar_('Regalos', r._fila, { canjeado: new Date(), canjeado_por: yo.quien });
   return 'Regalo canjeado: ' + r.regalo + '.';
 }
 
-function panelContactado(fila) {
-  soloDueno_();
+function panelContactado(tok, fila) {
+  const yo = soloDueno_(tok);
   actualizar_('Calificaciones', fila, { contactado: 'si' });
   return 'Marcado como contactado.';
 }
 
-function panelGuardarPromo(p) {
-  soloDueno_();
+function panelGuardarPromo(tok, p) {
+  const yo = soloDueno_(tok);
   if (!p.titulo || !p.detalle) throw new Error('Completa el título y el detalle.');
   agregar_('Promociones', {
     id: 'P' + Date.now(), titulo: limpiar_(p.titulo, 80), detalle: limpiar_(p.detalle, 300),
@@ -274,28 +361,28 @@ function panelGuardarPromo(p) {
   return 'Publicada. Ya aparece en la app de los socios.';
 }
 
-function panelQuitarPromo(id) {
-  soloDueno_();
+function panelQuitarPromo(tok, id) {
+  const yo = soloDueno_(tok);
   const p = leer_('Promociones').find(x => x.id === id);
   if (p) actualizar_('Promociones', p._fila, { activa: 'no' });
   return 'Promoción quitada.';
 }
 
-function panelRegistrarCampana(segmento, n, mensaje) {
-  soloDueno_();
+function panelRegistrarCampana(tok, segmento, n, mensaje) {
+  const yo = soloDueno_(tok);
   agregar_('Campanas', { fecha: new Date(), segmento, socios: n, mensaje: limpiar_(mensaje, 500) });
   return 'Registrado.';
 }
 
-function panelSincronizar() {
-  soloDueno_();
+function panelSincronizar(tok) {
+  const yo = soloDueno_(tok);
   return sincronizarFudo();
 }
 
-function panelEliminarSocio(id) {
-  soloDueno_();
+function panelEliminarSocio(tok, id) {
+  const yo = soloDueno_(tok);
   const s = buscarSocio_('id', id);
-  if (s) eliminarSocio_(s, 'solicitud al local (' + Session.getActiveUser().getEmail() + ')');
+  if (s) eliminarSocio_(s, 'solicitud al local (' + yo.quien + ')');
   return 'Datos personales eliminados.';
 }
 
@@ -364,62 +451,135 @@ function crearClienteFudo_(socioId) {
 }
 
 /**
- * Corre cada hora: lee en Fudo las ventas cerradas de las últimas 36 horas que tienen cliente,
- * y suma una visita al socio (máximo una por día).
+ * Corre cada CLUB.minutosSync minutos: lee en Fudo las ventas de las últimas 36 horas que tienen cliente.
+ *  - Mesa abierta a nombre de un socio → suma la visita al tiro (si CLUB.visitaAlAbrir), sin correo todavía.
+ *  - Mesa cerrada → suma la visita si no estaba; completarConsumos_ guarda el consumo y, si venía de mesa abierta, manda el correo.
+ *  - Venta anulada o con otro cliente → completarConsumos_ anula la visita y descuenta el sello.
+ *  - Mesa cerrada con un total menor a CLUB.montoMinimoSello → no da sello (queda como "bajo mínimo").
+ * Máximo un sello por día. Cada visita guarda el garzón y la mesa para el control del panel.
  */
 function sincronizarFudo() {
   if (!credencialesFudo_()) return 'Fudo no está configurado todavía.';
-  // Reintenta crear en Fudo a los socios que quedaron pendientes.
-  leer_('Socios').filter(s => s.estado === 'activo' && !s.fudo_cliente_id).slice(0, 10).forEach(s => {
-    try { crearClienteFudo_(s.id); } catch (err) { log_('fudo', 'Pendiente ' + s.id + ': ' + err); }
-  });
-  const desde = new Date(Date.now() - 36 * 3600 * 1000).toISOString().slice(0, 19) + 'Z';
-  const hasta = new Date().toISOString().slice(0, 19) + 'Z';
-  const porFudo = {};
-  leer_('Socios').forEach(s => { if (s.fudo_cliente_id && s.estado === 'activo') porFudo[String(s.fudo_cliente_id)] = s; });
-  const vistas = {};
-  leer_('Visitas').forEach(v => { if (v.venta_fudo) vistas[String(v.venta_fudo)] = true; });
-  let pagina = 1, nuevas = 0, revisadas = 0;
-  while (pagina < 20) {
-    const res = fudo_('get', '/sales?filter[createdAt]=' + encodeURIComponent('and(gte.' + desde + ',lte.' + hasta + ')') +
-      '&page[size]=500&page[number]=' + pagina);
-    const ventas = res.data || [];
-    ventas.forEach(v => {
-      revisadas++;
-      const a = v.attributes || {};
-      const cliente = (((v.relationships || {}).customer || {}).data || {}).id;
-      const cerrada = a.saleState ? a.saleState === 'CLOSED' : !!a.closedAt;
-      if (!cliente || !cerrada || vistas[String(v.id)]) return;
-      const s = porFudo[String(cliente)];
-      if (!s) return;
-      sumarVisita_(buscarSocio_('id', s.id), String(v.id), 'fudo', a.closedAt ? new Date(a.closedAt) : new Date());
-      vistas[String(v.id)] = true;
-      nuevas++;
+  // Evita que el disparador y el botón del panel corran al mismo tiempo y dupliquen visitas.
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(30000)) return 'Ya hay una revisión de Fudo en curso. Intenta de nuevo en un minuto.';
+  try {
+    // Reintenta crear en Fudo a los socios que quedaron pendientes.
+    leer_('Socios').filter(s => s.estado === 'activo' && !s.fudo_cliente_id).slice(0, 10).forEach(s => {
+      try { crearClienteFudo_(s.id); } catch (err) { log_('fudo', 'Pendiente ' + s.id + ': ' + err); }
     });
-    if (ventas.length < 500) break;
-    pagina++;
+    const desde = new Date(Date.now() - 36 * 3600 * 1000).toISOString().slice(0, 19) + 'Z';
+    const hasta = new Date().toISOString().slice(0, 19) + 'Z';
+    const porFudo = {};
+    leer_('Socios').forEach(s => { if (s.fudo_cliente_id && s.estado === 'activo') porFudo[String(s.fudo_cliente_id)] = s; });
+    const vistas = {};
+    leer_('Visitas').forEach(v => { if (v.venta_fudo && v.cuenta_sello !== 'anulada') vistas[String(v.venta_fudo)] = true; });
+    let pagina = 1, nuevas = 0, revisadas = 0;
+    while (pagina < 20) {
+      const res = fudo_('get', '/sales?filter[createdAt]=' + encodeURIComponent('and(gte.' + desde + ',lte.' + hasta + ')') +
+        '&page[size]=500&page[number]=' + pagina);
+      const ventas = res.data || [];
+      ventas.forEach(v => {
+        revisadas++;
+        const a = v.attributes || {};
+        const cliente = (((v.relationships || {}).customer || {}).data || {}).id;
+        const estado = estadoVenta_(a);
+        if (!cliente || vistas[String(v.id)] || estado === 'anulada') return;
+        if (estado === 'abierta' && !CLUB.visitaAlAbrir) return;
+        const s = porFudo[String(cliente)];
+        if (!s) return;
+        const quien = garzonYMesa_(v);
+        if (estado === 'cerrada' && Number(a.total) < CLUB.montoMinimoSello) {
+          agregar_('Visitas', { fecha: a.closedAt ? new Date(a.closedAt) : new Date(), socio_id: s.id, venta_fudo: String(v.id), origen: 'fudo',
+            cuenta_sello: 'bajo mínimo', calificada: 'si', monto: Number(a.total), garzon: quien.garzon, mesa: quien.mesa });
+        } else if (estado === 'cerrada') {
+          sumarVisita_(buscarSocio_('id', s.id), String(v.id), 'fudo', a.closedAt ? new Date(a.closedAt) : new Date(), quien);
+        } else {
+          sumarVisita_(buscarSocio_('id', s.id), String(v.id), 'fudo (mesa abierta)', a.createdAt ? new Date(a.createdAt) : new Date(),
+            Object.assign({ correo: false }, quien));
+        }
+        vistas[String(v.id)] = true;
+        nuevas++;
+      });
+      if (ventas.length < 500) break;
+      pagina++;
+    }
+    const r = completarConsumos_(40);
+    limpiarInactivos_();
+    const msg = 'Fudo: ' + revisadas + ' ventas revisadas, ' + nuevas + ' visitas nuevas de socios' +
+      (r.cerradas ? ', ' + r.cerradas + ' consumos guardados' : '') + (r.anuladas ? ', ' + r.anuladas + ' visitas anuladas' : '') +
+      (r.bajoMinimo ? ', ' + r.bajoMinimo + ' bajo el mínimo' : '') + '.';
+    PropertiesService.getScriptProperties().setProperty('ULTIMO_SYNC', Utilities.formatDate(new Date(), CLUB.zona, 'dd-MM-yyyy HH:mm') + ' · ' + msg);
+    if (nuevas || r.anuladas) log_('sync', msg);
+    return msg;
+  } finally {
+    lock.releaseLock();
   }
-  const conDetalle = completarConsumos_(40);
-  limpiarInactivos_();
-  const msg = 'Fudo: ' + revisadas + ' ventas revisadas, ' + nuevas + ' visitas nuevas de socios' + (conDetalle ? ', ' + conDetalle + ' consumos guardados' : '') + '.';
-  PropertiesService.getScriptProperties().setProperty('ULTIMO_SYNC', Utilities.formatDate(new Date(), CLUB.zona, 'dd-MM-yyyy HH:mm') + ' · ' + msg);
-  if (nuevas) log_('sync', msg);
-  return msg;
+}
+
+/** Nombre del garzón y de la mesa de una venta de Fudo. Si Fudo no entrega el nombre, queda el número. */
+function garzonYMesa_(venta) {
+  const rel = k => ((((venta || {}).relationships || {})[k] || {}).data || {}).id;
+  return { garzon: nombreFudo_('users', rel('waiter'), 'Usuario'), mesa: nombreFudo_('tables', rel('table'), 'Mesa') };
+}
+
+const nombresFudo__ = {};
+function nombreFudo_(tipo, id, prefijo) {
+  if (!id) return '';
+  const k = tipo + '/' + id;
+  if (k in nombresFudo__) return nombresFudo__[k];
+  const cache = CacheService.getScriptCache();
+  let nombre = cache.get('fudo_' + k);
+  if (!nombre) {
+    try {
+      const a = (fudo_('get', '/' + tipo + '/' + id).data || {}).attributes || {};
+      nombre = String(a.name || a.number || '').trim();
+    } catch (err) { nombre = ''; }
+    nombre = nombre ? (prefijo === 'Mesa' && /^\d+$/.test(nombre) ? 'Mesa ' + nombre : nombre) : prefijo + ' ' + id;
+    cache.put('fudo_' + k, nombre, 21600);
+  }
+  return nombresFudo__[k] = nombre;
+}
+
+/** 'cerrada', 'anulada' o 'abierta' según lo que diga Fudo de la venta. */
+function estadoVenta_(a) {
+  const e = String(a.saleState || '').toUpperCase();
+  if (e === 'CLOSED' || (!e && a.closedAt)) return 'cerrada';
+  if (/CANCEL/.test(e)) return 'anulada';
+  return 'abierta';
 }
 
 /**
- * Guarda el monto y los productos de las visitas de socios que vienen de Fudo.
- * Revisa las visitas que todavía no tienen monto (así también recupera las anteriores).
+ * Revisa las visitas de Fudo que todavía no tienen monto (así también recupera las anteriores):
+ *  - venta cerrada → guarda monto y productos; si la visita venía de una mesa abierta, la confirma y manda el correo;
+ *  - venta anulada, o la mesa quedó a nombre de otro cliente → anula la visita;
+ *  - mesa todavía abierta → la deja para la próxima revisión.
  */
 function completarConsumos_(max) {
   const pendientes = leer_('Visitas').filter(v => v.venta_fudo && v.monto === '' && v.socio_id).slice(0, max || 40);
-  if (!pendientes.length) return 0;
+  const r = { cerradas: 0, anuladas: 0, bajoMinimo: 0 };
+  if (!pendientes.length) return r;
   const yaGuardadas = {};
   leer_('Consumos').forEach(c => yaGuardadas[String(c.venta_fudo)] = true);
-  let n = 0;
+  const socios = {};
+  leer_('Socios').forEach(s => socios[s.id] = s);
   pendientes.forEach(v => {
     try {
       const d = detalleVentaFudo_(v.venta_fudo);
+      const s = socios[v.socio_id];
+      const otroCliente = s && s.fudo_cliente_id && d.cliente !== String(s.fudo_cliente_id);
+      if (d.estado === 'anulada' || otroCliente) {
+        anularVisita_(v, d.estado === 'anulada' ? 'venta anulada en Fudo' : 'la mesa quedó a nombre de otro cliente');
+        r.anuladas++;
+        return;
+      }
+      if (d.estado !== 'cerrada') return;
+      if (d.total < CLUB.montoMinimoSello) {
+        anularVisita_(v, 'consumo de ' + d.total + ', bajo el mínimo', 'bajo mínimo', d.total);
+        actualizar_('Visitas', v._fila, { origen: 'fudo', garzon: d.garzon, mesa: d.mesa });
+        r.bajoMinimo++;
+        return;
+      }
       if (!yaGuardadas[String(v.venta_fudo)]) {
         d.lineas.forEach(l => agregar_('Consumos', {
           fecha: v.fecha, socio_id: v.socio_id, venta_fudo: String(v.venta_fudo), producto: l.producto,
@@ -427,14 +587,16 @@ function completarConsumos_(max) {
         }));
         yaGuardadas[String(v.venta_fudo)] = true;
       }
-      actualizar_('Visitas', v._fila, { monto: d.total });
-      n++;
+      actualizar_('Visitas', v._fila, { monto: d.total, origen: 'fudo', garzon: d.garzon, mesa: d.mesa });
+      // El correo para calificar sale al cerrar la mesa, no mientras el socio sigue comiendo.
+      if (v.origen === 'fudo (mesa abierta)' && v.cuenta_sello === 'si' && s && s.estado === 'activo') correoCalificar_(buscarSocio_('id', s.id));
+      r.cerradas++;
     } catch (err) {
       log_('fudo', 'Detalle de venta ' + v.venta_fudo + ': ' + err);
       if (/→ 404/.test(String(err))) actualizar_('Visitas', v._fila, { monto: 'sin datos' });
     }
   });
-  return n;
+  return r;
 }
 
 function detalleVentaFudo_(id) {
@@ -456,14 +618,19 @@ function detalleVentaFudo_(id) {
       precio: Number(a.price) || 0,
     };
   });
-  const total = Number(((r.data || {}).attributes || {}).total);
-  return { total: isNaN(total) ? lineas.reduce((t, l) => t + l.cantidad * l.precio, 0) : total, lineas };
+  const venta = r.data || {};
+  const total = Number((venta.attributes || {}).total);
+  return {
+    total: isNaN(total) ? lineas.reduce((t, l) => t + l.cantidad * l.precio, 0) : total, lineas,
+    estado: estadoVenta_(venta.attributes || {}), cliente: String(rel(venta, 'customer') || ''),
+    ...garzonYMesa_(venta),
+  };
 }
 
 /** Correr una vez desde el editor: guarda montos y productos de todas las visitas anteriores. */
 function recuperarConsumos() {
   let total = 0, n;
-  do { n = completarConsumos_(40); total += n; } while (n > 0 && total < 1000);
+  do { n = completarConsumos_(40).cerradas; total += n; } while (n > 0 && total < 1000);
   Logger.log('Visitas completadas con su consumo: ' + total);
   return total;
 }
@@ -540,16 +707,18 @@ function probarFudo() {
 
 /* ------------------------------ Lógica ------------------------------ */
 
-function sumarVisita_(s, ventaFudo, origen, cuando) {
+function sumarVisita_(s, ventaFudo, origen, cuando, opciones) {
   cuando = cuando || new Date();
+  const correo = !opciones || opciones.correo !== false;
   const dia = Utilities.formatDate(cuando, CLUB.zona, 'yyyy-MM-dd');
   const yaHoy = fechaTxt_(s.ultima_visita) === dia;
-  agregar_('Visitas', { fecha: cuando, socio_id: s.id, venta_fudo: ventaFudo, origen, cuenta_sello: yaHoy ? 'no' : 'si', calificada: yaHoy ? 'si' : '' });
+  agregar_('Visitas', { fecha: cuando, socio_id: s.id, venta_fudo: ventaFudo, origen, cuenta_sello: yaHoy ? 'no' : 'si', calificada: yaHoy ? 'si' : '',
+    garzon: (opciones || {}).garzon || '', mesa: (opciones || {}).mesa || '' });
   if (yaHoy) return 'Ya tenía su visita de hoy. No se suma otro sello.';
   const total = (Number(s.visitas_total) || 0) + 1;
   let sellos = Math.min((Number(s.sellos) || 0) + 1, CLUB.visitasParaPremio);
   if (total === 1 && s.referido_por) {
-    sellos = Math.min(sellos + CLUB.bonoReferido, CLUB.visitasParaPremio);
+    // El invitado suma solo su visita; el sello extra es para quien lo invitó.
     const ref = buscarSocio_('id', s.referido_por);
     if (ref && ref.estado === 'activo') {
       actualizar_('Socios', ref._fila, { sellos: Math.min((Number(ref.sellos) || 0) + CLUB.bonoReferido, CLUB.visitasParaPremio) });
@@ -557,16 +726,42 @@ function sumarVisita_(s, ventaFudo, origen, cuando) {
     }
   }
   actualizar_('Socios', s._fila, { sellos, visitas_total: total, ultima_visita: cuando });
-  if (CLUB.enviarCorreoCalificar && s.email) {
-    try {
-      MailApp.sendEmail({
-        to: s.email, name: 'Rusti-Co.', subject: '¿Cómo estuvo tu visita a Rusti-Co.?',
-        htmlBody: '<p>Hola ' + esc_(s.nombre.split(' ')[0]) + ',</p><p>Sumaste un sello: llevas <b>' + sellos + ' de ' + CLUB.visitasParaPremio +
-          '</b> para tu ' + esc_(CLUB.premio) + '.</p><p>¿Nos cuentas cómo estuvo todo? Toma 10 segundos: <a href="' + CLUB.urlClub + '">califica tu visita</a>.</p><p>Rusti-Co. · Momentos que saben bien</p>',
-      });
-    } catch (err) { log_('correo', String(err)); }
-  }
+  if (correo) correoCalificar_(Object.assign({}, s, { sellos }));
   return sellos >= CLUB.visitasParaPremio ? '¡' + s.nombre.split(' ')[0] + ' completó su tarjeta!' : 'Visita sumada: ' + sellos + ' de ' + CLUB.visitasParaPremio + '.';
+}
+
+function correoCalificar_(s) {
+  if (!CLUB.enviarCorreoCalificar || !s || !s.email) return;
+  try {
+    MailApp.sendEmail({
+      to: s.email, name: 'Rusti-Co.', subject: '¿Cómo estuvo tu visita a Rusti-Co.?',
+      htmlBody: '<p>Hola ' + esc_(s.nombre.split(' ')[0]) + ',</p><p>Sumaste un sello: llevas <b>' + (Number(s.sellos) || 0) + ' de ' + CLUB.visitasParaPremio +
+        '</b> para tu ' + esc_(CLUB.premio) + '.</p><p>¿Nos cuentas cómo estuvo todo? Toma 10 segundos: <a href="' + CLUB.urlClub + '">califica tu visita</a>.</p><p>Rusti-Co. · Momentos que saben bien</p>',
+    });
+  } catch (err) { log_('correo', String(err)); }
+}
+
+/**
+ * Deshace una visita de Fudo que no corresponde (venta anulada, mesa cambiada a otro cliente o consumo bajo el mínimo).
+ * Si ese día el socio tenía otra visita sin sello, el sello pasa a esa y no se descuenta.
+ */
+function anularVisita_(v, motivo, marca, monto) {
+  actualizar_('Visitas', v._fila, { cuenta_sello: marca || 'anulada', monto: monto === undefined ? 'anulada' : monto, calificada: 'si' });
+  log_('fudo', 'Visita anulada (' + motivo + '): venta ' + v.venta_fudo + ', socio ' + v.socio_id);
+  if (v.cuenta_sello !== 'si') return;
+  const dia = fechaTxt_(v.fecha);
+  const visitas = leer_('Visitas').filter(x => x.socio_id === v.socio_id && x._fila !== v._fila);
+  const otra = visitas.find(x => x.cuenta_sello === 'no' && fechaTxt_(x.fecha) === dia);
+  if (otra) { actualizar_('Visitas', otra._fila, { cuenta_sello: 'si', calificada: '' }); return; }
+  const s = buscarSocio_('id', v.socio_id);
+  if (!s) return;
+  const total = Math.max((Number(s.visitas_total) || 0) - 1, 0);
+  const conSello = visitas.filter(x => x.cuenta_sello === 'si');
+  actualizar_('Socios', s._fila, {
+    sellos: Math.max((Number(s.sellos) || 0) - 1, 0), visitas_total: total,
+    ultima_visita: conSello.length ? conSello[conSello.length - 1].fecha : '',
+  });
+  if (total === 0 && s.referido_por) log_('fudo', 'Revisar a mano: se anuló la primera visita de ' + s.nombre + ', que tenía bono por invitación.');
 }
 
 function eliminarSocio_(s, canal) {
@@ -604,7 +799,8 @@ function limpiarInactivos_() {
 
 function visitaPendiente_(socioId) {
   const limite = Date.now() - 7 * 864e5;
-  const vs = leer_('Visitas').filter(v => v.socio_id === socioId && v.cuenta_sello === 'si' && v.calificada !== 'si' && new Date(v.fecha).getTime() > limite);
+  const vs = leer_('Visitas').filter(v => v.socio_id === socioId && v.cuenta_sello === 'si' && v.calificada !== 'si' &&
+    v.origen !== 'fudo (mesa abierta)' && new Date(v.fecha).getTime() > limite);
   return vs.length ? vs[vs.length - 1] : null;
 }
 
