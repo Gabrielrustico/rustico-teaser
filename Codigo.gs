@@ -5,7 +5,7 @@
  *  - La web (rusti-co.cl/club) le habla por POST para registrar socios, mostrar su tarjeta y calificar.
  *  - El panel del local se abre en la misma URL con ?panel=1 y solo funciona para la cuenta dueña.
  *  - El equipo (garzonas) abre el mismo panel con ?equipo=1 en la implementación de clientes, con su
- *    nombre y el PIN del local (propiedad EQUIPO_PIN). Ven todo menos la pestaña Control.
+ *    nombre y el PIN del local (propiedad EQUIPO_PIN). Solo miran y canjean; no ven la pestaña Control.
  *  - Cada 15 minutos revisa en Fudo las mesas con cliente asignado y suma sellos: la visita queda
  *    registrada al abrir la mesa y se confirma al cerrarla (si la venta se anula, el sello se descuenta).
  *
@@ -228,6 +228,13 @@ function acceso_(tok) {
   return { dueno: false, quien: 'equipo: ' + nombre };
 }
 
+/** Cambios que solo hace el dueño. El equipo solo mira y canjea premios y regalos. */
+function soloDueno_(tok) {
+  const yo = acceso_(tok);
+  if (!yo.dueno) throw new Error('Eso lo hace solo el encargado. Desde aquí puedes mirar y canjear.');
+  return yo;
+}
+
 function equipoEntrar(nombre, pin) {
   const n = limpiar_(nombre, 40);
   if (n.length < 2) throw new Error('Escribe tu nombre.');
@@ -313,7 +320,7 @@ function control_(nombres) {
 }
 
 function panelSumarVisita(tok, id) {
-  const yo = acceso_(tok);
+  const yo = soloDueno_(tok);
   const s = buscarSocio_('id', id);
   if (!s) throw new Error('Socio no encontrado.');
   const r = sumarVisita_(s, '', 'manual (panel)', null, { garzon: yo.quien, mesa: 'a mano' });
@@ -338,13 +345,13 @@ function panelCanjearRegalo(tok, regaloId) {
 }
 
 function panelContactado(tok, fila) {
-  const yo = acceso_(tok);
+  const yo = soloDueno_(tok);
   actualizar_('Calificaciones', fila, { contactado: 'si' });
   return 'Marcado como contactado.';
 }
 
 function panelGuardarPromo(tok, p) {
-  const yo = acceso_(tok);
+  const yo = soloDueno_(tok);
   if (!p.titulo || !p.detalle) throw new Error('Completa el título y el detalle.');
   agregar_('Promociones', {
     id: 'P' + Date.now(), titulo: limpiar_(p.titulo, 80), detalle: limpiar_(p.detalle, 300),
@@ -355,25 +362,25 @@ function panelGuardarPromo(tok, p) {
 }
 
 function panelQuitarPromo(tok, id) {
-  const yo = acceso_(tok);
+  const yo = soloDueno_(tok);
   const p = leer_('Promociones').find(x => x.id === id);
   if (p) actualizar_('Promociones', p._fila, { activa: 'no' });
   return 'Promoción quitada.';
 }
 
 function panelRegistrarCampana(tok, segmento, n, mensaje) {
-  const yo = acceso_(tok);
+  const yo = soloDueno_(tok);
   agregar_('Campanas', { fecha: new Date(), segmento, socios: n, mensaje: limpiar_(mensaje, 500) });
   return 'Registrado.';
 }
 
 function panelSincronizar(tok) {
-  const yo = acceso_(tok);
+  const yo = soloDueno_(tok);
   return sincronizarFudo();
 }
 
 function panelEliminarSocio(tok, id) {
-  const yo = acceso_(tok);
+  const yo = soloDueno_(tok);
   const s = buscarSocio_('id', id);
   if (s) eliminarSocio_(s, 'solicitud al local (' + yo.quien + ')');
   return 'Datos personales eliminados.';
