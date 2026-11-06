@@ -18,7 +18,7 @@ const CLUB = {
   visitasParaPremio: 10,
   premio: '1 pizza gratis a elección',
   regaloCumpleanos: 'Postre gratis para el cumpleañero, o una Pizza Nutella por cada 6 personas en su mesa',
-  bonoReferido: 1,              // visitas extra para ambos cuando el invitado hace su primera visita
+  bonoReferido: 1,              // visita extra para quien invitó, cuando el invitado hace su primera visita
   regaloReferido: '1 pisco sour de regalo', // para el invitado al registrarse y para quien invitó cuando el amigo viene
   diasRegalo: 60,               // vigencia de los regalos
   diasRiesgo: 30,               // activo ≤ 30 días; en riesgo 31–60; perdido > 60
@@ -680,7 +680,7 @@ function sumarVisita_(s, ventaFudo, origen, cuando, opciones) {
   const total = (Number(s.visitas_total) || 0) + 1;
   let sellos = Math.min((Number(s.sellos) || 0) + 1, CLUB.visitasParaPremio);
   if (total === 1 && s.referido_por) {
-    sellos = Math.min(sellos + CLUB.bonoReferido, CLUB.visitasParaPremio);
+    // El invitado suma solo su visita; el sello extra es para quien lo invitó.
     const ref = buscarSocio_('id', s.referido_por);
     if (ref && ref.estado === 'activo') {
       actualizar_('Socios', ref._fila, { sellos: Math.min((Number(ref.sellos) || 0) + CLUB.bonoReferido, CLUB.visitasParaPremio) });
