@@ -467,7 +467,7 @@ names.forEach(n => {
 });
 render(names[0]);
 
-/* Precios al día: GitHub lee Fudo cada mañana y deja los precios en menu.json */
+/* Precios al día: GitHub lee Fudo varias veces al día y deja los precios en menu.json */
 fetch("menu.json", {cache:"no-store"}).then(r => r.ok ? r.json() : null).then(data => {
   if (!data || !data.products) return;
   aplicarPreciosFudo(data);

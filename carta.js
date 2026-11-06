@@ -1,6 +1,6 @@
 /* Carta de Rusti-Co.: la usan la portada (index.html) y la carta de las mesas (carta/).
    Para cambiar platos, descripciones o fotos, edita solo este archivo.
-   Los precios se actualizan solos cada mañana desde Fudo (menu.json). */
+   Los precios se actualizan solos varias veces al día desde Fudo (menu.json). */
 const MENU_UPDATED = "25 de octubre de 2026";
 const FUDO_MENU_URL = "https://menu.fu.do/rusti-co/qr-menu";
 const MENU = {

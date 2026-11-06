@@ -186,7 +186,7 @@ function spy(){
 
 render();
 
-/* Precios de Fudo (menu.json, se actualiza cada mañana) */
+/* Precios de Fudo (menu.json, se actualiza varias veces al día) */
 fetch("../menu.json", {cache:"no-store"}).then(r => r.ok ? r.json() : null).then(data => {
   if (!data || !data.products) return;
   const usadas = aplicarPreciosFudo(data), extra = {};
