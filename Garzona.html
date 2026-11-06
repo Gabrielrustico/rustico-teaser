@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="es">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap">
+<style>
+:root{--ink:#0d0a08;--ink-2:#17120e;--line:#2f251c;--cream:#f4ede2;--muted:#ab9f90;--gold:#ffd700;--gold-ink:#1a1405;
+  --good:#4cd27a;--bad:#ff6b5a;--font:"Montserrat","Segoe UI",system-ui,sans-serif;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ink);color:var(--cream);font-family:var(--font);font-size:16px;line-height:1.5}
+button,input{font:inherit;color:inherit}
+[hidden]{display:none!important}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:8px}
+.wrap{max-width:520px;margin:0 auto;padding:20px 16px 60px}
+.head{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+.head img{height:26px}
+.head h1{font-size:1rem;font-weight:600;margin:0}
+.head .who{margin-left:auto;font-size:.8rem;color:var(--muted)}
+.box{background:var(--ink-2);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:14px}
+.label{display:block;font-size:.7rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+input{width:100%;background:var(--ink);border:1px solid var(--line);border-radius:12px;padding:.8em 1em;margin-bottom:14px}
+.btn{display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:999px;padding:.8em 1.3em;font-weight:600;font-size:.9rem;cursor:pointer}
+.btn-gold{background:var(--gold);color:var(--gold-ink);width:100%}
+.btn-sm{padding:.55em 1em;font-size:.82rem;background:var(--gold);color:var(--gold-ink);flex:none}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:10px}
+.row input{margin:0}
+.muted{color:var(--muted)} .small{font-size:.84rem}
+.socio h2{font-size:1.05rem;font-weight:600;margin:0}
+.item{display:flex;align-items:center;gap:12px;border-top:1px solid var(--line);padding-top:12px;margin-top:12px}
+.item div{flex:1;min-width:0}
+.ok{color:var(--good)} .err{color:var(--bad)}
+.msg{min-height:1.5em;margin:6px 0 14px;font-size:.9rem}
+.linkbtn{background:none;border:0;color:var(--muted);font-size:.8rem;text-decoration:underline;cursor:pointer;padding:0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <img src="https://www.rusti-co.cl/img/logo-color.png" alt="Rusti-Co.">
+    <h1>Canjes del Club</h1>
+    <span class="who" id="who"></span>
+  </div>
+
+  <form class="box" id="entrar">
+    <label class="label" for="nombre">Tu nombre</label>
+    <input id="nombre" autocomplete="off" required maxlength="40">
+    <label class="label" for="pin">PIN del local</label>
+    <input id="pin" type="password" inputmode="numeric" autocomplete="off" required>
+    <button class="btn btn-gold" id="btnEntrar">Entrar</button>
+    <p class="msg err" id="msgEntrar" role="alert"></p>
+  </form>
+
+  <div id="app" hidden>
+    <form class="box" id="buscar">
+      <label class="label" for="q">Buscar socio</label>
+      <div class="row">
+        <input id="q" placeholder="Últimos 4 dígitos o nombre" autocomplete="off" required>
+        <button class="btn btn-sm" id="btnBuscar">Buscar</button>
+      </div>
+    </form>
+    <p class="msg" id="msg" role="status"></p>
+    <div id="lista"></div>
+    <button class="linkbtn" id="salir" type="button">Salir</button>
+  </div>
+</div>
+<script>
+const $ = id => document.getElementById(id);
+const esc = v => String(v == null ? '' : v).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const st = { pin: '', nombre: '', q: '' };
+try { $('nombre').value = localStorage.getItem('garzona') || ''; } catch (e) {}
+
+function run(fn, ...args) {
+  return new Promise((ok, ko) => google.script.run.withSuccessHandler(ok).withFailureHandler(e => ko(new Error(e && e.message || 'Error'))) [fn](...args));
+}
+function aviso(t, ok) { $('msg').textContent = t; $('msg').className = 'msg ' + (ok ? 'ok' : 'err'); }
+
+$('entrar').onsubmit = async ev => {
+  ev.preventDefault();
+  $('btnEntrar').disabled = true; $('msgEntrar').textContent = '';
+  try {
+    await run('garzonaEntrar', $('pin').value);
+    st.pin = $('pin').value; st.nombre = $('nombre').value.trim();
+    try { localStorage.setItem('garzona', st.nombre); } catch (e) {}
+    $('who').textContent = st.nombre;
+    $('entrar').hidden = true; $('app').hidden = false; $('q').focus();
+  } catch (e) { $('msgEntrar').textContent = e.message; }
+  $('btnEntrar').disabled = false;
+};
+
+$('salir').onclick = () => { st.pin = ''; $('pin').value = ''; $('lista').innerHTML = ''; $('msg').textContent = ''; $('app').hidden = true; $('entrar').hidden = false; $('who').textContent = ''; };
+
+$('buscar').onsubmit = ev => { ev.preventDefault(); st.q = $('q').value; buscar(); };
+
+async function buscar() {
+  $('btnBuscar').disabled = true;
+  try {
+    const socios = await run('garzonaBuscar', st.pin, st.q);
+    if (!socios.length) { $('lista').innerHTML = ''; aviso('No encontré socios con esa búsqueda.'); }
+    pintar(socios);
+  } catch (e) { aviso(e.message); }
+  $('btnBuscar').disabled = false;
+}
+
+function pintar(socios) {
+  $('lista').innerHTML = socios.map(s => {
+    const premio = s.sellos >= s.meta
+      ? `<div class="item"><div><b>${esc(s.premio)}</b><div class="small muted">Tarjeta completa</div></div><button class="btn btn-sm" data-premio="${esc(s.id)}">Canjear</button></div>` : '';
+    const regalos = s.regalos.map(r =>
+      `<div class="item"><div><b>${esc(r.regalo)}</b><div class="small muted">${esc(r.motivo)} · vence ${esc(r.vence)}</div></div><button class="btn btn-sm" data-regalo="${esc(r.id)}">Canjear</button></div>`).join('');
+    const nada = !premio && !regalos ? '<p class="small muted" style="margin-top:10px">No tiene regalos ni premios para canjear.</p>' : '';
+    return `<div class="box socio"><h2>${esc(s.nombre)}</h2><div class="small muted">Teléfono ···${esc(s.tel4)} · ${s.sellos} de ${s.meta} sellos</div>${premio}${regalos}${nada}</div>`;
+  }).join('');
+}
+
+$('lista').onclick = async ev => {
+  const b = ev.target.closest('button'); if (!b) return;
+  const nombre = b.closest('.item').querySelector('b').textContent;
+  if (!confirmar(b, nombre)) return;
+  b.disabled = true;
+  try {
+    const t = b.dataset.regalo ? await run('garzonaCanjearRegalo', st.pin, st.nombre, b.dataset.regalo)
+                               : await run('garzonaCanjearPremio', st.pin, st.nombre, b.dataset.premio);
+    await buscar(); aviso(t, true);
+  } catch (e) { aviso(e.message); b.disabled = false; }
+};
+
+/* Primer toque pide confirmar, el segundo canjea (sin ventanas emergentes). */
+function confirmar(b, nombre) {
+  if (b.dataset.confirmar) return true;
+  b.dataset.confirmar = '1'; b.textContent = '¿Confirmar?';
+  aviso('Toca "¿Confirmar?" para canjear ' + nombre + '. Hazlo solo al entregarlo.', true);
+  setTimeout(() => { if (b.isConnected) { delete b.dataset.confirmar; b.textContent = 'Canjear'; } }, 5000);
+  return false;
+}
+</script>
+</body>
+</html>

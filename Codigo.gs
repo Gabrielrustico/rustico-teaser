@@ -4,6 +4,8 @@
  * Vive pegado a una hoja de cálculo de administracion@rusti-co.cl.
  *  - La web (rusti-co.cl/club) le habla por POST para registrar socios, mostrar su tarjeta y calificar.
  *  - El panel del local se abre en la misma URL con ?panel=1 y solo funciona para la cuenta dueña.
+ *  - La vista garzona se abre con ?garzona=1 en la implementación de clientes: con el PIN del local
+ *    deja buscar socios y canjear sus regalos y premios, nada más. PIN: propiedad GARZONA_PIN.
  *  - Cada 15 minutos revisa en Fudo las mesas con cliente asignado y suma sellos: la visita queda
  *    registrada al abrir la mesa y se confirma al cerrarla (si la venta se anula, el sello se descuenta).
  *
@@ -84,6 +86,12 @@ function doGet(e) {
   if (e && e.parameter && e.parameter.panel) {
     return HtmlService.createTemplateFromFile('Panel').evaluate()
       .setTitle('Panel del Club Rusti-Co.')
+      .addMetaTag('viewport', 'width=device-width, initial-scale=1')
+      .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.DEFAULT);
+  }
+  if (e && e.parameter && e.parameter.garzona) {
+    return HtmlService.createTemplateFromFile('Garzona').evaluate()
+      .setTitle('Club Rusti-Co. · Canjes')
       .addMetaTag('viewport', 'width=device-width, initial-scale=1')
       .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.DEFAULT);
   }
@@ -207,6 +215,80 @@ function eliminarme(b) {
   if (!s) return { ok: false, sesion: false, error: 'Tu sesión venció. Entra con tu teléfono.' };
   eliminarSocio_(s, 'web rusti-co.cl/club');
   return { ok: true };
+}
+
+/* ---------------------------- Vista garzona ---------------------------- */
+/*
+ * Solo buscar socios y canjear lo que ya tienen en su tarjeta. No suma visitas ni muestra el control.
+ * El PIN vive en Propiedades de la secuencia de comandos → GARZONA_PIN (lo define el dueño).
+ * Tras 5 PIN incorrectos seguidos se bloquea 15 minutos.
+ */
+function pinGarzona_(pin) {
+  const cache = CacheService.getScriptCache();
+  const fallos = Number(cache.get('PIN_FALLOS') || 0);
+  if (fallos >= 5) throw new Error('Demasiados intentos. Espera 15 minutos o avisa al encargado.');
+  const real = PropertiesService.getScriptProperties().getProperty('GARZONA_PIN');
+  if (!real) throw new Error('Falta configurar el PIN del local. Avisa al encargado.');
+  if (String(pin || '') !== String(real)) {
+    cache.put('PIN_FALLOS', String(fallos + 1), 900);
+    if (fallos + 1 >= 5) log_('garzona', 'Vista garzona bloqueada 15 min por PIN incorrecto');
+    throw new Error('PIN incorrecto.');
+  }
+  cache.remove('PIN_FALLOS');
+}
+
+function nombreGarzona_(g) {
+  const n = limpiar_(g, 40);
+  if (n.length < 2) throw new Error('Escribe tu nombre antes de canjear.');
+  return n;
+}
+
+function garzonaEntrar(pin) {
+  pinGarzona_(pin);
+  return true;
+}
+
+/** Busca por los últimos 4 dígitos del teléfono o por nombre (3 letras o más). */
+function garzonaBuscar(pin, q) {
+  pinGarzona_(pin);
+  const t = String(q || '').trim();
+  const sinTilde = x => String(x).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  let socios = leer_('Socios').filter(s => s.estado === 'activo');
+  if (/^\d{4}$/.test(t)) socios = socios.filter(s => String(s.telefono).replace(/\D/g, '').slice(-4) === t);
+  else if (t.length >= 3) socios = socios.filter(s => sinTilde(s.nombre).includes(sinTilde(t)));
+  else throw new Error('Escribe los últimos 4 dígitos del teléfono o al menos 3 letras del nombre.');
+  return socios.slice(0, 10).map(s => ({
+    id: s.id, nombre: s.nombre, tel4: String(s.telefono).replace(/\D/g, '').slice(-4),
+    sellos: Number(s.sellos) || 0, meta: CLUB.visitasParaPremio, premio: CLUB.premio,
+    regalos: regalosPendientes_(s.id),
+  }));
+}
+
+function garzonaCanjearRegalo(pin, garzona, regaloId) {
+  pinGarzona_(pin);
+  const quien = nombreGarzona_(garzona);
+  const lock = LockService.getScriptLock(); lock.waitLock(20000);
+  try {
+    const r = leer_('Regalos').find(x => x.id === regaloId);
+    if (!r || r.canjeado) throw new Error('Ese regalo ya fue canjeado o no existe.');
+    if (fechaTxt_(r.vence) < Utilities.formatDate(new Date(), CLUB.zona, 'yyyy-MM-dd')) throw new Error('Ese regalo ya venció.');
+    actualizar_('Regalos', r._fila, { canjeado: new Date(), canjeado_por: 'garzona: ' + quien });
+    return 'Listo: ' + r.regalo + ' canjeado.';
+  } finally { lock.releaseLock(); }
+}
+
+function garzonaCanjearPremio(pin, garzona, socioId) {
+  pinGarzona_(pin);
+  const quien = nombreGarzona_(garzona);
+  const lock = LockService.getScriptLock(); lock.waitLock(20000);
+  try {
+    const s = buscarSocio_('id', socioId);
+    if (!s || s.estado !== 'activo') throw new Error('Socio no encontrado.');
+    if (Number(s.sellos) < CLUB.visitasParaPremio) throw new Error('Este socio aún no completa su tarjeta.');
+    actualizar_('Socios', s._fila, { sellos: 0 });
+    agregar_('Canjes', { fecha: new Date(), socio_id: s.id, premio: CLUB.premio, registrado_por: 'garzona: ' + quien });
+    return 'Listo: premio canjeado. La tarjeta de ' + s.nombre.split(' ')[0] + ' vuelve a 0.';
+  } finally { lock.releaseLock(); }
 }
 
 /* ---------------------------- Panel del local ---------------------------- */
