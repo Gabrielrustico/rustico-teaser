@@ -97,6 +97,8 @@ function doGet(e) {
 function doPost(e) {
   let body = {};
   try { body = JSON.parse(e.postData.contents || '{}'); } catch (err) { return json_({ ok: false, error: 'Solicitud inválida.' }); }
+  // Escaneo del QR de las mesas (rusti-co.cl/carta/?m=mesa): queda en la pestaña Registro con tipo "escaneo".
+  if (body.accion === 'escaneo') { log_('escaneo', limpiar_(body.origen, 30) || 'qr'); return json_({ ok: true }); }
   const lock = LockService.getScriptLock();
   lock.waitLock(20000);
   try {
