@@ -91,7 +91,7 @@ const PIZZAS_CLASICAS = ["Margarita","Pepperoni","Napolitana","Hawaiana","4 Ques
 // Las pizzas que no están en ninguna de las dos listas quedan en "De la casa".
 const SABOR = {
   "Burrata":"Cremosa y fresca, con el crocante del pistacho.",
-  "Brisket":"Carne tierna y jugosa, entre dulce y picante.",
+  "Brisket":"Carne tierna y jugosa, con un toque dulce de cebolla caramelizada.",
   "Camarón":"Sabor a mar: base de bisque, cremosa, con limón que la refresca.",
   "Salmón":"Suave y cremosa, con el toque ácido del limón y las alcaparras.",
 };
