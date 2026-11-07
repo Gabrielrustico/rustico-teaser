@@ -2,7 +2,7 @@ name: Actualizar precios desde Fudo
 
 on:
   schedule:
-    - cron: "17 10 * * *"   # todos los días, ~7:17 en Concepción
+    - cron: "17 0,10,15,18,21 * * *"   # 5 veces al día (hora de Concepción en verano: 7:17, 12:17, 15:17, 18:17 y 21:17)
   workflow_dispatch:         # botón "Run workflow" para correrlo a mano
 
 permissions:

@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Carta · Rusti-Co. Pizzería & Bar</title>
+<meta name="description" content="Carta de Rusti-Co. Pizzería & Bar, Concepción: pizzas napolitanas, para compartir, postres, coctelería y cervezas.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap">
+<style>
+/* Carta para las mesas (QR del acrílico). Pensada para el celular: todo en una sola lista,
+   categorías fijas arriba y la franja del Club siempre visible abajo. */
+:root{
+  --ink:#0d0a08; --ink-2:#17120e; --ink-3:#231b15;
+  --cream:#f4ede2; --muted:#ab9f90; --gold:#ffd700; --gold-ink:#1a1405;
+  --font:"Montserrat","Segoe UI",system-ui,-apple-system,sans-serif;
+  --bar:64px;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:120px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--ink);color:var(--cream);font-family:var(--font);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;
+  padding-bottom:calc(var(--bar) + env(safe-area-inset-bottom,0px) + 16px)}
+a{color:inherit}
+img{display:block;max-width:100%}
+h1,h2,h3{margin:0;font-weight:300;letter-spacing:-.01em;line-height:1.15;text-wrap:balance}
+p{margin:0}
+.wrap{max-width:760px;margin:0 auto;padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px))}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:4px}
+.eyebrow{font-size:.7rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+
+/* Encabezado */
+.top{padding-top:env(safe-area-inset-top,0px)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:16px 6px}
+.top img{height:34px;width:auto}
+.top a.home{font-size:.78rem;color:var(--muted);text-decoration:none}
+.intro{padding-block:14px 18px}
+.intro h1{font-size:2rem}
+.intro .sub{color:var(--muted);font-size:.8rem;margin-top:6px}
+
+/* Tarjeta del Club */
+.club{display:grid;grid-template-columns:1fr auto;gap:12px 16px;align-items:center;background:var(--gold);color:var(--gold-ink);border-radius:18px;padding:16px 18px;text-decoration:none;margin-bottom:22px}
+.club b{display:block;font-size:1.05rem;font-weight:700;line-height:1.25}
+.club small{display:block;font-size:.8rem;margin-top:2px}
+.club .go{background:var(--gold-ink);color:var(--gold);border-radius:999px;padding:.7em 1.1em;font-size:.8rem;font-weight:700;white-space:nowrap}
+.stamps{grid-column:1/-1;display:grid;grid-template-columns:repeat(10,1fr);gap:5px}
+.stamps span{aspect-ratio:1;border-radius:50%;border:1.5px dashed color-mix(in srgb,var(--gold-ink) 45%,transparent)}
+.stamps span.on{background:var(--gold-ink);border:0}
+.stamps span.prize{border:0;background:var(--gold-ink) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23ffd700' d='M12 3C7.8 3 4.1 4.8 1.8 7.6l10.2 13.9L22.2 7.6C19.9 4.8 16.2 3 12 3Zm-3 7a1.4 1.4 0 1 1 0-2.8A1.4 1.4 0 0 1 9 10Zm4.5 4a1.4 1.4 0 1 1 0-2.8 1.4 1.4 0 0 1 0 2.8Zm1.5-6a1.1 1.1 0 1 1 0-2.2A1.1 1.1 0 0 1 15 8Z'/%3E%3C/svg%3E") center/62% no-repeat}
+
+/* Categorías fijas */
+.cats{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--ink) 92%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--ink-3);padding-top:env(safe-area-inset-top,0px)}
+.cats .wrap{display:flex;gap:8px;overflow-x:auto;padding-block:10px;scrollbar-width:none}
+.cats .wrap::-webkit-scrollbar{display:none}
+.cats a{flex:none;border:1px solid var(--ink-3);color:var(--muted);font-size:.84rem;font-weight:500;padding:.55em 1em;border-radius:999px;text-decoration:none}
+.cats a.on{background:var(--cream);color:var(--ink);border-color:var(--cream)}
+
+/* Secciones y platos */
+.sec{padding-top:30px}
+.sec h2{font-size:1.6rem;margin-bottom:16px}
+.exec{display:grid;grid-template-columns:84px 1fr;gap:4px 16px;align-items:center;border:1px solid color-mix(in srgb,var(--gold) 40%,transparent);border-radius:16px;padding:12px;margin-top:6px}
+.exec img{grid-row:span 3;width:84px;aspect-ratio:4/5;object-fit:cover;border-radius:999px 999px 8px 8px}
+.exec p{font-size:.88rem;color:var(--cream)}
+.exec .eyebrow{font-size:.64rem;letter-spacing:.12em}
+.item{display:grid;grid-template-columns:72px 1fr;column-gap:14px;align-items:center;padding-block:12px;border-bottom:1px solid var(--ink-3)}
+.item.noimg{grid-template-columns:1fr}
+.item .ph{width:72px;height:72px;border-radius:50%;overflow:hidden;background:#050505}
+.item .ph img{width:100%;height:100%;object-fit:cover}
+.row{display:flex;align-items:baseline;gap:10px}
+.row h3{font-size:1rem;font-weight:500;line-height:1.3}
+.row .lead{flex:1;border-bottom:1px dotted var(--ink-3);transform:translateY(-4px);min-width:12px}
+.price{font-weight:600;color:var(--gold);font-variant-numeric:tabular-nums;white-space:nowrap}
+.desc{color:var(--muted);font-size:.84rem;line-height:1.45;margin-top:2px}
+.tag{display:inline-block;margin-left:6px;font-size:.62rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);border:1px solid color-mix(in srgb,var(--gold) 45%,transparent);border-radius:999px;padding:.12em .55em;vertical-align:middle}
+/* Favoritas de la casa */
+.favs{display:grid;grid-template-columns:1fr 1fr;gap:22px 14px;margin-bottom:8px}
+.fav{display:grid;gap:8px;align-content:start}
+.fav .ph{aspect-ratio:1;border-radius:50%;overflow:hidden;background:#050505}
+.fav .ph img{width:100%;height:100%;object-fit:cover}
+.fav h3{font-size:1rem;font-weight:600;line-height:1.25}
+.fav .price{font-size:1.05rem}
+.sabor{color:var(--cream);font-size:.86rem;line-height:1.4}
+.item .sabor{margin-top:2px}
+.pair{margin-top:18px;border-left:2px solid var(--gold);padding:4px 0 4px 14px;font-size:.88rem;color:var(--cream)}
+.pair b{color:var(--gold);font-weight:600}
+.more{margin:22px 0 4px;font-size:.7rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+
+.note{margin:36px 0 10px;color:var(--muted);font-size:.8rem}
+.note a{color:var(--cream)}
+
+/* Franja fija del Club */
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:10;background:var(--gold);color:var(--gold-ink);text-decoration:none;box-shadow:0 -6px 24px rgba(0,0,0,.45);padding-bottom:env(safe-area-inset-bottom,0px)}
+.bar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:var(--bar)}
+.bar span{font-size:.9rem;line-height:1.25}
+.bar b{font-weight:700}
+.bar .go{flex:none;background:var(--gold-ink);color:var(--gold);border-radius:999px;padding:.65em 1.05em;font-size:.82rem;font-weight:700}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <img src="../img/logo-color.png" alt="Rusti-Co. Pizzería & Bar">
+    <a class="home" href="../">rusti-co.cl</a>
+  </div>
+</header>
+
+<div class="wrap intro">
+  <p class="eyebrow">Pizzería &amp; Bar · Concepción</p>
+  <h1>Nuestra carta</h1>
+  <p class="sub">Precios en pesos chilenos.</p>
+</div>
+
+<div class="wrap">
+  <a class="club" id="clubCard" href="../club/">
+    <span><b>Junta 10 visitas y una pizza va por la casa</b><small>Club Rusti-Co. · Gratis, te inscribes en 1 minuto.</small></span>
+    <span class="go">Inscríbete</span>
+    <span class="stamps" aria-hidden="true"><span class="on"></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span class="prize"></span></span>
+  </a>
+</div>
+
+<nav class="cats" aria-label="Categorías de la carta"><div class="wrap" id="cats"></div></nav>
+
+<main class="wrap" id="carta"></main>
+
+<div class="wrap">
+  <p class="note">Precios en pesos chilenos, actualizados al <span id="menuDate"></span>. Si tienes alguna alergia o restricción, avísale a tu garzón o garzona. ¿No carga bien? Abre la <a id="fudoLink" href="#" target="_blank" rel="noopener">carta de respaldo</a>.</p>
+</div>
+
+<a class="bar" id="clubBar" href="../club/">
+  <span class="wrap"><span>🍕 <b>10 visitas = pizza gratis</b><br>Club Rusti-Co.</span><span class="go">Inscríbete →</span></span>
+</a>
+
+<script src="../carta.js"></script>
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbxGEE89OFZEPTTve4zdjylVMj80sAnWi2TlRYvxKoQHSozT4GBWVHd7t93LMNxp2Q/exec";
+const clp = n => Math.round(n).toLocaleString("es-CL");   // sin signo $: los precios se aclaran una vez arriba
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const slug = s => normName(s) || "otros";
+document.getElementById("menuDate").textContent = MENU_UPDATED;
+document.getElementById("fudoLink").href = FUDO_MENU_URL;
+
+/* Medir escaneos: el QR de las mesas apunta a rusti-co.cl/carta/?m=mesa
+   (o ?m=mesa5, ?m=barra...). Se cuenta una vez por visita y llega al Club como "escaneo". */
+const origen = (new URLSearchParams(location.search).get("m") || "").replace(/[^\w-]/g, "").slice(0, 30);
+if (origen && !sessionStorage.getItem("escaneo")) {
+  sessionStorage.setItem("escaneo", "1");
+  fetch(API_URL, {method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"},
+    body: JSON.stringify({accion:"escaneo", origen, pagina:"carta"}), keepalive:true}).catch(() => {});
+}
+
+function row(n, p, tag){
+  return `<div class="row"><h3>${esc(n)}${tag?`<span class="tag">${esc(tag)}</span>`:""}</h3><span class="lead"></span><span class="price">${clp(p)}</span></div>`;
+}
+function item([n, p, d, img, tag]){
+  return `<div class="item${img ? "" : " noimg"}">${img ? `<div class="ph"><img src="../img/${img}.jpg" alt="" loading="lazy"></div>` : ""}
+    <div>${row(n, p, tag)}${SABOR[n] ? `<p class="sabor">${esc(SABOR[n])}</p>` : ""}${d ? `<p class="desc">${esc(d)}</p>` : ""}</div></div>`;
+}
+function fav([n, p, d, img, tag]){
+  return `<article class="fav"><div class="ph"><img src="../img/${img}.jpg" alt="Pizza ${esc(n)}" loading="lazy"></div>
+    <h3>${esc(n)}${tag ? `<span class="tag">${esc(tag)}</span>` : ""}</h3><span class="price">${clp(p)}</span>
+    ${SABOR[n] ? `<p class="sabor">${esc(SABOR[n])}</p>` : ""}<p class="desc">${esc(d)}</p></article>`;
+}
+/* Menú ejecutivo: solo se muestra de lunes a viernes, de 13:00 a 15:30 (hora de Concepción) */
+function horaEjecutivo(){
+  const f = new Intl.DateTimeFormat("en-US", {timeZone:"America/Santiago", weekday:"short", hour:"2-digit", minute:"2-digit", hour12:false}).formatToParts(new Date());
+  const g = t => f.find(x => x.type === t).value, m = (+g("hour") % 24) * 60 + +g("minute");
+  return !["Sat","Sun"].includes(g("weekday")) && m >= 13*60 && m < 15*60 + 30;
+}
+/* Pizzas: favoritas con foto grande, luego "De la casa" y "Clásicas" */
+function pizzas(items, add){
+  const by = n => items.find(i => i[0] === n);
+  const favs = PIZZAS_FAVORITAS.map(by).filter(i => i && i[3]);
+  const resto = items.filter(i => !favs.includes(i));
+  const clasicas = resto.filter(i => PIZZAS_CLASICAS.includes(i[0]));
+  const casa = resto.filter(i => !PIZZAS_CLASICAS.includes(i[0])).concat(add);
+  return `${favs.length ? `<p class="more" style="margin-top:0">Las favoritas de la casa</p><div class="favs">${favs.map(fav).join("")}</div>` : ""}
+    ${horaEjecutivo() ? ejecutivo : ""}
+    ${casa.length ? `<p class="more">De la casa</p>${casa.map(item).join("")}` : ""}
+    ${clasicas.length ? `<p class="more">Clásicas</p>${clasicas.map(item).join("")}` : ""}
+    <p class="pair"><b>Para acompañar:</b> ${esc(ACOMPANAR)}</p>`;
+}
+
+let ejecutivo = "";
+/* extra: productos de Fudo que no están en carta.js, agrupados por su categoría en Fudo */
+function render(extra = {}){
+  const secs = Object.entries(MENU).map(([cat, {items}]) => {
+    const add = (extra[slug(cat)] || {}).items || [];
+    delete extra[slug(cat)];
+    return [cat, items, add];
+  });
+  Object.values(extra).forEach(g => secs.push([g.name, [], g.items]));
+  ejecutivo = `<div class="exec"><img src="../img/ejecutivo.jpg" alt="Menú ejecutivo" loading="lazy">
+      <p class="eyebrow">Menú ejecutivo · lun a vie, 13:00 a 15:30</p>
+      <p>Pizza individual (Margarita, Pepperoni o Napolitana) + bebida 220 cc + ensalada.</p>
+      <span class="price">9.990</span></div>`;
+  document.getElementById("carta").innerHTML = secs.map(([cat, items, add], i) => `
+    <section class="sec" id="${slug(cat)}"><h2>${esc(cat)}</h2>
+      ${MENU[cat] && MENU[cat].type === "pizzas" ? pizzas(items, add) : `
+      ${items.map(item).join("")}
+      ${add.length ? `${items.length ? `<p class="more">Más ${esc(cat.toLowerCase())}</p>` : ""}${add.map(item).join("")}` : ""}`}
+    </section>`).join("");
+  document.getElementById("cats").innerHTML = secs.map(([cat]) => `<a href="#${slug(cat)}">${esc(cat)}</a>`).join("");
+  spy();
+}
+
+/* Marca la categoría que se está viendo */
+let obs;
+function spy(){
+  if (obs) obs.disconnect();
+  const links = [...document.querySelectorAll("#cats a")];
+  obs = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    links.forEach(a => {
+      const on = a.getAttribute("href") === "#" + e.target.id;
+      a.classList.toggle("on", on);
+      if (on) a.parentNode.scrollTo({left: a.offsetLeft - 18, behavior:"smooth"});
+    });
+  }), {rootMargin:"-120px 0px -65% 0px"});
+  document.querySelectorAll("#carta .sec").forEach(s => obs.observe(s));
+}
+
+render();
+
+/* Precios de Fudo (menu.json, se actualiza varias veces al día) */
+fetch("../menu.json", {cache:"no-store"}).then(r => r.ok ? r.json() : null).then(data => {
+  if (!data || !data.products) return;
+  const usadas = aplicarPreciosFudo(data), extra = {};
+  for (const [k, f] of Object.entries(data.products)) {
+    if (usadas.has(k) || f.active === false || f.qr === false || !f.price) continue;
+    const g = extra[slug(f.category || "Otros")] ||= {name: f.category || "Otros", items: []};
+    g.items.push([f.name, f.price, ""]);
+  }
+  Object.values(extra).forEach(g => g.items.sort((a, b) => a[0].localeCompare(b[0], "es")));
+  if (data.updated) document.getElementById("menuDate").textContent =
+    new Date(data.updated).toLocaleDateString("es-CL", {day:"numeric", month:"long", year:"numeric", timeZone:"America/Santiago"});
+  render(extra);
+}).catch(() => {});
+</script>
+</body>
+</html>
