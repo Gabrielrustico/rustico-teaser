@@ -85,6 +85,18 @@ const MENU = {
   ]},
 };
 
+/* Carta de las mesas (carta/): orden de las pizzas y frases de sabor */
+const PIZZAS_FAVORITAS = ["Burrata","Brisket","Camarón","Salmón"];   // van primero, con foto grande
+const PIZZAS_CLASICAS = ["Margarita","Pepperoni","Napolitana","Hawaiana","4 Quesos","Capricciosa","Vegetariana","Mexicana","Burger","Árabe"];
+// Las pizzas que no están en ninguna de las dos listas quedan en "De la casa".
+const SABOR = {
+  "Burrata":"Cremosa y fresca, con el crocante del pistacho.",
+  "Brisket":"Carne tierna y jugosa, entre dulce y picante.",
+  "Camarón":"Sabor a mar: base de bisque, cremosa, con limón que la refresca.",
+  "Salmón":"Suave y cremosa, con el toque ácido del limón y las alcaparras.",
+};
+const ACOMPANAR = "Un Pisco sour Catedral o un schop Cocholgue bien helado.";
+
 /* Nombre en la web -> nombre del producto en Fudo, cuando no coinciden */
 const FUDO_ALIASES = {
   "Prosciutto, mango y crema":"Prosciuttos Mango y Crema",

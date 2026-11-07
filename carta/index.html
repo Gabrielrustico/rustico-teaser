@@ -38,6 +38,7 @@ p{margin:0}
 .top a.home{font-size:.78rem;color:var(--muted);text-decoration:none}
 .intro{padding-block:14px 18px}
 .intro h1{font-size:2rem}
+.intro .sub{color:var(--muted);font-size:.8rem;margin-top:6px}
 
 /* Tarjeta del Club */
 .club{display:grid;grid-template-columns:1fr auto;gap:12px 16px;align-items:center;background:var(--gold);color:var(--gold-ink);border-radius:18px;padding:16px 18px;text-decoration:none;margin-bottom:22px}
@@ -73,6 +74,17 @@ p{margin:0}
 .price{font-weight:600;color:var(--gold);font-variant-numeric:tabular-nums;white-space:nowrap}
 .desc{color:var(--muted);font-size:.84rem;line-height:1.45;margin-top:2px}
 .tag{display:inline-block;margin-left:6px;font-size:.62rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);border:1px solid color-mix(in srgb,var(--gold) 45%,transparent);border-radius:999px;padding:.12em .55em;vertical-align:middle}
+/* Favoritas de la casa */
+.favs{display:grid;grid-template-columns:1fr 1fr;gap:22px 14px;margin-bottom:8px}
+.fav{display:grid;gap:8px;align-content:start}
+.fav .ph{aspect-ratio:1;border-radius:50%;overflow:hidden;background:#050505}
+.fav .ph img{width:100%;height:100%;object-fit:cover}
+.fav h3{font-size:1rem;font-weight:600;line-height:1.25}
+.fav .price{font-size:1.05rem}
+.sabor{color:var(--cream);font-size:.86rem;line-height:1.4}
+.item .sabor{margin-top:2px}
+.pair{margin-top:18px;border-left:2px solid var(--gold);padding:4px 0 4px 14px;font-size:.88rem;color:var(--cream)}
+.pair b{color:var(--gold);font-weight:600}
 .more{margin:22px 0 4px;font-size:.7rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
 
 .note{margin:36px 0 10px;color:var(--muted);font-size:.8rem}
@@ -98,6 +110,7 @@ p{margin:0}
 <div class="wrap intro">
   <p class="eyebrow">Pizzería &amp; Bar · Concepción</p>
   <h1>Nuestra carta</h1>
+  <p class="sub">Precios en pesos chilenos.</p>
 </div>
 
 <div class="wrap">
@@ -123,7 +136,7 @@ p{margin:0}
 <script src="../carta.js"></script>
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbxGEE89OFZEPTTve4zdjylVMj80sAnWi2TlRYvxKoQHSozT4GBWVHd7t93LMNxp2Q/exec";
-const clp = n => "$" + Math.round(n).toLocaleString("es-CL");
+const clp = n => Math.round(n).toLocaleString("es-CL");   // sin signo $: los precios se aclaran una vez arriba
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const slug = s => normName(s) || "otros";
 document.getElementById("menuDate").textContent = MENU_UPDATED;
@@ -143,9 +156,34 @@ function row(n, p, tag){
 }
 function item([n, p, d, img, tag]){
   return `<div class="item${img ? "" : " noimg"}">${img ? `<div class="ph"><img src="../img/${img}.jpg" alt="" loading="lazy"></div>` : ""}
-    <div>${row(n, p, tag)}${d ? `<p class="desc">${esc(d)}</p>` : ""}</div></div>`;
+    <div>${row(n, p, tag)}${SABOR[n] ? `<p class="sabor">${esc(SABOR[n])}</p>` : ""}${d ? `<p class="desc">${esc(d)}</p>` : ""}</div></div>`;
+}
+function fav([n, p, d, img]){
+  return `<article class="fav"><div class="ph"><img src="../img/${img}.jpg" alt="Pizza ${esc(n)}" loading="lazy"></div>
+    <h3>${esc(n)}</h3><span class="price">${clp(p)}</span>
+    ${SABOR[n] ? `<p class="sabor">${esc(SABOR[n])}</p>` : ""}<p class="desc">${esc(d)}</p></article>`;
+}
+/* Menú ejecutivo: solo se muestra de lunes a viernes, de 13:00 a 15:30 (hora de Concepción) */
+function horaEjecutivo(){
+  const f = new Intl.DateTimeFormat("en-US", {timeZone:"America/Santiago", weekday:"short", hour:"2-digit", minute:"2-digit", hour12:false}).formatToParts(new Date());
+  const g = t => f.find(x => x.type === t).value, m = (+g("hour") % 24) * 60 + +g("minute");
+  return !["Sat","Sun"].includes(g("weekday")) && m >= 13*60 && m < 15*60 + 30;
+}
+/* Pizzas: favoritas con foto grande, luego "De la casa" y "Clásicas" */
+function pizzas(items, add){
+  const by = n => items.find(i => i[0] === n);
+  const favs = PIZZAS_FAVORITAS.map(by).filter(i => i && i[3]);
+  const resto = items.filter(i => !favs.includes(i));
+  const clasicas = resto.filter(i => PIZZAS_CLASICAS.includes(i[0]));
+  const casa = resto.filter(i => !PIZZAS_CLASICAS.includes(i[0])).concat(add);
+  return `${favs.length ? `<p class="more" style="margin-top:0">Las favoritas de la casa</p><div class="favs">${favs.map(fav).join("")}</div>` : ""}
+    ${horaEjecutivo() ? ejecutivo : ""}
+    ${casa.length ? `<p class="more">De la casa</p>${casa.map(item).join("")}` : ""}
+    ${clasicas.length ? `<p class="more">Clásicas</p>${clasicas.map(item).join("")}` : ""}
+    <p class="pair"><b>Para acompañar:</b> ${esc(ACOMPANAR)}</p>`;
 }
 
+let ejecutivo = "";
 /* extra: productos de Fudo que no están en carta.js, agrupados por su categoría en Fudo */
 function render(extra = {}){
   const secs = Object.entries(MENU).map(([cat, {items}]) => {
@@ -154,15 +192,15 @@ function render(extra = {}){
     return [cat, items, add];
   });
   Object.values(extra).forEach(g => secs.push([g.name, [], g.items]));
-  const ejecutivo = `<div class="exec"><img src="../img/ejecutivo.jpg" alt="Menú ejecutivo" loading="lazy">
+  ejecutivo = `<div class="exec"><img src="../img/ejecutivo.jpg" alt="Menú ejecutivo" loading="lazy">
       <p class="eyebrow">Menú ejecutivo · lun a vie, 13:00 a 15:30</p>
       <p>Pizza individual (Margarita, Pepperoni o Napolitana) + bebida 220 cc + ensalada.</p>
-      <span class="price">$9.990</span></div>`;
+      <span class="price">9.990</span></div>`;
   document.getElementById("carta").innerHTML = secs.map(([cat, items, add], i) => `
     <section class="sec" id="${slug(cat)}"><h2>${esc(cat)}</h2>
-      ${i === 0 ? ejecutivo : ""}
+      ${MENU[cat] && MENU[cat].type === "pizzas" ? pizzas(items, add) : `
       ${items.map(item).join("")}
-      ${add.length ? `${items.length ? `<p class="more">Más ${esc(cat.toLowerCase())}</p>` : ""}${add.map(item).join("")}` : ""}
+      ${add.length ? `${items.length ? `<p class="more">Más ${esc(cat.toLowerCase())}</p>` : ""}${add.map(item).join("")}` : ""}`}
     </section>`).join("");
   document.getElementById("cats").innerHTML = secs.map(([cat]) => `<a href="#${slug(cat)}">${esc(cat)}</a>`).join("");
   spy();

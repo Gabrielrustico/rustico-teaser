@@ -298,7 +298,7 @@ footer nav a:hover{color:var(--cream)}
         <img src="img/ejecutivo.jpg" alt="Menú ejecutivo: pizza pepperoni individual, ensalada y bebida" loading="lazy">
         <div><p class="eyebrow">Menú ejecutivo · lunes a viernes, 13:00 a 15:30</p>
         <p>Pizza individual (Margarita, Pepperoni o Napolitana) + bebida 220 cc + ensalada.</p></div>
-        <span class="price">$9.990</span>
+        <span class="price">9.990</span>
       </div>
       <div class="tabs" role="tablist" id="tabs"></div>
       <div id="menu"></div>
@@ -429,7 +429,7 @@ const HOURS = [ // 0 = domingo
 /* ========================================= */
 /* La carta (platos y precios) está en carta.js */
 
-const clp = n => "$" + n.toLocaleString("es-CL");
+const clp = n => n.toLocaleString("es-CL");   // sin signo $ (la carta aclara que son pesos chilenos)
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 document.getElementById("googleReview").href = GOOGLE_REVIEW_URL;
 document.getElementById("menuDate").textContent = MENU_UPDATED;
