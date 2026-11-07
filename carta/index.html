@@ -158,9 +158,9 @@ function item([n, p, d, img, tag]){
   return `<div class="item${img ? "" : " noimg"}">${img ? `<div class="ph"><img src="../img/${img}.jpg" alt="" loading="lazy"></div>` : ""}
     <div>${row(n, p, tag)}${SABOR[n] ? `<p class="sabor">${esc(SABOR[n])}</p>` : ""}${d ? `<p class="desc">${esc(d)}</p>` : ""}</div></div>`;
 }
-function fav([n, p, d, img]){
+function fav([n, p, d, img, tag]){
   return `<article class="fav"><div class="ph"><img src="../img/${img}.jpg" alt="Pizza ${esc(n)}" loading="lazy"></div>
-    <h3>${esc(n)}</h3><span class="price">${clp(p)}</span>
+    <h3>${esc(n)}${tag ? `<span class="tag">${esc(tag)}</span>` : ""}</h3><span class="price">${clp(p)}</span>
     ${SABOR[n] ? `<p class="sabor">${esc(SABOR[n])}</p>` : ""}<p class="desc">${esc(d)}</p></article>`;
 }
 /* Menú ejecutivo: solo se muestra de lunes a viernes, de 13:00 a 15:30 (hora de Concepción) */
