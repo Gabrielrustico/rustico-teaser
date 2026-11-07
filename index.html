@@ -437,7 +437,7 @@ document.getElementById("menuDate").textContent = MENU_UPDATED;
 const tabsEl = document.getElementById("tabs"), menuEl = document.getElementById("menu");
 const names = Object.keys(MENU);
 function head(name, price, tag){
-  return `<div class="row"><h3>${esc(name)}${tag?`<span class="tag">${esc(tag)}</span>`:""}</h3><span class="lead"></span><span class="price">${clp(price)}</span></div>`;
+  return `<div class="row"><h3>${esc(name)}${tag?String(tag).split(",").map(t => `<span class="tag">${esc(t.trim())}</span>`).join(""):""}</h3><span class="lead"></span><span class="price">${clp(price)}</span></div>`;
 }
 function render(cat){
   const {type, items} = MENU[cat];

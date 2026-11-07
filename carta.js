@@ -10,7 +10,7 @@ const MENU = {
     ["Napolitana",12990,"Pomodoro, fior di latte, cherrys horneados y jamón.","napolitana"],
     ["Hawaiana",13500,"Pomodoro, fior di latte, jamón y piña asada.","hawaiana"],
     ["Burrata",18990,"Pomodoro, fior di latte, mortadela de pistacho, burrata, pesto y pistacho.","burrata","Favorita"],
-    ["Brisket",19900,"Pomodoro, fior di latte, brisket, pimentón asado, mermelada de brisket, ají verde, cebolla caramelizada y albahaca.","brisket","Premiada"],
+    ["Brisket",19900,"Pomodoro, fior di latte, brisket, pimentón asado, mermelada de brisket, ají verde, cebolla caramelizada y albahaca.","brisket","Premiada, Favorita"],
     ["Pesto",16990,"Base de pesto, fior di latte, cherrys horneados, prosciutto y grana padano.","pesto"],
     ["Capricciosa",16990,"Pomodoro, fior di latte, jamón, aceitunas sevillanas, champiñones, alcachofa y parmesano.","capricciosa","Nueva"],
     ["Rúcula",15900,"Pomodoro, fior di latte, rúcula, prosciutto, aceto balsámico reducido y grana padano.","rucula"],
