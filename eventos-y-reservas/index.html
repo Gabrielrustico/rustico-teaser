@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Cumpleaños, eventos y reservas en Concepción | Rusti-Co. Pizzería &amp; Bar</title>
+<meta name="description" content="Celebra tu cumpleaños o junta en Rusti-Co., pizzería napolitana y bar en Lomas de San Andrés, Concepción. Reserva tu mesa llamando al +56 9 8906 0041.">
+<link rel="canonical" href="https://www.rusti-co.cl/eventos-y-reservas/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_CL">
+<meta property="og:title" content="Cumpleaños, eventos y reservas en Concepción | Rusti-Co. Pizzería &amp; Bar">
+<meta property="og:description" content="Celebra tu cumpleaños o junta en Rusti-Co., pizzería napolitana y bar en Lomas de San Andrés, Concepción. Reserva tu mesa llamando al +56 9 8906 0041.">
+<meta property="og:url" content="https://www.rusti-co.cl/eventos-y-reservas/">
+<meta property="og:image" content="https://www.rusti-co.cl/img/coctel.jpg">
+<link rel="icon" href="../img/logo-color.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Rusti-Co.","item":"https://www.rusti-co.cl/"},{"@type":"ListItem","position":2,"name":"Eventos y reservas","item":"https://www.rusti-co.cl/eventos-y-reservas/"}]}</script>
+<style>
+/* Carta para las mesas (QR del acrílico). Pensada para el celular: todo en una sola lista,
+   categorías fijas arriba y la franja del Club siempre visible abajo. */
+:root{
+  --ink:#0d0a08; --ink-2:#17120e; --ink-3:#231b15;
+  --cream:#f4ede2; --muted:#ab9f90; --gold:#ffd700; --gold-ink:#1a1405;
+  --font:"Montserrat","Segoe UI",system-ui,-apple-system,sans-serif;
+  --bar:64px;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:120px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--ink);color:var(--cream);font-family:var(--font);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;
+  padding-bottom:calc(var(--bar) + env(safe-area-inset-bottom,0px) + 16px)}
+a{color:inherit}
+img{display:block;max-width:100%}
+h1,h2,h3{margin:0;font-weight:300;letter-spacing:-.01em;line-height:1.15;text-wrap:balance}
+p{margin:0}
+.wrap{max-width:760px;margin:0 auto;padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px))}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:4px}
+.eyebrow{font-size:.7rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+
+/* Encabezado */
+.top{padding-top:env(safe-area-inset-top,0px)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:16px 6px}
+.top img{height:34px;width:auto}
+.top a.home{font-size:.78rem;color:var(--muted);text-decoration:none}
+.intro{padding-block:14px 18px}
+.intro h1{font-size:2rem}
+.intro .sub{color:var(--muted);font-size:.8rem;margin-top:6px}
+
+/* Tarjeta del Club */
+.club{display:grid;grid-template-columns:1fr auto;gap:12px 16px;align-items:center;background:var(--gold);color:var(--gold-ink);border-radius:18px;padding:16px 18px;text-decoration:none;margin-bottom:22px}
+.club b{display:block;font-size:1.05rem;font-weight:700;line-height:1.25}
+.club small{display:block;font-size:.8rem;margin-top:2px}
+.club .go{background:var(--gold-ink);color:var(--gold);border-radius:999px;padding:.7em 1.1em;font-size:.8rem;font-weight:700;white-space:nowrap}
+.stamps{grid-column:1/-1;display:grid;grid-template-columns:repeat(10,1fr);gap:5px}
+.stamps span{aspect-ratio:1;border-radius:50%;border:1.5px dashed color-mix(in srgb,var(--gold-ink) 45%,transparent)}
+.stamps span.on{background:var(--gold-ink);border:0}
+.stamps span.prize{border:0;background:var(--gold-ink) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23ffd700' d='M12 3C7.8 3 4.1 4.8 1.8 7.6l10.2 13.9L22.2 7.6C19.9 4.8 16.2 3 12 3Zm-3 7a1.4 1.4 0 1 1 0-2.8A1.4 1.4 0 0 1 9 10Zm4.5 4a1.4 1.4 0 1 1 0-2.8 1.4 1.4 0 0 1 0 2.8Zm1.5-6a1.1 1.1 0 1 1 0-2.2A1.1 1.1 0 0 1 15 8Z'/%3E%3C/svg%3E") center/62% no-repeat}
+
+/* Categorías fijas */
+.cats{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--ink) 92%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--ink-3);padding-top:env(safe-area-inset-top,0px)}
+.cats .wrap{display:flex;gap:8px;overflow-x:auto;padding-block:10px;scrollbar-width:none}
+.cats .wrap::-webkit-scrollbar{display:none}
+.cats a{flex:none;border:1px solid var(--ink-3);color:var(--muted);font-size:.84rem;font-weight:500;padding:.55em 1em;border-radius:999px;text-decoration:none}
+.cats a.on{background:var(--cream);color:var(--ink);border-color:var(--cream)}
+
+/* Secciones y platos */
+.sec{padding-top:30px}
+.sec h2{font-size:1.6rem;margin-bottom:16px}
+.exec{display:grid;grid-template-columns:84px 1fr;gap:4px 16px;align-items:center;border:1px solid color-mix(in srgb,var(--gold) 40%,transparent);border-radius:16px;padding:12px;margin-top:6px}
+.exec img{grid-row:span 3;width:84px;aspect-ratio:4/5;object-fit:cover;border-radius:999px 999px 8px 8px}
+.exec p{font-size:.88rem;color:var(--cream)}
+.exec .eyebrow{font-size:.64rem;letter-spacing:.12em}
+.item{display:grid;grid-template-columns:72px 1fr;column-gap:14px;align-items:center;padding-block:12px;border-bottom:1px solid var(--ink-3)}
+.item.noimg{grid-template-columns:1fr}
+.item .ph{width:72px;height:72px;border-radius:50%;overflow:hidden;background:#050505}
+.item .ph img{width:100%;height:100%;object-fit:cover}
+.row{display:flex;align-items:baseline;gap:10px}
+.row h3{font-size:1rem;font-weight:500;line-height:1.3}
+.row .lead{flex:1;border-bottom:1px dotted var(--ink-3);transform:translateY(-4px);min-width:12px}
+.price{font-weight:600;color:var(--gold);font-variant-numeric:tabular-nums;white-space:nowrap}
+.desc{color:var(--muted);font-size:.84rem;line-height:1.45;margin-top:2px}
+.tag{display:inline-block;margin-left:6px;font-size:.62rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);border:1px solid color-mix(in srgb,var(--gold) 45%,transparent);border-radius:999px;padding:.12em .55em;vertical-align:middle}
+/* Favoritas de la casa */
+.favs{display:grid;grid-template-columns:1fr 1fr;gap:22px 14px;margin-bottom:8px}
+.fav{display:grid;gap:8px;align-content:start}
+.fav .ph{aspect-ratio:1;border-radius:50%;overflow:hidden;background:#050505}
+.fav .ph img{width:100%;height:100%;object-fit:cover}
+.fav h3{font-size:1rem;font-weight:600;line-height:1.25}
+.fav .price{font-size:1.05rem}
+.sabor{color:var(--cream);font-size:.86rem;line-height:1.4}
+.item .sabor{margin-top:2px}
+.pair{margin-top:18px;border-left:2px solid var(--gold);padding:4px 0 4px 14px;font-size:.88rem;color:var(--cream)}
+.pair b{color:var(--gold);font-weight:600}
+.more{margin:22px 0 4px;font-size:.7rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+
+.note{margin:36px 0 10px;color:var(--muted);font-size:.8rem}
+.note a{color:var(--cream)}
+
+
+.txt{color:#e4dccf;max-width:62ch;margin-top:10px}
+.txt+.txt{margin-top:12px}
+.box{border:1px solid var(--ink-3);border-radius:18px;padding:18px;margin-top:22px;background:var(--ink-2)}
+.box h2{font-size:1.25rem;margin-bottom:8px}
+.box ul{margin:8px 0 0;padding-left:20px;color:#e4dccf}
+.box li+li{margin-top:6px}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.btn{display:inline-flex;align-items:center;padding:.85em 1.3em;border-radius:999px;font-weight:600;font-size:.88rem;text-decoration:none;border:1px solid var(--ink-3)}
+.btn.gold{background:var(--gold);color:var(--gold-ink);border-color:var(--gold)}
+.award{display:inline-block;margin-top:12px;border:1px solid color-mix(in srgb,var(--gold) 45%,transparent);color:var(--gold);border-radius:999px;padding:.4em .9em;font-size:.78rem;font-weight:600}
+.foot{margin:40px 0 30px;color:var(--muted);font-size:.82rem;border-top:1px solid var(--ink-3);padding-top:18px}
+.foot a{color:var(--cream)}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a href="../"><img src="../img/logo-color.png" alt="Rusti-Co. Pizzería &amp; Bar" width="152" height="34"></a>
+    <a class="home" href="../">rusti-co.cl</a>
+  </div>
+</header>
+<main class="wrap">
+  <div class="intro">
+    <p class="eyebrow">Rusti-Co. · Lomas de San Andrés, Concepción</p>
+    <h1>Cumpleaños, eventos y reservas</h1>
+  </div>
+  <p class="txt">¿Cumpleaños, junta de amigos, celebración de la oficina o almuerzo en familia? En Rusti-Co. hay pizza napolitana recién salida del horno, cócteles de autor y mesas para compartir. Reserva y te tenemos todo listo.</p>
+  <div class="btns"><a class="btn gold" href="tel:+56989060041">Reservar: +56 9 8906 0041</a><a class="btn" href="../carta/">Ver la carta</a></div>
+  <section class="box">
+    <h2>Cumpleaños con regalo</h2>
+    <p class="txt">Si eres socio del <a href="../club/">Club Rusti-Co.</a>, en tu mes de cumpleaños el postre va por la casa. Y si vienen 6 o más, les regalamos una Pizza Nutella por cada 6 personas en la mesa. Inscribirse es gratis.</p>
+  </section>
+  <section class="box">
+    <h2>Para grupos</h2>
+    <ul>
+      <li>Pizzas para compartir, antipastos y la <a href="../carta/">carta completa</a>, con precios al día.</li>
+      <li>Barra con <a href="../bar-cocteleria/">coctelería de autor y cervezas en schop</a>.</li>
+      <li>Estacionamiento y ambiente para familias.</li>
+    </ul>
+  </section>
+  <section class="box">
+    <h2>Cómo reservar</h2>
+    <p class="txt">Llámanos al <a href="tel:+56989060041">+56 9 8906 0041</a> con el día, la hora y cuántas personas vienen. Atendemos de lunes a sábado de 13:00 a 23:00 y los domingos de 12:00 a 18:00.</p>
+    <div class="btns"><a class="btn" href="https://www.google.com/maps/dir/?api=1&amp;destination=Ram%C3%B3n%20Carrasco%2099%2C%20Concepci%C3%B3n%2C%20Chile" target="_blank" rel="noopener">Cómo llegar</a></div>
+  </section>
+
+  <footer class="foot">
+    <p><b>Rusti-Co. Pizzería &amp; Bar</b> · Ramón Carrasco 99, Local 7, Lomas de San Andrés, Concepción · <a href="tel:+56989060041">+56 9 8906 0041</a></p>
+    <p style="margin-top:6px">Lunes a sábado 13:00–23:00 · Domingo 12:00–18:00 · <a href="../carta/">Carta</a> · <a href="../bar-cocteleria/">Bar y coctelería</a> · <a href="../eventos-y-reservas/">Eventos y reservas</a> · <a href="../club/">Club</a></p>
+  </footer>
+</main>
+</body>
+</html>

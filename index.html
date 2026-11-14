@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Rusti-Co. · Pizzería napolitana en Concepción | Pizza &amp; Bar</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Pizzería napolitana en Concepción, en Lomas de San Andrés: pizzas hechas en horno a la vista, menú ejecutivo, coctelería de autor y cervezas artesanales. Delivery y estacionamiento. Ramón Carrasco 99.">
+<meta name="description" content="Pizzería napolitana en Concepción. Nuestra Pizza Brisket: 1° del Biobío y 5° de Chile en The Top Chile 2026. Horno a la vista, coctelería de autor y cervezas artesanales en Lomas de San Andrés. Estacionamiento y delivery.">
 <link rel="canonical" href="https://www.rusti-co.cl/">
 <meta property="og:type" content="restaurant">
 <meta property="og:site_name" content="Rusti-Co. Pizzería &amp; Bar">
@@ -28,15 +28,17 @@
   "url": "https://www.rusti-co.cl/",
   "logo": "https://www.rusti-co.cl/img/logo-color.png",
   "image": ["https://www.rusti-co.cl/img/horno.jpg", "https://www.rusti-co.cl/img/fachada.jpg", "https://www.rusti-co.cl/img/pizzero.jpg"],
-  "telephone": "+56984150886",
+  "telephone": "+56989060041",
   "email": "administracion@rusti-co.cl",
   "priceRange": "$$",
   "currenciesAccepted": "CLP",
   "servesCuisine": ["Pizza", "Pizza napolitana", "Italiana", "Coctelería"],
   "hasMenu": "https://www.rusti-co.cl/carta/",
+  "acceptsReservations": true,
+  "award": "Pizza Brisket: 1° lugar región del Biobío y 5° lugar nacional en The Top Chile 2026",
   "address": {
     "@type": "PostalAddress",
-    "streetAddress": "Ramón Carrasco 99",
+    "streetAddress": "Ramón Carrasco 99, Local 7",
     "addressLocality": "Concepción",
     "addressRegion": "Biobío",
     "addressCountry": "CL"
@@ -122,6 +124,8 @@ p{margin:0}
 .hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center;padding-block:64px 72px}
 .hero h1.eyebrow{font-size:.74rem;font-weight:600;letter-spacing:.22em;line-height:1.6;text-wrap:pretty}
 .hero-title{font-size:var(--step-hero);margin:18px 0 22px;font-weight:300;letter-spacing:-.02em;line-height:1.05;text-wrap:balance}
+.award-chip{display:inline-block;margin:-6px 0 18px;border:1px solid color-mix(in srgb,var(--gold) 45%,transparent);color:var(--cream);border-radius:999px;padding:.45em 1em;font-size:.82rem}
+.award-chip b{color:var(--gold);font-weight:600}
 .hero-title em{font-style:normal;color:var(--gold)}
 .hero .lede{font-size:1.08rem}
 .cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
@@ -275,7 +279,7 @@ footer{padding-block:56px 40px;border-top:1px solid var(--ink-3);margin-top:96px
 footer .wrap{display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between;align-items:center}
 footer img{height:30px;width:auto}
 footer p{color:var(--muted);font-size:.85rem}
-footer nav{display:flex;gap:22px;font-size:.85rem}
+footer nav{display:flex;flex-wrap:wrap;gap:10px 22px;font-size:.85rem}
 footer nav a{color:var(--muted);text-decoration:none}
 footer nav a:hover{color:var(--cream)}
 </style>
@@ -303,6 +307,7 @@ footer nav a:hover{color:var(--cream)}
       <div>
         <h1 class="eyebrow">Pizzería napolitana en Concepción · Lomas de San Andrés</h1>
         <p class="hero-title">Momentos que <em>saben bien.</em></p>
+        <p class="award-chip">🏆 Pizza Brisket: <b>1° del Biobío y 5° de Chile</b> en The Top Chile 2026</p>
         <p class="lede">Pizza napolitana con sabores chilenos, hecha frente a ti en nuestro horno a la vista. Coctelería de autor, cervezas artesanales y mesas para compartir.</p>
         <div class="cta-row">
           <a class="btn btn-gold" href="carta/"><span class="dot"></span>Ver la carta</a>
@@ -426,7 +431,7 @@ footer nav a:hover{color:var(--cream)}
       <div>
         <p class="eyebrow">Visítanos</p>
         <h2>Te esperamos con el horno encendido</h2>
-        <p class="addr">Ramón Carrasco 99<small>Lomas de San Andrés, Concepción</small></p>
+        <p class="addr">Ramón Carrasco 99, Local 7<small>Lomas de San Andrés, Concepción</small></p>
         <p class="lede" style="margin-bottom:18px">Somos una pizzería napolitana en Concepción: horno a la vista y pizzas de borde alto y aireado que salen en minutos. Ven con la familia o los amigos, aprovecha el menú ejecutivo de lunes a viernes o pide delivery a tu casa.</p>
         <table class="hours" aria-label="Horario de atención">
           <tbody id="hours"><tr><td>Lunes a sábado</td><td>13:00 – 23:00</td></tr><tr><td>Domingo</td><td>12:00 – 18:00</td></tr></tbody>
@@ -438,8 +443,10 @@ footer nav a:hover{color:var(--cream)}
         </div>
         <div class="cta-row">
           <a class="btn btn-gold" href="https://www.google.com/maps/dir/?api=1&amp;destination=Ram%C3%B3n%20Carrasco%2099%2C%20Concepci%C3%B3n%2C%20Chile" target="_blank" rel="noopener">Cómo llegar</a>
+          <a class="btn btn-line" href="tel:+56989060041">Llamar +56 9 8906 0041</a>
           <a class="btn btn-line" href="https://www.instagram.com/rustico.pizzabar/" target="_blank" rel="noopener">Instagram @rustico.pizzabar</a>
         </div>
+        <p class="lede" style="margin-top:18px">¿Celebras algo? Mira <a href="eventos-y-reservas/">cumpleaños, eventos y reservas</a> o conoce nuestro <a href="bar-cocteleria/">bar y coctelería</a>.</p>
       </div>
       <div class="arch"><img src="img/fachada.jpg" alt="Fachada de Rusti-Co. con su letrero" loading="lazy" width="900" height="1350"></div>
     </div>
@@ -449,10 +456,12 @@ footer nav a:hover{color:var(--cream)}
 <footer>
   <div class="wrap">
     <img src="img/logo-color.png" alt="Rusti-Co." width="800" height="242">
-    <p>Momentos que saben bien · Ramón Carrasco 99, Concepción</p>
+    <p>Momentos que saben bien · Ramón Carrasco 99, Local 7, Lomas de San Andrés, Concepción · <a href="tel:+56989060041">+56 9 8906 0041</a></p>
     <nav aria-label="Pie">
       <a href="#carta">Carta</a>
       <a href="club/">Club</a>
+      <a href="bar-cocteleria/">Bar y coctelería</a>
+      <a href="eventos-y-reservas/">Eventos y reservas</a>
       <a href="https://www.instagram.com/rustico.pizzabar/" target="_blank" rel="noopener">Instagram</a>
       <a href="equipo/" rel="nofollow">Equipo</a>
     </nav>
