@@ -3,9 +3,53 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Rusti-Co. Pizzería & Bar</title>
+<title>Rusti-Co. · Pizzería napolitana en Concepción | Pizza &amp; Bar</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Pizzería y bar en Lomas de San Andrés, Concepción. Pizza napolitana con horno a la vista, coctelería de autor y cervezas artesanales.">
+<meta name="description" content="Pizzería napolitana en Concepción, en Lomas de San Andrés: pizzas hechas en horno a la vista, menú ejecutivo, coctelería de autor y cervezas artesanales. Delivery y estacionamiento. Ramón Carrasco 99.">
+<link rel="canonical" href="https://www.rusti-co.cl/">
+<meta property="og:type" content="restaurant">
+<meta property="og:site_name" content="Rusti-Co. Pizzería &amp; Bar">
+<meta property="og:locale" content="es_CL">
+<meta property="og:title" content="Rusti-Co. · Pizzería napolitana en Concepción">
+<meta property="og:description" content="Pizza napolitana en horno a la vista, coctelería de autor y cervezas artesanales en Lomas de San Andrés, Concepción.">
+<meta property="og:url" content="https://www.rusti-co.cl/">
+<meta property="og:image" content="https://www.rusti-co.cl/img/horno.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0d0a08">
+<link rel="icon" href="img/logo-color.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Restaurant",
+  "@id": "https://www.rusti-co.cl/#restaurante",
+  "name": "Rusti-Co. Pizzería & Bar",
+  "alternateName": ["Rusti-Co.", "Rústico Pizza Bar"],
+  "description": "Pizzería napolitana y bar en Lomas de San Andrés, Concepción: pizzas en horno a la vista, menú ejecutivo, coctelería de autor y cervezas artesanales.",
+  "url": "https://www.rusti-co.cl/",
+  "logo": "https://www.rusti-co.cl/img/logo-color.png",
+  "image": ["https://www.rusti-co.cl/img/horno.jpg", "https://www.rusti-co.cl/img/fachada.jpg", "https://www.rusti-co.cl/img/pizzero.jpg"],
+  "telephone": "+56984150886",
+  "email": "administracion@rusti-co.cl",
+  "priceRange": "$$",
+  "currenciesAccepted": "CLP",
+  "servesCuisine": ["Pizza", "Pizza napolitana", "Italiana", "Coctelería"],
+  "hasMenu": "https://www.rusti-co.cl/carta/",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Ramón Carrasco 99",
+    "addressLocality": "Concepción",
+    "addressRegion": "Biobío",
+    "addressCountry": "CL"
+  },
+  "areaServed": "Concepción",
+  "openingHoursSpecification": [
+    {"@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], "opens": "13:00", "closes": "23:00"},
+    {"@type": "OpeningHoursSpecification", "dayOfWeek": "Sunday", "opens": "12:00", "closes": "18:00"}
+  ],
+  "sameAs": ["https://www.instagram.com/rustico.pizzabar/", "https://menu.fu.do/rusti-co/qr-menu"],
+  "parentOrganization": {"@type": "Organization", "name": "Alimentos Villarroel SpA"}
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap">
@@ -76,8 +120,9 @@ p{margin:0}
 
 /* Hero */
 .hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center;padding-block:64px 72px}
-.hero h1{font-size:var(--step-hero);margin:18px 0 22px}
-.hero h1 em{font-style:normal;color:var(--gold)}
+.hero h1.eyebrow{font-size:.74rem;font-weight:600;letter-spacing:.22em;line-height:1.6;text-wrap:pretty}
+.hero-title{font-size:var(--step-hero);margin:18px 0 22px;font-weight:300;letter-spacing:-.02em;line-height:1.05;text-wrap:balance}
+.hero-title em{font-style:normal;color:var(--gold)}
 .hero .lede{font-size:1.08rem}
 .cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
 .status{display:flex;align-items:center;gap:10px;margin-top:30px;font-size:.88rem;color:var(--muted)}
@@ -241,7 +286,7 @@ footer nav a:hover{color:var(--cream)}
 <a class="promo-bar" href="#club"><span class="wrap"><span>🍕 <b>Club Rusti-Co.:</b> tu décima pizza va por la casa<span class="lg">, más regalo de cumpleaños. Gratis</span>.</span><span class="go">Ver beneficios →</span></span></a>
 <header class="top">
   <div class="wrap">
-    <a href="#inicio" aria-label="Rusti-Co. inicio"><img src="img/logo-color.png" alt="Rusti-Co. Pizzería & Bar"></a>
+    <a href="#inicio" aria-label="Rusti-Co. inicio"><img src="img/logo-color.png" alt="Rusti-Co. Pizzería & Bar" width="800" height="242"></a>
     <nav class="nav" aria-label="Secciones">
       <a href="#carta">Carta</a>
       <a href="#club">Club</a>
@@ -256,8 +301,8 @@ footer nav a:hover{color:var(--cream)}
   <section class="hero">
     <div class="wrap">
       <div>
-        <p class="eyebrow">Pizzería &amp; Bar · Lomas de San Andrés, Concepción</p>
-        <h1>Momentos que <em>saben bien.</em></h1>
+        <h1 class="eyebrow">Pizzería napolitana en Concepción · Lomas de San Andrés</h1>
+        <p class="hero-title">Momentos que <em>saben bien.</em></p>
         <p class="lede">Pizza napolitana con sabores chilenos, hecha frente a ti en nuestro horno a la vista. Coctelería de autor, cervezas artesanales y mesas para compartir.</p>
         <div class="cta-row">
           <a class="btn btn-gold" href="carta/"><span class="dot"></span>Ver la carta</a>
@@ -274,13 +319,13 @@ footer nav a:hover{color:var(--cream)}
 
   <div class="facts">
     <ul class="wrap">
-      <li><figure><img src="img/pizzero.jpg" alt="Pizzero mostrando una pizza recién salida del horno" loading="lazy"></figure>
+      <li><figure><img src="img/pizzero.jpg" alt="Pizzero mostrando una pizza recién salida del horno" loading="lazy" width="900" height="1350"></figure>
         <div><b>Masa napolitana</b><span>Borde alto y aireado, horneada en minutos.</span></div></li>
-      <li><figure><img src="img/coctel.jpg" alt="Cóctel de autor bajo el letrero de neón" loading="lazy"></figure>
+      <li><figure><img src="img/coctel.jpg" alt="Cóctel de autor bajo el letrero de neón" loading="lazy" width="900" height="1350"></figure>
         <div><b>Coctelería de autor</b><span>Pisco sour de sabores, mojitos y gin.</span></div></li>
-      <li><figure><img src="img/schop.jpg" alt="Schop de cerveza artesanal saliendo del grifo" loading="lazy"></figure>
+      <li><figure><img src="img/schop.jpg" alt="Schop de cerveza artesanal saliendo del grifo" loading="lazy" width="900" height="1350"></figure>
         <div><b>Cervezas artesanales</b><span>Cocholgue, Fuzz, Pröcer, Porteña y más.</span></div></li>
-      <li><figure><img src="img/delivery.jpg" alt="Cajas de delivery de Rusti-Co. con pizza" loading="lazy"></figure>
+      <li><figure><img src="img/delivery.jpg" alt="Cajas de delivery de Rusti-Co. con pizza" loading="lazy" width="900" height="1350"></figure>
         <div><b>Estacionamiento y delivery</b><span>Llega fácil o pide a tu casa.</span></div></li>
     </ul>
   </div>
@@ -295,7 +340,7 @@ footer nav a:hover{color:var(--cream)}
         <p class="lede">Dieciséis pizzas, antipastos, panuozzos, postres y una barra completa. Precios en pesos chilenos.</p>
       </div>
       <div class="exec">
-        <img src="img/ejecutivo.jpg" alt="Menú ejecutivo: pizza pepperoni individual, ensalada y bebida" loading="lazy">
+        <img src="img/ejecutivo.jpg" alt="Menú ejecutivo: pizza pepperoni individual, ensalada y bebida" loading="lazy" width="700" height="863">
         <div><p class="eyebrow">Menú ejecutivo · lunes a viernes, 13:00 a 15:30</p>
         <p>Pizza individual (Margarita, Pepperoni o Napolitana) + bebida 220 cc + ensalada.</p></div>
         <span class="price">9.990</span>
@@ -321,7 +366,7 @@ footer nav a:hover{color:var(--cream)}
         <a class="btn btn-ink" href="club/">Únete gratis</a>
       </div>
       <div class="card" aria-label="Ejemplo de tarjeta del Club">
-        <div class="card-top"><img src="img/logo-color.png" alt=""><small>Tarjeta de socio</small></div>
+        <div class="card-top"><img src="img/logo-color.png" alt="" width="800" height="242"><small>Tarjeta de socio</small></div>
         <h3>Hola, Camila</h3>
         <p class="sub">Te faltan 3 visitas para tu pizza gratis.</p>
         <div class="stamps" aria-hidden="true">
@@ -344,12 +389,12 @@ footer nav a:hover{color:var(--cream)}
         <p class="lede">Ven con amigos o en familia. Y no te vayas sin tu foto en las alas de neón.</p>
       </div>
       <div class="gallery">
-        <figure class="tall arch-sm"><img src="img/alas.jpg" alt="Clienta con un cóctel frente a las alas de neón de Rusti-Co." loading="lazy"></figure>
-        <figure><img src="img/pareja.jpg" alt="Pareja compartiendo una pizza" loading="lazy"></figure>
-        <figure class="tall"><img src="img/amigas.jpg" alt="Amigas brindando con cerveza y pizza" loading="lazy"></figure>
-        <figure><img src="img/perro.jpg" alt="Clienta con su perro en Rusti-Co." loading="lazy"></figure>
-        <figure><img src="img/nino.jpg" alt="Niño frente a una pizza de Nutella" loading="lazy"></figure>
-        <figure><img src="img/provoleta-pull.jpg" alt="Provoleta rústica fundida" loading="lazy"></figure>
+        <figure class="tall arch-sm"><img src="img/alas.jpg" alt="Clienta con un cóctel frente a las alas de neón de Rusti-Co." loading="lazy" width="900" height="1350"></figure>
+        <figure><img src="img/pareja.jpg" alt="Pareja compartiendo una pizza" loading="lazy" width="900" height="1350"></figure>
+        <figure class="tall"><img src="img/amigas.jpg" alt="Amigas brindando con cerveza y pizza" loading="lazy" width="900" height="1350"></figure>
+        <figure><img src="img/perro.jpg" alt="Clienta con su perro en Rusti-Co." loading="lazy" width="900" height="1350"></figure>
+        <figure><img src="img/nino.jpg" alt="Niño frente a una pizza de Nutella" loading="lazy" width="900" height="1350"></figure>
+        <figure><img src="img/provoleta-pull.jpg" alt="Provoleta rústica fundida" loading="lazy" width="900" height="1350"></figure>
       </div>
     </div>
   </section>
@@ -359,7 +404,7 @@ footer nav a:hover{color:var(--cream)}
       <div class="review-head"><p class="eyebrow">Tu opinión</p><h2>¿Ya viniste? Cuéntanos cómo te fue.</h2></div>
       <div class="review-grid">
         <div class="rcard google">
-          <div class="rbrand"><span class="gbadge"><img src="img/google-g.png" alt="Google"></span>
+          <div class="rbrand"><span class="gbadge"><img src="img/google-g.png" alt="Google" width="96" height="96"></span>
             <div><b>Reseñas de Google</b><div class="stars" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2.7-5.4 4.8 1.6 7.1L12 17.6 5.6 21.2l1.6-7.1L1.8 9.3 9 8.6z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2.7-5.4 4.8 1.6 7.1L12 17.6 5.6 21.2l1.6-7.1L1.8 9.3 9 8.6z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2.7-5.4 4.8 1.6 7.1L12 17.6 5.6 21.2l1.6-7.1L1.8 9.3 9 8.6z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2.7-5.4 4.8 1.6 7.1L12 17.6 5.6 21.2l1.6-7.1L1.8 9.3 9 8.6z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2.7-5.4 4.8 1.6 7.1L12 17.6 5.6 21.2l1.6-7.1L1.8 9.3 9 8.6z"/></svg></div></div></div>
           <h3>¿Te gustó? Déjanos tu reseña en Google.</h3>
           <p>Toma 30 segundos y ayuda a que más vecinos de Concepción nos encuentren.</p>
@@ -382,8 +427,9 @@ footer nav a:hover{color:var(--cream)}
         <p class="eyebrow">Visítanos</p>
         <h2>Te esperamos con el horno encendido</h2>
         <p class="addr">Ramón Carrasco 99<small>Lomas de San Andrés, Concepción</small></p>
+        <p class="lede" style="margin-bottom:18px">Somos una pizzería napolitana en Concepción: horno a la vista y pizzas de borde alto y aireado que salen en minutos. Ven con la familia o los amigos, aprovecha el menú ejecutivo de lunes a viernes o pide delivery a tu casa.</p>
         <table class="hours" aria-label="Horario de atención">
-          <tbody id="hours"></tbody>
+          <tbody id="hours"><tr><td>Lunes a sábado</td><td>13:00 – 23:00</td></tr><tr><td>Domingo</td><td>12:00 – 18:00</td></tr></tbody>
         </table>
         <div class="extras">
           <span class="chip">Estacionamiento</span>
@@ -395,20 +441,20 @@ footer nav a:hover{color:var(--cream)}
           <a class="btn btn-line" href="https://www.instagram.com/rustico.pizzabar/" target="_blank" rel="noopener">Instagram @rustico.pizzabar</a>
         </div>
       </div>
-      <div class="arch"><img src="img/fachada.jpg" alt="Fachada de Rusti-Co. con su letrero" loading="lazy"></div>
+      <div class="arch"><img src="img/fachada.jpg" alt="Fachada de Rusti-Co. con su letrero" loading="lazy" width="900" height="1350"></div>
     </div>
   </section>
 </main>
 
 <footer>
   <div class="wrap">
-    <img src="img/logo-color.png" alt="Rusti-Co.">
+    <img src="img/logo-color.png" alt="Rusti-Co." width="800" height="242">
     <p>Momentos que saben bien · Ramón Carrasco 99, Concepción</p>
     <nav aria-label="Pie">
       <a href="#carta">Carta</a>
       <a href="club/">Club</a>
       <a href="https://www.instagram.com/rustico.pizzabar/" target="_blank" rel="noopener">Instagram</a>
-      <a href="equipo/">Equipo</a>
+      <a href="equipo/" rel="nofollow">Equipo</a>
     </nav>
   </div>
 </footer>

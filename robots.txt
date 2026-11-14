@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /equipo/
+
+Sitemap: https://www.rusti-co.cl/sitemap.xml
