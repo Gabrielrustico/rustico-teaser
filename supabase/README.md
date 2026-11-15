@@ -28,3 +28,16 @@ Los datos viven en Supabase, no en este repositorio (que es público).
   revisan cada mes. Cada liquidación guarda los que usó.
 
 Los cálculos están en `equipo/rrhh.js`.
+
+## Indicadores mensuales (pestaña Indicadores, solo administradores)
+
+1. **SQL Editor**: pegar y ejecutar `migraciones/2026-11-15-indicadores.sql`.
+2. **GitHub → Settings → Secrets and variables → Actions**: agregar
+   `SUPABASE_SERVICE_ROLE_KEY` (Project Settings → API → `service_role`), además de
+   `FUDO_API_KEY` y `FUDO_API_SECRET`. La clave `service_role` va solo como secreto, nunca en el código.
+3. La acción “Indicadores mensuales desde Fudo” calcula el mes actual y el anterior
+   tres veces al día. Para cargar meses pasados: Actions → Run workflow → `meses`
+   (ej. `2026-01,2026-02,…`).
+
+Las cifras viven solo en Supabase: el repositorio y los registros de Actions son públicos,
+así que el script no imprime montos. Metas y reseñas de Google se escriben a mano en la pestaña.

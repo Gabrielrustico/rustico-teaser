@@ -86,6 +86,34 @@ h3{font-size:.68rem;text-transform:uppercase;letter-spacing:.14em;color:var(--mu
 .loading{display:grid;place-items:center;min-height:50vh;color:var(--muted)}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--cream);color:var(--ink);padding:.8em 1.2em;border-radius:999px;font-weight:600;font-size:.85rem;z-index:50;max-width:calc(100% - 32px);text-align:center}
 
+/* Indicadores */
+.ind-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.ind-top select{background:var(--ink-2);border:1px solid var(--line);border-radius:10px;padding:.5em .8em}
+.ind-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.ind-k{display:grid;gap:4px;align-content:start}
+.ind-k b{font-family:var(--mono);font-size:1.6rem;font-weight:600}
+.ind-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-top:14px}
+.ind-bar{position:relative;height:8px;border-radius:99px;background:var(--ink-3);overflow:hidden;margin:4px 0}
+.ind-bar i{position:absolute;inset:0 auto 0 0;background:var(--gold);border-radius:99px}
+.ind-bar i.proy{background:rgba(255,215,0,.28)}
+.ind-d{font-size:.74rem;font-weight:600}
+.ok{color:var(--ok)} .bad{color:var(--bad)}
+.ind-svg{width:100%;height:auto;display:block}
+.ind-svg text{fill:var(--muted);font-size:11px;font-family:var(--mono)}
+.ind-svg .grid{stroke:var(--line);stroke-width:1}
+.ind-svg .serie{fill:none;stroke:var(--gold);stroke-width:2.5;stroke-linejoin:round}
+.ind-svg .meta{stroke:var(--cream);stroke-width:1.5;stroke-dasharray:4 4;opacity:.7}
+.ind-svg .metat{fill:var(--cream)}
+.ind-svg rect{fill:var(--ink-3)} .ind-svg rect.sel{fill:var(--gold)} .ind-svg rect.parcial{opacity:.55}
+.ind-heat td{text-align:center;font-family:var(--mono);font-size:.72rem;padding:6px 2px;background:rgba(255,215,0,var(--a));color:var(--cream);border:1px solid var(--ink)}
+.ind-heat td.hi{color:var(--gold-ink);font-weight:600}
+.ind-heat th{text-align:center;padding:4px 2px}
+details summary{cursor:pointer}
+.ind-modos{display:inline-flex;gap:4px;background:var(--ink-2);border:1px solid var(--line);border-radius:999px;padding:4px;margin-bottom:16px}
+.ind-modos button{background:none;border:0;border-radius:999px;padding:.45em 1em;font-size:.82rem;font-weight:600;color:var(--muted);cursor:pointer}
+.ind-modos button[aria-current]{background:var(--gold);color:var(--gold-ink)}
+.ind-fila{cursor:pointer} .ind-fila:hover td{background:var(--ink-3)}
+
 /* Liquidación: papel blanco, también al imprimir */
 .paper{background:#fff;color:#1b1714;border-radius:6px;padding:26px 24px;min-width:0;font-size:14px}
 .paper .doc-head{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;border-bottom:2px solid #1b1714;padding-bottom:10px}
@@ -128,6 +156,7 @@ h3{font-size:.68rem;text-transform:uppercase;letter-spacing:.14em;color:var(--mu
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="rrhh.js"></script>
+<script src="indicadores.js"></script>
 <script>
 /* ===== Ajustes ===== */
 // Datos del proyecto Supabase (Project Settings → API). La clave "anon" es pública por diseño:
@@ -219,7 +248,7 @@ const trabPor = id => S.trab.find(t => t.id === id);
 const vacDe = id => S.vac.filter(v => v.trabajador_id === id);
 
 /* ---------- Estructura ---------- */
-const TABS_ADMIN = [["equipo","Equipo"],["liquidaciones","Liquidaciones"],["vacaciones","Vacaciones"],["asistencia","Asistencia"],["documentos","Documentos"],["parametros","Parámetros"]];
+const TABS_ADMIN = [["equipo","Equipo"],["indicadores","Indicadores"],["liquidaciones","Liquidaciones"],["vacaciones","Vacaciones"],["asistencia","Asistencia"],["documentos","Documentos"],["parametros","Parámetros"]];
 const TABS_TRAB = [["marcar","Asistencia"],["misliq","Liquidaciones"],["misvac","Vacaciones"],["misdocs","Documentos"],["misdatos","Mis datos"]];
 function pintar(){
   const tabs = S.admin ? TABS_ADMIN : TABS_TRAB;
@@ -611,6 +640,9 @@ VISTAS.parametros = () => {
     catch (err) { say("p-status", "No se pudo guardar: " + err.message, true); }
   };
 };
+
+/* ======================= INDICADORES (solo administradores) ======================= */
+VISTAS.indicadores = () => IND.vista();
 
 iniciar();
 </script>

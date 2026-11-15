@@ -1,0 +1,348 @@
+"""Calcula los indicadores mensuales de Rusti-Co. desde Fudo y los guarda en Supabase.
+
+Los resultados NO se escriben en este repositorio (que es público): van a la tabla
+`indicadores_mes` de Supabase, que solo pueden leer los administradores del
+apartado de equipo (rusti-co.cl/equipo, pestaña Indicadores).
+
+Variables de entorno (secretos del repositorio en GitHub):
+  FUDO_API_KEY, FUDO_API_SECRET   ya existen (las usa la carta)
+  SUPABASE_SERVICE_ROLE_KEY       clave service_role de Supabase (nunca en el código)
+  MESES                           opcional, ej. "2026-09,2026-10". Por defecto: mes actual y anterior.
+  PROBAR=1                        solo muestra los nombres de los campos de Fudo, sin cifras ni escritura.
+
+Definiciones (las mismas del informe mensual):
+  * Venta neta = suma del total de cada venta. Las ventas en $0 no cuentan como venta.
+  * Ticket por persona = venta con mesa de salón (mesas 1-15) / personas de esas ventas.
+  * Entrada = producto de la categoría Antipasto, salvo los Panuozzo (son plato principal).
+  * Panuozzo se mide aparte. El Panuozzo Brisket no está en la carta y se excluye.
+  * Postres = participación de la categoría Postres en la venta neta.
+  * Margen por mesa: solo bebidas, porque Fudo solo tiene costo cargado en bebidas.
+  * Fudo no mide la ocupación real (la cuenta se abre con el primer pedido), así que
+    se muestra la venta por día y hora como actividad, no como ocupación.
+  * Los domingos se cierra a las 18:00: no se comparan días completos con domingos.
+"""
+import json
+import os
+import sys
+import unicodedata
+import urllib.error
+import urllib.request
+from collections import defaultdict
+from datetime import datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
+
+AUTH_URL = "https://auth.fu.do/api"
+API = "https://api.fu.do/v1alpha1"
+SUPABASE_URL = "https://elohxbypbkxlszmjhyff.supabase.co"
+TZ = ZoneInfo("America/Santiago")
+
+# Mesas que normalmente se juntan. 14-15 terraza, 16-18 barra.
+GRUPOS = [("1+2", {1, 2}), ("3+4", {3, 4}), ("5", {5}), ("6", {6}), ("7+8", {7, 8}),
+          ("9+10", {9, 10}), ("11+12", {11, 12}), ("13", {13}),
+          ("Terraza 14-15", {14, 15}), ("Barra 16-18", {16, 17, 18})]
+SALON = set(range(1, 16))
+DIAS = ["lun", "mar", "mié", "jue", "vie", "sáb", "dom"]
+
+
+def http_json(url, data=None, token=None, headers=None, method=None):
+    h = {"Accept": "application/json"}
+    body = None
+    if data is not None:
+        body = json.dumps(data).encode()
+        h["Content-Type"] = "application/json"
+    if token:
+        h["Authorization"] = f"Bearer {token}"
+    h.update(headers or {})
+    req = urllib.request.Request(url, data=body, headers=h, method=method)
+    with urllib.request.urlopen(req, timeout=60) as r:
+        txt = r.read().decode()
+        return json.loads(txt) if txt.strip() else None
+
+
+def norm(s):
+    s = unicodedata.normalize("NFD", (s or "").lower())
+    return "".join(c for c in s if unicodedata.category(c) != "Mn")
+
+
+def rel_id(obj, name):
+    d = ((obj.get("relationships") or {}).get(name) or {}).get("data")
+    return d.get("id") if isinstance(d, dict) else None
+
+
+def rel_ids(obj, name):
+    d = ((obj.get("relationships") or {}).get(name) or {}).get("data")
+    return [x["id"] for x in d] if isinstance(d, list) else []
+
+
+def parse_fecha(s):
+    return datetime.fromisoformat(s.replace("Z", "+00:00")).astimezone(TZ)
+
+
+def rango_mes(mes):
+    y, m = map(int, mes.split("-"))
+    ini = datetime(y, m, 1, tzinfo=TZ)
+    fin = datetime(y + (m == 12), m % 12 + 1, 1, tzinfo=TZ)
+    return ini, fin
+
+
+def bajar_ventas(token, desde):
+    """Ventas desde `desde` (más recientes primero), con ítems, productos, categorías y mesa."""
+    include = "items.product.productCategory,table"
+    ventas, incl, page = [], {}, 1
+    while True:
+        url = f"{API}/sales?sort=-createdAt&page[size]=100&page[number]={page}&include={include}"
+        try:
+            j = http_json(url, token=token)
+        except urllib.error.HTTPError as e:
+            if e.code == 400 and include.endswith(",table"):
+                include = "items.product.productCategory"  # por si la mesa no se puede incluir
+                continue
+            raise
+        data = j.get("data") or []
+        for x in j.get("included") or []:
+            incl[(x["type"], x["id"])] = x
+        viejas = False
+        for v in data:
+            if parse_fecha(v["attributes"]["createdAt"]) < desde:
+                viejas = True
+                break
+            ventas.append(v)
+        if viejas or len(data) < 100:
+            return ventas, incl
+        page += 1
+
+
+_POR_ID = {}
+
+
+def buscar(incl, tipo_contiene, id_):
+    """Busca un objeto incluido por id sin depender del nombre exacto del tipo (Item, SaleItem…)."""
+    if not id_:
+        return None
+    if _POR_ID.get("_de") is not incl or _POR_ID.get("_n") != len(incl):
+        _POR_ID.clear()
+        _POR_ID.update({"_de": incl, "_n": len(incl)})
+        for (t, i), x in incl.items():
+            _POR_ID.setdefault(i, []).append((t.lower(), x))
+    for t, x in _POR_ID.get(id_, []):
+        if tipo_contiene in t:
+            return x
+    return None
+
+
+def mesa_de(v, incl):
+    a = v["attributes"]
+    for k in ("tableNumber", "table"):
+        if isinstance(a.get(k), (int, float)) or (isinstance(a.get(k), str) and a[k].isdigit()):
+            return int(a[k])
+    t = buscar(incl, "table", rel_id(v, "table"))
+    if t:
+        ta = t.get("attributes") or {}
+        for k in ("number", "name", "code"):
+            val = ta.get(k)
+            if isinstance(val, (int, float)):
+                return int(val)
+            if isinstance(val, str):
+                dig = "".join(c for c in val if c.isdigit())
+                if dig:
+                    return int(dig)
+    return None
+
+
+def grupo_de(mesa):
+    for nombre, mesas in GRUPOS:
+        if mesa in mesas:
+            return nombre
+    return "Sin mesa"
+
+
+def calcular(mes, ventas, incl):
+    ini, fin = rango_mes(mes)
+    dias_mes = (fin - ini).days
+    venta = n = personas_salon = venta_salon = 0
+    con_entrada = 0
+    por_dia = defaultdict(float)
+    calor = defaultdict(float)  # (díaSemana, hora) -> venta
+    dias_semana_vistos = defaultdict(set)
+    prod = defaultdict(lambda: {"u": 0.0, "v": 0.0, "cat": ""})
+    cat_venta = defaultdict(float)
+    pan = {"u": 0.0, "v": 0.0, "ventas": 0}
+    grupos = defaultdict(lambda: {"ventas": 0, "personas": 0, "venta": 0.0, "venta_beb": 0.0, "margen_beb": 0.0})
+    tam_grupo = defaultdict(int)
+    margen_beb = venta_beb = 0.0
+    descuentos = 0.0
+
+    for v in ventas:
+        a = v["attributes"]
+        f = parse_fecha(a["createdAt"])
+        if not (ini <= f < fin):
+            continue
+        estado = norm(str(a.get("saleState") or ""))
+        if estado in ("canceled", "cancelled", "anulada", "deleted"):
+            continue
+        total = float(a.get("total") or 0)
+        if total <= 0:
+            continue
+        n += 1
+        venta += total
+        descuentos += float(a.get("discount") or a.get("discountAmount") or 0)
+        por_dia[f.day] += total
+        calor[(f.weekday(), f.hour)] += total
+        dias_semana_vistos[f.weekday()].add(f.date())
+        gente = int(a.get("people") or 0)
+        mesa = mesa_de(v, incl)
+        g = grupos[grupo_de(mesa)]
+        g["ventas"] += 1
+        g["personas"] += gente
+        g["venta"] += total
+        if mesa in SALON and gente > 0:
+            personas_salon += gente
+            venta_salon += total
+            tam_grupo[min(gente, 8)] += 1
+
+        tuvo_entrada = tuvo_pan = False
+        for iid in rel_ids(v, "items"):
+            it = buscar(incl, "item", iid)
+            if not it:
+                continue
+            ia = it.get("attributes") or {}
+            if ia.get("canceled") or ia.get("cancelled"):
+                continue
+            precio = float(ia.get("price") or 0)  # total de la línea (ya multiplicado)
+            cant = float(ia.get("quantity") or 1)
+            p = buscar(incl, "product", rel_id(it, "product"))
+            pa = (p or {}).get("attributes") or {}
+            nombre = pa.get("name") or "Sin nombre"
+            c = buscar(incl, "categor", rel_id(p or {}, "productCategory"))
+            cat = ((c or {}).get("attributes") or {}).get("name") or ""
+            nn, nc = norm(nombre), norm(cat)
+            if "panuozzo" in nn and "brisket" in nn:
+                continue
+            prod[nombre]["u"] += cant
+            prod[nombre]["v"] += precio
+            prod[nombre]["cat"] = cat
+            cat_venta[cat or "Sin categoría"] += precio
+            if "panuozzo" in nn:
+                pan["u"] += cant
+                pan["v"] += precio
+                tuvo_pan = True
+            elif "antipast" in nc:
+                tuvo_entrada = True
+            costo = float(pa.get("cost") or 0)
+            if costo > 0:
+                m = precio - costo * cant
+                venta_beb += precio
+                margen_beb += m
+                g["venta_beb"] += precio
+                g["margen_beb"] += m
+        con_entrada += tuvo_entrada
+        pan["ventas"] += tuvo_pan
+
+    r = lambda x: round(x)
+    venta_postres = sum(v for k, v in cat_venta.items() if "postre" in norm(k))
+    venta_entradas = sum(p["v"] for k, p in prod.items() if "antipast" in norm(p["cat"]) and "panuozzo" not in norm(k))
+    productos = sorted(({"nombre": k, "cat": p["cat"], "u": round(p["u"], 1), "v": r(p["v"])} for k, p in prod.items()),
+                       key=lambda x: -x["v"])
+    orden = [g for g, _ in GRUPOS] + ["Sin mesa"]
+    mesas = [{"grupo": k, **{kk: (r(vv) if isinstance(vv, float) else vv) for kk, vv in grupos[k].items()}}
+             for k in orden if k in grupos]
+    hoy = datetime.now(TZ)
+    dias_transcurridos = dias_mes if hoy >= fin else max(1, (hoy - ini).days + (1 if hoy.hour >= 12 else 0))
+    return {
+        "mes": mes,
+        "dias_mes": dias_mes,
+        "dias_transcurridos": min(dias_mes, dias_transcurridos),
+        "cerrado": hoy >= fin,
+        "venta": r(venta),
+        "ventas": n,
+        "descuentos": r(descuentos),
+        "ticket_venta": r(venta / n) if n else 0,
+        "personas_salon": personas_salon,
+        "venta_salon": r(venta_salon),
+        "ticket_persona": r(venta_salon / personas_salon) if personas_salon else 0,
+        "pct_con_entrada": round(100 * con_entrada / n, 1) if n else 0,
+        "pct_entradas_venta": round(100 * venta_entradas / venta, 1) if venta else 0,
+        "pct_postres": round(100 * venta_postres / venta, 1) if venta else 0,
+        "venta_postres": r(venta_postres),
+        "panuozzo": {"u": round(pan["u"], 1), "v": r(pan["v"]), "ventas": pan["ventas"]},
+        "bebidas": {"venta": r(venta_beb), "margen": r(margen_beb),
+                    "pct_margen": round(100 * margen_beb / venta_beb, 1) if venta_beb else 0},
+        "por_dia": [r(por_dia.get(d, 0)) for d in range(1, dias_mes + 1)],
+        "calor": [[r(calor.get((d, h), 0)) for h in range(12, 24)] for d in range(7)],
+        "dias_por_semana": [len(dias_semana_vistos[d]) for d in range(7)],
+        "categorias": sorted(({"cat": k, "v": r(v)} for k, v in cat_venta.items()), key=lambda x: -x["v"]),
+        "top": productos[:12],
+        "bottom": [p for p in productos if p["u"] > 0][-8:][::-1],
+        "mesas": mesas,
+        "tam_grupo": {str(k): v for k, v in sorted(tam_grupo.items())},
+        "fuente": "Fudo (API), calculado " + hoy.strftime("%Y-%m-%d %H:%M") + " hora de Chile",
+    }
+
+
+def guardar(fila, clave):
+    http_json(f"{SUPABASE_URL}/rest/v1/indicadores_mes?on_conflict=mes",
+              data={"mes": fila["mes"], "datos": fila, "actualizado": datetime.now(timezone.utc).isoformat()},
+              headers={"apikey": clave, "Authorization": f"Bearer {clave}",
+                       "Prefer": "resolution=merge-duplicates,return=minimal"}, method="POST")
+
+
+def main():
+    key, secret = os.environ.get("FUDO_API_KEY"), os.environ.get("FUDO_API_SECRET")
+    if not key or not secret:
+        print("Faltan FUDO_API_KEY y FUDO_API_SECRET. No se calculó nada.")
+        return 0
+    clave = os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
+    if clave:
+        try:
+            http_json(f"{SUPABASE_URL}/rest/v1/indicadores_manual?select=mes&limit=1",
+                      headers={"apikey": clave, "Authorization": f"Bearer {clave}"})
+            print("Supabase: clave OK.")
+        except urllib.error.HTTPError as e:
+            print(f"Supabase rechazó la clave service_role (HTTP {e.code}). Revisa el secreto SUPABASE_SERVICE_ROLE_KEY.")
+            return 1
+    try:
+        token = http_json(AUTH_URL, {"apiKey": key.strip(), "apiSecret": secret.strip()})["token"]
+    except urllib.error.HTTPError as e:
+        print(f"Fudo rechazó las credenciales (HTTP {e.code}). Revisa FUDO_API_KEY y FUDO_API_SECRET.")
+        return 1
+    print("Fudo: credenciales OK.")
+    probar = os.environ.get("PROBAR") == "1"
+
+    hoy = datetime.now(TZ)
+    meses = [m.strip() for m in (os.environ.get("MESES") or "").split(",") if m.strip()]
+    if not meses:
+        anterior = (hoy.replace(day=1) - timedelta(days=1))
+        meses = [anterior.strftime("%Y-%m"), hoy.strftime("%Y-%m")]
+    desde = min(rango_mes(m)[0] for m in meses)
+    if probar:
+        desde = hoy - timedelta(days=2)
+    ventas, incl = bajar_ventas(token, desde)
+
+    if probar:
+        # El repositorio es público y sus registros de Actions también: solo nombres de campos, sin cifras.
+        print("Ventas leídas (últimos 2 días):", len(ventas))
+        if ventas:
+            v = ventas[0]
+            print("Venta, atributos:", sorted(v["attributes"].keys()))
+            print("Venta, relaciones:", sorted((v.get("relationships") or {}).keys()))
+        tipos = defaultdict(set)
+        for (t, _), x in incl.items():
+            tipos[t] |= set((x.get("attributes") or {}).keys()) | {"rel:" + k for k in (x.get("relationships") or {})}
+        for t, ks in sorted(tipos.items()):
+            print(f"Incluido {t}:", sorted(ks))
+        con_mesa = sum(1 for v in ventas if mesa_de(v, incl) is not None)
+        print(f"Ventas con mesa reconocida: {con_mesa} de {len(ventas)}")
+        return 0
+
+    for mes in meses:
+        fila = calcular(mes, ventas, incl)
+        if not clave:
+            print(f"{mes}: calculado, pero falta SUPABASE_SERVICE_ROLE_KEY; no se guardó.")
+            continue
+        guardar(fila, clave)
+        print(f"{mes}: indicadores guardados en Supabase.")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
