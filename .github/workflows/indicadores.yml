@@ -12,8 +12,6 @@ on:
         description: "Meses a recalcular, ej. 2026-09,2026-10 (vacío = mes actual y anterior)"
         required: false
         default: ""
-  push:
-    branches: [indicadores]       # prueba temporal antes del merge
 
 permissions:
   contents: read
@@ -28,5 +26,5 @@ jobs:
           FUDO_API_KEY: ${{ secrets.FUDO_API_KEY }}
           FUDO_API_SECRET: ${{ secrets.FUDO_API_SECRET }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          MESES: ${{ github.event_name == 'push' && '2026-01,2026-02,2026-03,2026-04,2026-05,2026-06,2026-07,2026-08,2026-09,2026-10,2026-11' || github.event.inputs.meses }}
+          MESES: ${{ github.event.inputs.meses }}
         run: python3 scripts/indicadores.py
