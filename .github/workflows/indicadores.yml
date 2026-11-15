@@ -1,0 +1,33 @@
+name: Indicadores mensuales desde Fudo
+
+# Calcula los indicadores del mes (y del mes anterior) y los guarda en Supabase.
+# No escribe nada en el repositorio: las cifras son internas y se ven solo en
+# rusti-co.cl/equipo → Indicadores, con sesión de administrador.
+on:
+  schedule:
+    - cron: "40 9,16,23 * * *"   # 3 veces al día (≈ 6:40, 13:40 y 20:40 en Concepción, verano)
+  workflow_dispatch:
+    inputs:
+      meses:
+        description: "Meses a recalcular, ej. 2026-09,2026-10 (vacío = mes actual y anterior)"
+        required: false
+        default: ""
+  push:
+    branches: [indicadores]       # prueba temporal: solo lee nombres de campos de Fudo
+
+permissions:
+  contents: read
+
+jobs:
+  indicadores:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Calcular y guardar indicadores
+        env:
+          FUDO_API_KEY: ${{ secrets.FUDO_API_KEY }}
+          FUDO_API_SECRET: ${{ secrets.FUDO_API_SECRET }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          MESES: ${{ github.event.inputs.meses }}
+          PROBAR: ${{ github.event_name == 'push' && '1' || '' }}
+        run: python3 scripts/indicadores.py
