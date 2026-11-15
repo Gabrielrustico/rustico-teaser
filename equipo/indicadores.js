@@ -8,6 +8,10 @@ const IND = (() => {
   const corto = m => MESES[+m.split("-")[1] - 1].slice(0, 3);
   const mm = n => "$" + (n / 1e6).toLocaleString("es-CL", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + " MM";
   const pct = n => (n ?? 0).toLocaleString("es-CL", { maximumFractionDigits: 1 }) + "%";
+  // Reseñas del mes: las leídas de Google (automáticas) mandan; si no hay, las escritas a mano.
+  const resenas = m => { const r = st.meses[m]?.resenas, man = st.manual[m] || {};
+    if (r && r.nuevas != null) return { nuevas: r.nuevas, total: r.total, estrellas: r.estrellas, auto: true, al: r.al };
+    return { nuevas: man.resenas_nuevas, total: r?.total ?? man.resenas_total, estrellas: r?.estrellas ?? man.estrellas, auto: false }; };
   const mesAnterior = m => { const [y, mo] = m.split("-").map(Number); return mo === 1 ? `${y - 1}-12` : `${y}-${String(mo - 1).padStart(2, "0")}`; };
 
   async function cargar(){
@@ -97,12 +101,12 @@ const IND = (() => {
   function formManual(man){
     const v = k => man[k] ?? "";
     const inp = (id, lab, k, step = "any") => `<div class="field"><label for="${id}">${lab}</label><input id="${id}" data-k="${k}" type="number" step="${step}" value="${v(k)}"></div>`;
-    return `<details class="box" ${Object.keys(man).length ? "" : "open"}><summary><b>Metas y reseñas de ${nombreMes(st.mes)}</b> <span class="small muted">(se escriben a mano)</span></summary>
+    return `<details class="box" ${Object.keys(man).length ? "" : "open"}><summary><b>Metas y reseñas de ${nombreMes(st.mes)}</b> <span class="small muted">(las reseñas se leen solas de Google; aquí puedes escribirlas si falta el dato)</span></summary>
       <form id="fInd" style="margin-top:12px"><div class="fields">
         ${inp("i-mv", "Meta de venta ($)", "meta_venta", "1")}${inp("i-mt", "Meta ticket por persona ($)", "meta_ticket", "1")}${inp("i-mr", "Meta reseñas nuevas", "meta_resenas", "1")}
         ${inp("i-rn", "Reseñas nuevas del mes", "resenas_nuevas", "1")}${inp("i-rt", "Reseñas totales en Google", "resenas_total", "1")}${inp("i-es", "Estrellas en Google", "estrellas", "0.1")}
       </div><div class="actions"><button class="btn btn-gold">Guardar</button></div><div class="status" id="i-status"></div>
-      <p class="small muted">Las reseñas se toman del Perfil de Empresa de Google. Fudo no las tiene.</p></form></details>`;
+      <p class="small muted">Si la lectura automática de Google funciona, sus números mandan sobre lo escrito aquí.</p></form></details>`;
   }
 
   function pintarMes(){
@@ -119,7 +123,7 @@ const IND = (() => {
     }
     const mv = +man.meta_venta || 0, mt = +man.meta_ticket || 0, mr = +man.meta_resenas || 0;
     const proy = d.cerrado ? 0 : Math.round(d.venta / Math.max(1, d.dias_transcurridos) * d.dias_mes);
-    const rn = man.resenas_nuevas;
+    const R = resenas(st.mes), rn = R.nuevas;
     // Mes en curso: la venta se compara con los mismos días del mes anterior; los conteos no se comparan.
     const ventaAnt = ant && !d.cerrado ? ant.por_dia.slice(0, d.dias_transcurridos).reduce((a, b) => a + b, 0) : ant?.venta;
     const cuenta = (act, prev) => d.cerrado ? delta(act, prev) : "";
@@ -129,7 +133,7 @@ const IND = (() => {
           ${proy ? `<span class="small muted">Al ritmo actual cierra en ${mm(proy)}</span>` : ""}${delta(d.venta, ventaAnt)}${!d.cerrado && ant ? `<span class="small muted">(mismos ${d.dias_transcurridos} días)</span>` : ""}`)}
         ${tarjeta("Ticket por persona", clp(d.ticket_persona), `${mt ? `<span class="small ${d.ticket_persona >= mt ? "ok" : "bad"}">Objetivo ${clp(mt)}</span>${barra(d.ticket_persona, mt)}` : ""}${delta(d.ticket_persona, ant?.ticket_persona)}`)}
         ${tarjeta("Reseñas nuevas en Google", rn != null && rn !== "" ? rn : "—", `${mr ? `<span class="small">Meta ${mr}</span>${barra(+rn || 0, mr)}` : ""}
-          ${man.resenas_total ? `<span class="small muted">${man.resenas_total} en total · ${man.estrellas || "—"} ★</span>` : `<span class="small muted">Escríbelas abajo</span>`}`)}
+          ${R.total ? `<span class="small muted">${R.total} en total · ${R.estrellas ? String(R.estrellas).replace(".", ",") : "—"} ★${R.auto ? " · leído de Google" : ""}</span>` : `<span class="small muted">Escríbelas abajo</span>`}`)}
         ${tarjeta("Cuentas", d.ventas.toLocaleString("es-CL"), `<span class="small muted">${clp(d.ticket_venta)} por cuenta · ${d.personas_salon.toLocaleString("es-CL")} personas en salón</span>${cuenta(d.ventas, ant?.ventas)}`)}
         ${tarjeta("Cuentas con entrada", pct(d.pct_con_entrada), `<span class="small muted">Antipasto sin Panuozzo · ${pct(d.pct_entradas_venta)} de la venta</span>`)}
         ${tarjeta("Postres", pct(d.pct_postres), `<span class="small muted">de la venta · ${clp(d.venta_postres)}</span>`)}
@@ -179,7 +183,7 @@ const IND = (() => {
     const venta = suma("venta"), metas = lista.reduce((a, m) => a + (+(st.manual[m]?.meta_venta) || 0), 0);
     const ventaConMeta = lista.reduce((a, m) => a + (+(st.manual[m]?.meta_venta) ? st.meses[m].venta : 0), 0);
     const ps = suma("personas_salon"), vs = suma("venta_salon"), n = suma("ventas");
-    const res = lista.reduce((a, m) => a + (+(st.manual[m]?.resenas_nuevas) || 0), 0);
+    const res = lista.reduce((a, m) => a + (+resenas(m).nuevas || 0), 0);
     const fila = m => { const d = st.meses[m], man = st.manual[m] || {}, mv = +man.meta_venta || 0, mt = +man.meta_ticket || 0;
       return `<tr data-ir="${m}" class="ind-fila"><td>${nombreMes(m)}${d.cerrado ? "" : ' <span class="pill warn">en curso</span>'}</td>
         <td class="num">${mm(d.venta)}</td><td class="num">${mv ? `<span class="${d.venta >= mv ? "ok" : d.cerrado ? "bad" : ""}">${Math.round(d.venta / mv * 100)}%</span>` : "—"}</td>
@@ -187,7 +191,7 @@ const IND = (() => {
         <td class="num"><span class="${mt ? (d.ticket_persona >= mt ? "ok" : "bad") : ""}">${clp(d.ticket_persona)}</span></td>
         <td class="num">${pct(d.pct_con_entrada)}</td><td class="num">${pct(d.pct_postres)}</td>
         <td class="num">${d.panuozzo.u.toLocaleString("es-CL")}</td><td class="num">${clp(d.bebidas.margen)}</td>
-        <td class="num">${man.resenas_nuevas ?? "—"}</td></tr>`; };
+        <td class="num">${resenas(m).nuevas ?? "—"}</td></tr>`; };
     $("vista").innerHTML = `${modos()}<div class="ind-top"><div><h2 style="margin:0">Historial ${esc(st.anio)}</h2>
         <p class="small muted">${lista.length} meses con datos · toca un mes para ver su detalle</p></div>
       ${anios.length > 1 ? `<select id="i-anio" aria-label="Año">${anios.map(a => `<option ${a === st.anio ? "selected" : ""}>${a}</option>`).join("")}</select>` : ""}</div>
@@ -195,7 +199,7 @@ const IND = (() => {
         ${tarjeta("Venta del año", mm(venta), metas ? `<span class="small muted">En los meses con meta: ${mm(ventaConMeta)} de ${mm(metas)} (${Math.round(ventaConMeta / metas * 100)}%)</span>` : "")}
         ${tarjeta("Ticket por persona", clp(ps ? vs / ps : 0), `<span class="small muted">promedio del año, salón</span>`)}
         ${tarjeta("Cuentas", n.toLocaleString("es-CL"), `<span class="small muted">${clp(n ? venta / n : 0)} por cuenta</span>`)}
-        ${tarjeta("Reseñas nuevas", res || "—", `<span class="small muted">según lo escrito cada mes</span>`)}
+        ${tarjeta("Reseñas nuevas", res || "—", `<span class="small muted">leídas de Google desde noviembre; antes, lo escrito a mano</span>`)}
       </div>
       <div class="box" style="margin-top:14px"><h3 style="margin-top:0">Venta por mes</h3>${graficoMeses()}</div>
       <div class="box" style="margin-top:14px"><h3 style="margin-top:0">Mes a mes</h3><div class="tablewrap"><table>
