@@ -39,7 +39,7 @@ const IND = (() => {
 
   // Venta acumulada del mes contra la línea de la meta.
   function graficoAcumulado(d, meta){
-    const W = 640, H = 220, P = { l: 46, r: 12, t: 12, b: 24 };
+    const W = 1000, H = 280, P = { l: 46, r: 12, t: 16, b: 24 };
     const acum = []; d.por_dia.reduce((s, v, i) => (acum[i] = s + v), 0);
     const hasta = d.cerrado ? d.dias_mes : Math.min(d.dias_transcurridos, d.dias_mes);
     const max = Math.max(meta || 0, acum[d.dias_mes - 1] || 0, 1) * 1.05;
@@ -58,7 +58,7 @@ const IND = (() => {
   function graficoMeses(){
     const lista = Object.keys(st.meses).filter(m => m.startsWith(st.anio)).sort();
     if (lista.length < 2) return `<div class="empty">La evolución aparece cuando haya al menos dos meses calculados.</div>`;
-    const W = 640, H = 200, P = { l: 46, r: 12, t: 16, b: 24 };
+    const W = 1000, H = 260, P = { l: 46, r: 12, t: 20, b: 24 };
     const vals = lista.map(m => st.meses[m].venta), metas = lista.map(m => +(st.manual[m]?.meta_venta) || 0);
     const max = Math.max(...vals, ...metas, 1) * 1.1, bw = (W - P.l - P.r) / lista.length;
     const y = v => H - P.b - (H - P.t - P.b) * v / max;
