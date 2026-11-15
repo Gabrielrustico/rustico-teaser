@@ -1,0 +1,2756 @@
+{
+ "products": {
+  "14defebrero": {
+   "active": true,
+   "category": "Tragos de autor",
+   "name": "14 de Febrero",
+   "price": 8900,
+   "qr": false
+  },
+  "2dotrago990": {
+   "active": true,
+   "category": "Coctel",
+   "name": "2do trago $990",
+   "price": 990,
+   "qr": false
+  },
+  "4quesos": {
+   "active": true,
+   "category": "Pizza",
+   "name": "Pizza 4 Quesos",
+   "price": 15990,
+   "qr": false
+  },
+  "4quesosuber": {
+   "active": true,
+   "category": "PIZZAS UBER ",
+   "name": "Pizza 4 quesos uber",
+   "price": 17990,
+   "qr": false
+  },
+  "abridormultiple": {
+   "active": true,
+   "category": "Bodega Barra",
+   "name": "Abridor multiple",
+   "price": 0,
+   "qr": false
+  },
+  "absolut": {
+   "active": true,
+   "category": "Vodka",
+   "name": "Absolut",
+   "price": 6900,
+   "qr": false
+  },
+  "adicionalpulpamojitolitro": {
+   "active": true,
+   "category": "Pulpa sabores",
+   "name": "Adicional Pulpa mojito litro",
+   "price": 2500,
+   "qr": false
+  },
+  "agregadobrisket": {
+   "active": true,
+   "category": "Agregados",
+   "name": "Agregado brisket",
+   "price": 6900,
+   "qr": true
+  },
+  "agregadoburrata": {
+   "active": true,
+   "category": "Agregados",
+   "name": "Agregado burrata",
+   "price": 4900,
+   "qr": false
+  },
+  "agregadomayo": {
+   "active": true,
+   "category": "Agregados",
+   "name": "Agregado mayo",
+   "price": 1500,
+   "qr": false
+  },
+  "agregadopalta": {
+   "active": true,
+   "category": "Agregados",
+   "name": "Agregado palta",
+   "price": 3000,
+   "qr": false
+  },
+  "agregadoproteina": {
+   "active": true,
+   "category": "Agregados",
+   "name": "Agregado proteina",
+   "price": 3000,
+   "qr": false
+  },
+  "agregadopulpa": {
+   "active": true,
+   "category": "Pulpa sabores",
+   "name": "agregado pulpa",
+   "price": 1500,
+   "qr": false
+  },
+  "agregadoquesofundido": {
+   "active": true,
+   "category": "Agregados",
+   "name": "Agregado queso fundido",
+   "price": 3000,
+   "qr": false
+  },
+  "agregadoquesoparmesano": {
+   "active": true,
+   "category": "Agregados",
+   "name": "Agregado queso parmesano",
+   "price": 1000,
+   "qr": false
+  },
+  "agregadosalsaalioli": {
+   "active": true,
+   "category": "Agregados",
+   "name": "Agregado salsa Ali Oli",
+   "price": 1500,
+   "qr": false
+  },
+  "agregadovegetal": {
+   "active": true,
+   "category": "Agregados",
+   "name": "Agregado vegetal",
+   "price": 2500,
+   "qr": false
+  },
+  "aguamineralcongas": {
+   "active": true,
+   "category": "Agua Con Gas",
+   "name": "Agua mineral con gas",
+   "price": 2900,
+   "qr": false
+  },
+  "aguamineralsingas": {
+   "active": true,
+   "category": "Agua Sin Gas",
+   "name": "Agua mineral sin gas",
+   "price": 2900,
+   "qr": false
+  },
+  "aguatonicaschweppes": {
+   "active": true,
+   "category": "Bebidas Gaseosas",
+   "name": "Agua tónica Schweppes",
+   "price": 3900,
+   "qr": false
+  },
+  "aguatonicaschweppeszero": {
+   "active": true,
+   "category": "Bebidas Gaseosas",
+   "name": "Agua Tonica Schweppes zero",
+   "price": 3900,
+   "qr": false
+  },
+  "album": {
+   "active": true,
+   "category": "PROMO MUNDIAL 2026",
+   "name": "ALBUM",
+   "price": 4500,
+   "qr": false
+  },
+  "albummundial2026": {
+   "active": false,
+   "category": "PROMO MUNDIAL 2026",
+   "name": "ALBUM MUNDIAL 2026",
+   "price": 3490,
+   "qr": true
+  },
+  "altodelcarmen35": {
+   "active": true,
+   "category": "Pisco",
+   "name": "Alto del carmen 35°",
+   "price": 5500,
+   "qr": false
+  },
+  "altodelcarmenetiquetablanca": {
+   "active": true,
+   "category": "Pisco",
+   "name": "Alto del Carmen Etiqueta Blanca",
+   "price": 6500,
+   "qr": false
+  },
+  "altodelcarmenetiquetanegra": {
+   "active": true,
+   "category": "Pisco",
+   "name": "Alto del Carmen Etiqueta Negra",
+   "price": 8790,
+   "qr": false
+  },
+  "amarettosour": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Amaretto Sour",
+   "price": 7900,
+   "qr": false
+  },
+  "amonio": {
+   "active": true,
+   "category": "Bodega coperia/limpieza",
+   "name": "Amonio",
+   "price": 0,
+   "qr": false
+  },
+  "aperolspritz": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Aperol Spritz",
+   "price": 6900,
+   "qr": false
+  },
+  "arabe": {
+   "active": true,
+   "category": "Pizza",
+   "name": "Pizza Árabe",
+   "price": 13990,
+   "qr": false
+  },
+  "arabeuber": {
+   "active": true,
+   "category": "PIZZAS UBER ",
+   "name": "Pizza arabe uber",
+   "price": 15990,
+   "qr": false
+  },
+  "arroz": {
+   "active": true,
+   "category": "Insumo Almuerzo",
+   "name": "Arroz",
+   "price": 0,
+   "qr": false
+  },
+  "australcalafate": {
+   "active": true,
+   "category": "Cerveza Tradicional",
+   "name": "Austral Calafate",
+   "price": 4900,
+   "qr": false
+  },
+  "ballantinesfinest40": {
+   "active": true,
+   "category": "Whisky",
+   "name": "Ballantine’s finest 40°",
+   "price": 5900,
+   "qr": false
+  },
+  "basedechelada": {
+   "active": true,
+   "category": "Bebidas Con Alcohol",
+   "name": "Base de chelada",
+   "price": 1500,
+   "qr": false
+  },
+  "basemichelada": {
+   "active": true,
+   "category": "Bebidas Con Alcohol",
+   "name": "Base michelada",
+   "price": 1500,
+   "qr": true
+  },
+  "basemicheladafull": {
+   "active": true,
+   "category": "Bebidas Con Alcohol",
+   "name": "Base michelada full",
+   "price": 2000,
+   "qr": false
+  },
+  "bebidacocanormal": {
+   "active": false,
+   "category": "Bebidas acompañante (sin precio adicional para SOLO LICORES)",
+   "name": "bebida coca normal",
+   "price": 0,
+   "qr": false
+  },
+  "bebidacocazero": {
+   "active": false,
+   "category": "Bebidas acompañante (sin precio adicional para SOLO LICORES)",
+   "name": "bebida coca zero",
+   "price": 0,
+   "qr": false
+  },
+  "bebidafanta": {
+   "active": false,
+   "category": "Bebidas acompañante (sin precio adicional para SOLO LICORES)",
+   "name": "bebida fanta",
+   "price": 0,
+   "qr": false
+  },
+  "bebidafantazero": {
+   "active": false,
+   "category": "Bebidas acompañante (sin precio adicional para SOLO LICORES)",
+   "name": "Bebida fanta zero",
+   "price": 0,
+   "qr": false
+  },
+  "bebidasprite": {
+   "active": false,
+   "category": "Bebidas acompañante (sin precio adicional para SOLO LICORES)",
+   "name": "bebida sprite",
+   "price": 0,
+   "qr": false
+  },
+  "bebidaspritezero": {
+   "active": false,
+   "category": "Bebidas acompañante (sin precio adicional para SOLO LICORES)",
+   "name": "Bebida sprite zero",
+   "price": 0,
+   "qr": false
+  },
+  "beefeaterlondondry": {
+   "active": true,
+   "category": "Gin",
+   "name": "Beefeater london dry",
+   "price": 8900,
+   "qr": false
+  },
+  "beefeaterpink": {
+   "active": true,
+   "category": "Gin",
+   "name": "Beefeater pink",
+   "price": 8900,
+   "qr": false
+  },
+  "bilz": {
+   "active": true,
+   "category": "Bebidas Gaseosas",
+   "name": "Bilz",
+   "price": 2500,
+   "qr": false
+  },
+  "bilzzero": {
+   "active": true,
+   "category": "Bebidas Gaseosas",
+   "name": "Bilz zero",
+   "price": 2500,
+   "qr": false
+  },
+  "blackjack": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Black Jack",
+   "price": 6900,
+   "qr": false
+  },
+  "bodegabasura50x70": {
+   "active": true,
+   "category": "Bodega coperia/limpieza",
+   "name": "Bodega Basura 50x70",
+   "price": 0,
+   "qr": false
+  },
+  "bolsacamiseta40x50": {
+   "active": true,
+   "category": "Bodega coperia/limpieza",
+   "name": "Bolsa camiseta  40x50",
+   "price": 0,
+   "qr": false
+  },
+  "bolsadebasura50x70": {
+   "active": true,
+   "category": "Bodega coperia/limpieza",
+   "name": "Bolsa de basura 50x70",
+   "price": 0,
+   "qr": false
+  },
+  "bolsadebasura80x110": {
+   "active": true,
+   "category": "Bodega coperia/limpieza",
+   "name": "Bolsa de Basura 80x110",
+   "price": 0,
+   "qr": false
+  },
+  "bolsasalvacio": {
+   "active": true,
+   "category": "Envases Cocina",
+   "name": "Bolsas al vacio",
+   "price": 0,
+   "qr": false
+  },
+  "bolsaspapelcraft": {
+   "active": true,
+   "category": "Envases Cocina",
+   "name": "Bolsas Papel Craft",
+   "price": 0,
+   "qr": false
+  },
+  "bolsastaco": {
+   "active": true,
+   "category": "Envases Cocina",
+   "name": "Bolsas Taco",
+   "price": 0,
+   "qr": false
+  },
+  "bombillas": {
+   "active": true,
+   "category": "Bodega Garzoneria",
+   "name": "Bombillas",
+   "price": 0,
+   "qr": false
+  },
+  "borgona": {
+   "active": true,
+   "category": "FIESTAS PATRIAS",
+   "name": "Borgoña",
+   "price": 5900,
+   "qr": true
+  },
+  "brisket": {
+   "active": true,
+   "category": "Pizza",
+   "name": "Pizza Brisket",
+   "price": 19900,
+   "qr": false
+  },
+  "brisketuber": {
+   "active": true,
+   "category": "PIZZAS UBER ",
+   "name": "Pizza brisket uber",
+   "price": 22900,
+   "qr": false
+  },
+  "budweiser": {
+   "active": true,
+   "category": "Cerveza Tradicional",
+   "name": "Budweiser",
+   "price": 3900,
+   "qr": false
+  },
+  "budweiser0": {
+   "active": true,
+   "category": "Cerveza Sin Alcohol",
+   "name": "Budweiser 0°",
+   "price": 3900,
+   "qr": false
+  },
+  "burger": {
+   "active": true,
+   "category": "Pizza",
+   "name": "Pizza Burger",
+   "price": 13990,
+   "qr": false
+  },
+  "burgeruber": {
+   "active": true,
+   "category": "PIZZAS UBER ",
+   "name": "Pizza burger uber",
+   "price": 15990,
+   "qr": false
+  },
+  "burrata": {
+   "active": true,
+   "category": "Pizza",
+   "name": "Pizza Burrata",
+   "price": 18990,
+   "qr": false
+  },
+  "burrataalhorno": {
+   "active": true,
+   "category": "Antipasto",
+   "name": "Burrata al Horno",
+   "price": 11500,
+   "qr": false
+  },
+  "burratauber": {
+   "active": true,
+   "category": "PIZZAS UBER ",
+   "name": "Pizza burrata uber",
+   "price": 19900,
+   "qr": false
+  },
+  "caballa": {
+   "active": true,
+   "category": "Insumo Almuerzo",
+   "name": "Caballa",
+   "price": 0,
+   "qr": false
+  },
+  "cafeamericano": {
+   "active": true,
+   "category": "Te Y Café",
+   "name": "Cafe americano",
+   "price": 2500,
+   "qr": false
+  },
+  "cafecortado": {
+   "active": true,
+   "category": "Te Y Café",
+   "name": "Cafe cortado",
+   "price": 2900,
+   "qr": false
+  },
+  "cafeexpresso": {
+   "active": true,
+   "category": "Te Y Café",
+   "name": "Cafe expresso",
+   "price": 2000,
+   "qr": false
+  },
+  "cafelatte": {
+   "active": true,
+   "category": "Te Y Café",
+   "name": "Café latte",
+   "price": 4200,
+   "qr": false
+  },
+  "caipirinasabores": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Caipirina sabores",
+   "price": 7900,
+   "qr": false
+  },
+  "caipirinatradicional": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Caipirina tradicional",
+   "price": 6500,
+   "qr": false
+  },
+  "caipiroska": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Caipiroska",
+   "price": 7900,
+   "qr": false
+  },
+  "cajadepizzachica": {
+   "active": true,
+   "category": "Bodega Garzoneria",
+   "name": "Caja de pizza chica",
+   "price": 0,
+   "qr": false
+  },
+  "cajadepizzagrande": {
+   "active": true,
+   "category": "Bodega Garzoneria",
+   "name": "caja de pizza grande",
+   "price": 0,
+   "qr": false
+  },
+  "calafate2x1": {
+   "active": true,
+   "category": "Cerveza Tradicional",
+   "name": "Calafate 2x1",
+   "price": 0,
+   "qr": false
+  },
+  "calafaterustico": {
+   "active": true,
+   "category": "Shop 470 cc cerveza artesanal",
+   "name": "Calafate Rusti-co",
+   "price": 6500,
+   "qr": true
+  },
+  "camaron": {
+   "active": true,
+   "category": "Pizza",
+   "name": "Pizza de Camaron",
+   "price": 18500,
+   "qr": false
+  },
+  "camaronuber": {
+   "active": true,
+   "category": "PIZZAS UBER ",
+   "name": "Pizza camaron uber",
+   "price": 20900,
+   "qr": false
+  },
+  "camembertalsarten": {
+   "active": true,
+   "category": "Antipasto",
+   "name": "Camembert al Sarten",
+   "price": 9900,
+   "qr": false
+  },
+  "campari": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Campari",
+   "price": 6900,
+   "qr": false
+  },
+  "camparispritz": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Campari Spritz",
+   "price": 6900,
+   "qr": false
+  },
+  "canadadry": {
+   "active": true,
+   "category": "Bebidas Gaseosas",
+   "name": "Canada Dry",
+   "price": 2500,
+   "qr": false
+  },
+  "canadadrymini": {
+   "active": true,
+   "category": "Bebidas Gaseosas",
+   "name": "Canada dry mini",
+   "price": 2000,
+   "qr": false
+  },
+  "canadadryzero": {
+   "active": true,
+   "category": "Bebidas Gaseosas",
+   "name": "Canada Dry Zero",
+   "price": 2500,
+   "qr": false
+  },
+  "capricciosa": {
+   "active": true,
+   "category": "Pizza",
+   "name": "Pizza Capricciosa",
+   "price": 16990,
+   "qr": false
+  },
+  "capuchino": {
+   "active": true,
+   "category": "Te Y Café",
+   "name": "Capuchino",
+   "price": 3500,
+   "qr": false
+  },
+  "carajillo": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Carajillo",
+   "price": 6900,
+   "qr": false
+  },
+  "cervezamurelagringa": {
+   "active": true,
+   "category": "Shop 470 cc cerveza artesanal",
+   "name": "Cerveza Mure la gringa",
+   "price": 5900,
+   "qr": false
+  },
+  "cervezaportenalacostera": {
+   "active": false,
+   "category": "Cerveza Tradicional",
+   "name": "Cerveza Portena La costera",
+   "price": 4900,
+   "qr": false
+  },
+  "cervezaportenastrongale": {
+   "active": false,
+   "category": "Cerveza Tradicional",
+   "name": "Cerveza Portena Strong Ale",
+   "price": 4900,
+   "qr": false
+  },
+  "cervezascottishambarchiflondeldiablo": {
+   "active": true,
+   "category": "Shop 470 cc cerveza artesanal",
+   "name": "Cerveza Scottish Ambar Chiflón del diablo",
+   "price": 6500,
+   "qr": true
+  },
+  "cesarrustica": {
+   "active": true,
+   "category": "Ensalada",
+   "name": "Cesar Rustica",
+   "price": 10900,
+   "qr": true
+  },
+  "chivasregal12y": {
+   "active": true,
+   "category": "Whisky",
+   "name": "Chivas Regal 12Y",
+   "price": 8490,
+   "qr": false
+  },
+  "chocolatemym": {
+   "active": true,
+   "category": "Bodega Garzoneria",
+   "name": "Chocolate mym",
+   "price": 0,
+   "qr": false
+  },
+  "chocolatesanenuz": {
+   "active": true,
+   "category": "Bodega Garzoneria",
+   "name": "Chocolate sanenuz",
+   "price": 0,
+   "qr": false
+  },
+  "cifcrema": {
+   "active": true,
+   "category": "Bodega coperia/limpieza",
+   "name": "Cif crema",
+   "price": 0,
+   "qr": false
+  },
+  "clavooxidado": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Clavo oxidado",
+   "price": 6500,
+   "qr": false
+  },
+  "cloro": {
+   "active": true,
+   "category": "Bodega coperia/limpieza",
+   "name": "Cloro",
+   "price": 0,
+   "qr": false
+  },
+  "cocacola": {
+   "active": true,
+   "category": "Bebidas Gaseosas",
+   "name": "Coca Cola",
+   "price": 2500,
+   "qr": false
+  },
+  "cocacolamini": {
+   "active": true,
+   "category": "Bebidas Gaseosas",
+   "name": "Coca cola mini",
+   "price": 2000,
+   "qr": false
+  },
+  "cocacolazero": {
+   "active": true,
+   "category": "Bebidas Gaseosas",
+   "name": "Coca Cola Zero",
+   "price": 2500,
+   "qr": false
+  },
+  "cocacolazeromini": {
+   "active": true,
+   "category": "Bebidas Gaseosas",
+   "name": "Coca Cola zero mini",
+   "price": 2000,
+   "qr": false
+  },
+  "cochalguecalafate": {
+   "active": false,
+   "category": "Shop 470 cc cerveza artesanal",
+   "name": "Cochalgue calafate",
+   "price": 5900,
+   "qr": false
+  },
+  "cocholgueambar": {
+   "active": false,
+   "category": "Shop 470 cc cerveza artesanal",
+   "name": "Cocholgue Ambar",
+   "price": 6500,
+   "qr": false
+  },
+  "cocholguecalafate": {
+   "active": false,
+   "category": "Shop 470 cc cerveza artesanal",
+   "name": "Cocholgue Calafate",
+   "price": 6500,
+   "qr": false
+  },
+  "cocholguepaleale": {
+   "active": false,
+   "category": "Shop 470 cc cerveza artesanal",
+   "name": "Cocholgue Pale Ale",
+   "price": 5900,
+   "qr": false
+  },
+  "coctelera": {
+   "active": false,
+   "category": "Bodega Barra",
+   "name": "Coctelera",
+   "price": 0,
+   "qr": false
+  },
+  "colador": {
+   "active": true,
+   "category": "Bodega Barra",
+   "name": "Colador",
+   "price": 0,
+   "qr": false
+  },
+  "confort": {
+   "active": true,
+   "category": "Bodega coperia/limpieza",
+   "name": "Confort",
+   "price": 0,
+   "qr": false
+  },
+  "conodehelado": {
+   "active": true,
+   "category": "Bodega Garzoneria",
+   "name": "Cono de helado",
+   "price": 0,
+   "qr": false
+  },
+  "contenedorgastronomico": {
+   "active": true,
+   "category": "Bodega Barra",
+   "name": "Contenedor gastronomico",
+   "price": 0,
+   "qr": false
+  },
+  "copadeespumante": {
+   "active": false,
+   "category": "Coctel",
+   "name": "Copa de espumante",
+   "price": 3900,
+   "qr": false
+  },
+  "copaespumante": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Copa espumante",
+   "price": 4500,
+   "qr": false
+  },
+  "copasdevino": {
+   "active": true,
+   "category": "Bodega Barra",
+   "name": "Copas de vino",
+   "price": 0,
+   "qr": false
+  },
+  "cordillerano": {
+   "active": false,
+   "category": "Agua Sin Gas",
+   "name": "Cordillerano",
+   "price": 0,
+   "qr": false
+  },
+  "corona": {
+   "active": true,
+   "category": "Cerveza Tradicional",
+   "name": "Corona",
+   "price": 3900,
+   "qr": false
+  },
+  "corona0": {
+   "active": false,
+   "category": "Cerveza Sin Alcohol",
+   "name": "Corona 0°",
+   "price": 3900,
+   "qr": false
+  },
+  "cosmopolitan": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Cosmopolitan",
+   "price": 6900,
+   "qr": false
+  },
+  "crudo": {
+   "active": true,
+   "category": "Antipasto",
+   "name": "Crudo",
+   "price": 15900,
+   "qr": true
+  },
+  "crudos": {
+   "active": false,
+   "category": "Antipasto",
+   "name": "crudos",
+   "price": 15990,
+   "qr": true
+  },
+  "cuatroquesos": {
+   "active": false,
+   "category": "Pizza",
+   "name": "Pizza cuatro quesos",
+   "price": 15900,
+   "qr": true
+  },
+  "cuchillo": {
+   "active": true,
+   "category": "Bodega Barra",
+   "name": "Cuchillo",
+   "price": 0,
+   "qr": false
+  },
+  "daiquiri": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Daiquiri",
+   "price": 6900,
+   "qr": false
+  },
+  "damablanca": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Dama Blanca",
+   "price": 6900,
+   "qr": false
+  },
+  "deldiapepperoni": {
+   "active": false,
+   "category": "Promoción",
+   "name": "Pizza del día Pepperoni",
+   "price": 9990,
+   "qr": false
+  },
+  "deliriumred": {
+   "active": true,
+   "category": "Cerveza Tradicional",
+   "name": "Delirium Red",
+   "price": 6900,
+   "qr": false
+  },
+  "deliriumtremens": {
+   "active": true,
+   "category": "Cerveza Tradicional",
+   "name": "Delirium Tremens",
+   "price": 6900,
+   "qr": false
+  },
+  "deliriumtremens750cc": {
+   "active": false,
+   "category": "Cerveza Tradicional",
+   "name": "Delirium Tremens 750cc",
+   "price": 13900,
+   "qr": false
+  },
+  "delivery": {
+   "active": true,
+   "category": "Pizza",
+   "name": "Delivery",
+   "price": 3000,
+   "qr": false
+  },
+  "desengrasante": {
+   "active": true,
+   "category": "Bodega coperia/limpieza",
+   "name": "Desengrasante",
+   "price": 0,
+   "qr": false
+  },
+  "desodoranteambiental": {
+   "active": true,
+   "category": "Bodega coperia/limpieza",
+   "name": "Desodorante ambiental",
+   "price": 0,
+   "qr": false
+  },
+  "dieciochera": {
+   "active": false,
+   "category": "Pizza",
+   "name": "Pizza dieciochera",
+   "price": 16990,
+   "qr": false
+  },
+  "disaronnosprits": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Disaronno Sprits",
+   "price": 6900,
+   "qr": false
+  },
+  "disaronnovelvetalasrocas": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Disaronno Velvet a las rocas",
+   "price": 6500,
+   "qr": false
+  },
+  "dolbekmaqui": {
+   "active": true,
+   "category": "Cerveza Tradicional",
+   "name": "Dolbek Maqui",
+   "price": 4900,
+   "qr": false
+  },
+  "dosificadormetalico": {
+   "active": true,
+   "category": "Bodega Barra",
+   "name": "Dosificador metalico",
+   "price": 0,
+   "qr": false
+  },
+  "empanadaconmasadepizza": {
+   "active": false,
+   "category": "FIESTAS PATRIAS",
+   "name": "Empanada con masa de pizza",
+   "price": 6990,
+   "qr": true
+  },
+  "encendedorcocina": {
+   "active": true,
+   "category": "Bodega coperia/limpieza",
+   "name": "Encendedor cocina",
+   "price": 0,
+   "qr": false
+  },
+  "endulzantestevia": {
+   "active": true,
+   "category": "Bodega Garzoneria",
+   "name": "Endulzante Stevia",
+   "price": 0,
+   "qr": false
+  },
+  "envaserucula": {
+   "active": true,
+   "category": "Envases Cocina",
+   "name": "Envase rucula",
+   "price": 0,
+   "qr": false
+  },
+  "envasesalsaalioli": {
+   "active": true,
+   "category": "Envases Cocina",
+   "name": "Envase Salsa Alioli",
+   "price": 0,
+   "qr": false
+  },
+  "envasetartar": {
+   "active": true,
+   "category": "Envases Cocina",
+   "name": "Envase Tartar",
+   "price": 0,
+   "qr": false
+  },
+  "envasetiramisu": {
+   "active": true,
+   "category": "Envases Cocina",
+   "name": "Envase Tiramisu",
+   "price": 0,
+   "qr": false
+  },
+  "escobillon": {
+   "active": true,
+   "category": "Bodega coperia/limpieza",
+   "name": "Escobillon",
+   "price": 0,
+   "qr": false
+  },
+  "espiritudelosandes": {
+   "active": true,
+   "category": "Pisco",
+   "name": "Espíritu de los Andes",
+   "price": 6900,
+   "qr": false
+  },
+  "esponja": {
+   "active": true,
+   "category": "Bodega coperia/limpieza",
+   "name": "Esponja",
+   "price": 0,
+   "qr": false
+  },
+  "esponjaacero": {
+   "active": true,
+   "category": "Bodega coperia/limpieza",
+   "name": "Esponja acero",
+   "price": 0,
+   "qr": false
+  },
+  "espressodoble": {
+   "active": true,
+   "category": "Te Y Café",
+   "name": "Espresso doble",
+   "price": 3500,
+   "qr": false
+  },
+  "espressomartini": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Espresso Martini",
+   "price": 6900,
+   "qr": false
+  },
+  "fanta": {
+   "active": true,
+   "category": "Bebidas Gaseosas",
+   "name": "Fanta",
+   "price": 2500,
+   "qr": false
+  },
+  "fantamini": {
+   "active": true,
+   "category": "Bebidas Gaseosas",
+   "name": "Fanta mini",
+   "price": 0,
+   "qr": false
+  },
+  "fantazero": {
+   "active": true,
+   "category": "Bebidas Gaseosas",
+   "name": "Fanta Zero",
+   "price": 2500,
+   "qr": false
+  },
+  "fernet": {
+   "active": true,
+   "category": "Otros",
+   "name": "Fernet",
+   "price": 6900,
+   "qr": false
+  },
+  "frambuesacoladasinalcohol": {
+   "active": true,
+   "category": "Cocteles Sin alcohol",
+   "name": "Frambuesa Colada (sin alcohol)",
+   "price": 6500,
+   "qr": false
+  },
+  "frozensourcatedralsabores": {
+   "active": false,
+   "category": "Pisco Sour",
+   "name": "Frozen Sour Catedral Sabores",
+   "price": 7900,
+   "qr": false
+  },
+  "fuzzdistorsion": {
+   "active": true,
+   "category": "Shop 470 cc cerveza artesanal",
+   "name": "Fuzz Distorsion",
+   "price": 6500,
+   "qr": false
+  },
+  "fuzzwhiterabbit": {
+   "active": true,
+   "category": "Shop 470 cc cerveza artesanal",
+   "name": "Fuzz White Rabbit",
+   "price": 6500,
+   "qr": false
+  },
+  "ginfrutosrojos": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Gin Frutos Rojos",
+   "price": 7900,
+   "qr": false
+  },
+  "gingerbeer": {
+   "active": true,
+   "category": "Otros",
+   "name": "Ginger beer",
+   "price": 4900,
+   "qr": false
+  },
+  "gintonicpepino": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Gin Tonic Pepino",
+   "price": 6900,
+   "qr": false
+  },
+  "gintonictradicional": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Gin Tonic Tradicional",
+   "price": 6900,
+   "qr": false
+  },
+  "guantedegoma": {
+   "active": true,
+   "category": "Bodega coperia/limpieza",
+   "name": "Guante de goma",
+   "price": 0,
+   "qr": false
+  },
+  "guantestallal": {
+   "active": true,
+   "category": "Bodega coperia/limpieza",
+   "name": "Guantes talla L",
+   "price": 0,
+   "qr": false
+  },
+  "guantestallam": {
+   "active": true,
+   "category": "Bodega coperia/limpieza",
+   "name": "Guantes talla m",
+   "price": 0,
+   "qr": false
+  },
+  "guinnessstout42": {
+   "active": true,
+   "category": "Cerveza Tradicional",
+   "name": "Guinness Stout 4.2°",
+   "price": 5900,
+   "qr": false
+  },
+  "hawaiana": {
+   "active": true,
+   "category": "Pizza",
+   "name": "Pizza Hawaiana",
+   "price": 13500,
+   "qr": false
+  },
+  "hawaianauber": {
+   "active": true,
+   "category": "PIZZAS UBER ",
+   "name": "Pizza hawaiana uber",
+   "price": 15500,
+   "qr": false
+  },
+  "heineken0": {
+   "active": true,
+   "category": "Cerveza Sin Alcohol",
+   "name": "Heineken 0°",
+   "price": 3900,
+   "qr": false
+  },
+  "heladoconosoft": {
+   "active": false,
+   "category": "Postre",
+   "name": "Helado cono Soft",
+   "price": 1900,
+   "qr": false
+  },
+  "heladosoftchubi": {
+   "active": false,
+   "category": "Postre",
+   "name": "Helado soft Chubi",
+   "price": 2490,
+   "qr": false
+  },
+  "heladosoftmym": {
+   "active": false,
+   "category": "Postre",
+   "name": "Helado soft MyM",
+   "price": 3400,
+   "qr": false
+  },
+  "heladosoftoreo": {
+   "active": false,
+   "category": "Postre",
+   "name": "Helado soft Oreo",
+   "price": 2900,
+   "qr": false
+  },
+  "heladosoftsahnenuss": {
+   "active": false,
+   "category": "Postre",
+   "name": "Helado soft Sahne nuss",
+   "price": 3590,
+   "qr": false
+  },
+  "hendricks": {
+   "active": true,
+   "category": "Gin",
+   "name": "Hendrick’s",
+   "price": 9490,
+   "qr": false
+  },
+  "individualesdepapel": {
+   "active": true,
+   "category": "Bodega Garzoneria",
+   "name": "Individuales de papel",
+   "price": 0,
+   "qr": false
+  },
+  "jabonliquido": {
+   "active": true,
+   "category": "Bodega coperia/limpieza",
+   "name": "Jabon liquido",
+   "price": 0,
+   "qr": false
+  },
+  "jackdanielsapple": {
+   "active": true,
+   "category": "Whisky",
+   "name": "Jack Daniel’s Apple",
+   "price": 8490,
+   "qr": false
+  },
+  "jackdanielsgentleman": {
+   "active": true,
+   "category": "Whisky",
+   "name": "Jack Daniel’s Gentleman",
+   "price": 12490,
+   "qr": false
+  },
+  "jackdanielshoney": {
+   "active": true,
+   "category": "Whisky",
+   "name": "Jack Daniel’s Honey",
+   "price": 8490,
+   "qr": false
+  },
+  "jackdanielsoldno7": {
+   "active": true,
+   "category": "Whisky",
+   "name": "Jack Daniel’s Old No.7",
+   "price": 8990,
+   "qr": false
+  },
+  "jaggerbebida": {
+   "active": true,
+   "category": "Otros",
+   "name": "Jagger + bebida",
+   "price": 6900,
+   "qr": false
+  },
+  "jaggermeistershot": {
+   "active": true,
+   "category": "Otros",
+   "name": "Jaggermeister (shot)",
+   "price": 4500,
+   "qr": false
+  },
+  "jerezsour": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Jerez Sour",
+   "price": 8500,
+   "qr": false
+  },
+  "johncollins": {
+   "active": true,
+   "category": "Coctel",
+   "name": "John Collins",
+   "price": 7500,
+   "qr": false
+  },
+  "johnniewalkerblacklabel": {
+   "active": true,
+   "category": "Whisky",
+   "name": "Johnnie Walker Black Label",
+   "price": 8990,
+   "qr": false
+  },
+  "johnniewalkerdoubleblack": {
+   "active": true,
+   "category": "Whisky",
+   "name": "Johnnie Walker Double Black",
+   "price": 12990,
+   "qr": false
+  },
+  "johnniewalkerredlabel": {
+   "active": true,
+   "category": "Whisky",
+   "name": "Johnnie Walker Red Label",
+   "price": 5900,
+   "qr": false
+  },
+  "jugodearandano": {
+   "active": true,
+   "category": "Jugo",
+   "name": "Jugo de arándano",
+   "price": 4500,
+   "qr": false
+  },
+  "jugoframbuesa": {
+   "active": true,
+   "category": "Jugo",
+   "name": "Jugo Frambuesa",
+   "price": 3900,
+   "qr": false
+  },
+  "jugofrutilla": {
+   "active": true,
+   "category": "Jugo",
+   "name": "Jugo Frutilla",
+   "price": 3900,
+   "qr": false
+  },
+  "jugomango": {
+   "active": true,
+   "category": "Jugo",
+   "name": "Jugo Mango",
+   "price": 4900,
+   "qr": false
+  },
+  "jugomaracuya": {
+   "active": true,
+   "category": "Jugo",
+   "name": "Jugo Maracuya",
+   "price": 4900,
+   "qr": false
+  },
+  "jugopina": {
+   "active": true,
+   "category": "Jugo",
+   "name": "Jugo Piña",
+   "price": 3900,
+   "qr": false
+  },
+  "kirroyal": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Kir Royal",
+   "price": 5900,
+   "qr": false
+  },
+  "kross": {
+   "active": false,
+   "category": "Cerveza Tradicional",
+   "name": "Kross",
+   "price": 4900,
+   "qr": false
+  },
+  "kross5": {
+   "active": true,
+   "category": "Cerveza Tradicional",
+   "name": "Kross 5",
+   "price": 4900,
+   "qr": false
+  },
+  "krossgolden": {
+   "active": true,
+   "category": "Cerveza Tradicional",
+   "name": "Kross Golden",
+   "price": 4900,
+   "qr": false
+  },
+  "krossstout": {
+   "active": true,
+   "category": "Cerveza Tradicional",
+   "name": "kross stout",
+   "price": 4900,
+   "qr": true
+  },
+  "kunstmannlager0": {
+   "active": true,
+   "category": "Cerveza Sin Alcohol",
+   "name": "Kunstmann lager 0",
+   "price": 4500,
+   "qr": false
+  },
+  "kunstmannsinfiltrar": {
+   "active": true,
+   "category": "Cerveza Tradicional",
+   "name": "Kunstmann Sin Filtrar",
+   "price": 4500,
+   "qr": false
+  },
+  "kunstmanntorobayo": {
+   "active": true,
+   "category": "Cerveza Tradicional",
+   "name": "Kunstmann Torobayo",
+   "price": 4500,
+   "qr": false
+  },
+  "kunstmannvaldivia": {
+   "active": true,
+   "category": "Cerveza Tradicional",
+   "name": "Kunstmann Valdivia",
+   "price": 4000,
+   "qr": false
+  },
+  "lavaloza": {
+   "active": true,
+   "category": "Bodega coperia/limpieza",
+   "name": "Lava Loza",
+   "price": 0,
+   "qr": false
+  },
+  "limon": {
+   "active": true,
+   "category": "Bodega Barra",
+   "name": "Limon",
+   "price": 0,
+   "qr": false
+  },
+  "limonada": {
+   "active": true,
+   "category": "Jugo",
+   "name": "Limonada",
+   "price": 3900,
+   "qr": false
+  },
+  "limonadamentajengibre": {
+   "active": true,
+   "category": "Jugo",
+   "name": "Limonada Menta Jengibre",
+   "price": 4500,
+   "qr": false
+  },
+  "limonadasabores": {
+   "active": true,
+   "category": "Jugo",
+   "name": "Limonada sabores",
+   "price": 4900,
+   "qr": false
+  },
+  "limpiapiso": {
+   "active": true,
+   "category": "Bodega coperia/limpieza",
+   "name": "Limpia piso",
+   "price": 0,
+   "qr": false
+  },
+  "limpiavidrio": {
+   "active": true,
+   "category": "Bodega coperia/limpieza",
+   "name": "Limpia vidrio",
+   "price": 0,
+   "qr": false
+  },
+  "londonmule": {
+   "active": true,
+   "category": "Coctel",
+   "name": "London Mule",
+   "price": 9900,
+   "qr": false
+  },
+  "longisland": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Long Island",
+   "price": 8900,
+   "qr": false
+  },
+  "manantial": {
+   "active": true,
+   "category": "Agua Sin Gas",
+   "name": "Manantial",
+   "price": 0,
+   "qr": false
+  },
+  "manhattan": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Manhattan",
+   "price": 5990,
+   "qr": false
+  },
+  "manjarate": {
+   "active": true,
+   "category": "Postre",
+   "name": "Manjarate",
+   "price": 4900,
+   "qr": false
+  },
+  "margarita": {
+   "active": true,
+   "category": "Pizza",
+   "name": "Pizza Margarita",
+   "price": 9900,
+   "qr": false
+  },
+  "margaritabebida": {
+   "active": false,
+   "category": "Promoción",
+   "name": "Pizza Margarita + Bebida",
+   "price": 12000,
+   "qr": false
+  },
+  "margaritauber": {
+   "active": true,
+   "category": "PIZZAS UBER ",
+   "name": "Pizza margarita uber",
+   "price": 11500,
+   "qr": false
+  },
+  "marinara": {
+   "active": true,
+   "category": "Pizza",
+   "name": "Pizza Marinara",
+   "price": 8500,
+   "qr": false
+  },
+  "martinidry": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Martini Dry",
+   "price": 5900,
+   "qr": false
+  },
+  "menuejecutivo": {
+   "active": true,
+   "category": "Promoción",
+   "name": "Menú ejecutivo",
+   "price": 9990,
+   "qr": true
+  },
+  "mexicana": {
+   "active": true,
+   "category": "Pizza",
+   "name": "Pizza Mexicana",
+   "price": 13990,
+   "qr": false
+  },
+  "mexicanauber": {
+   "active": true,
+   "category": "PIZZAS UBER ",
+   "name": "Pizza mexicana uber",
+   "price": 15900,
+   "qr": false
+  },
+  "mezclaheladodechocolate": {
+   "active": true,
+   "category": "Bodega Garzoneria",
+   "name": "Mezcla helado de chocolate",
+   "price": 0,
+   "qr": false
+  },
+  "mezclaheladodevainilla": {
+   "active": true,
+   "category": "Bodega Garzoneria",
+   "name": "Mezcla helado de vainilla",
+   "price": 0,
+   "qr": false
+  },
+  "mistral35": {
+   "active": true,
+   "category": "Pisco",
+   "name": "Mistral 35°",
+   "price": 5500,
+   "qr": false
+  },
+  "mistralapple": {
+   "active": true,
+   "category": "Pisco",
+   "name": "Mistral Apple",
+   "price": 6500,
+   "qr": false
+  },
+  "mistralgrannobel": {
+   "active": true,
+   "category": "Pisco",
+   "name": "Mistral Gran Nobel",
+   "price": 10900,
+   "qr": false
+  },
+  "mistralnobel40": {
+   "active": true,
+   "category": "Pisco",
+   "name": "Mistral Nobel 40°",
+   "price": 6990,
+   "qr": false
+  },
+  "mojito1litro": {
+   "active": true,
+   "category": "Mojitos",
+   "name": "Mojito 1 litro",
+   "price": 14900,
+   "qr": false
+  },
+  "mojito1litrosinalcohol": {
+   "active": true,
+   "category": "Mojito sin alcohol",
+   "name": "Mojito 1 litro sin alcohol",
+   "price": 12900,
+   "qr": false
+  },
+  "mojitoarandano": {
+   "active": true,
+   "category": "Mojitos",
+   "name": "Mojito arandano",
+   "price": 7500,
+   "qr": false
+  },
+  "mojitoarandanossinalcohol": {
+   "active": true,
+   "category": "Mojito sin alcohol",
+   "name": "Mojito arandanos (sin alcohol)",
+   "price": 5900,
+   "qr": false
+  },
+  "mojitobeer0": {
+   "active": true,
+   "category": "Mojito sin alcohol",
+   "name": "Mojito Beer 0°",
+   "price": 9990,
+   "qr": false
+  },
+  "mojitocorona": {
+   "active": true,
+   "category": "Mojitos",
+   "name": "Mojito Corona",
+   "price": 9500,
+   "qr": false
+  },
+  "mojitocoronasabores": {
+   "active": true,
+   "category": "Mojitos",
+   "name": "Mojito Corona (sabores)",
+   "price": 10490,
+   "qr": false
+  },
+  "mojitoenergizante": {
+   "active": true,
+   "category": "Mojitos",
+   "name": "Mojito Energizante",
+   "price": 8900,
+   "qr": false
+  },
+  "mojitoespumante": {
+   "active": true,
+   "category": "Mojitos",
+   "name": "Mojito espumante",
+   "price": 6900,
+   "qr": false
+  },
+  "mojitoespumantesinalcohol": {
+   "active": true,
+   "category": "Mojito sin alcohol",
+   "name": "Mojito Espumante Sin Alcohol",
+   "price": 6990,
+   "qr": false
+  },
+  "mojitoframbuesa": {
+   "active": true,
+   "category": "Mojitos",
+   "name": "Mojito frambuesa",
+   "price": 7500,
+   "qr": false
+  },
+  "mojitoframbuesasinalcohol": {
+   "active": true,
+   "category": "Mojito sin alcohol",
+   "name": "Mojito frambuesa (sin alcohol)",
+   "price": 5900,
+   "qr": false
+  },
+  "mojitofrutilla": {
+   "active": true,
+   "category": "Mojitos",
+   "name": "Mojito Frutilla",
+   "price": 7500,
+   "qr": false
+  },
+  "mojitofrutillasinalcohol": {
+   "active": true,
+   "category": "Mojito sin alcohol",
+   "name": "Mojito frutilla (sin alcohol)",
+   "price": 5900,
+   "qr": false
+  },
+  "mojitojagger": {
+   "active": true,
+   "category": "Mojitos",
+   "name": "Mojito Jagger",
+   "price": 7900,
+   "qr": false
+  },
+  "mojitomango": {
+   "active": true,
+   "category": "Mojitos",
+   "name": "Mojito Mango",
+   "price": 7500,
+   "qr": false
+  },
+  "mojitomangosinalcohol": {
+   "active": true,
+   "category": "Mojito sin alcohol",
+   "name": "Mojito Mango (sin alcohol)",
+   "price": 5900,
+   "qr": false
+  },
+  "mojitomaracuya": {
+   "active": true,
+   "category": "Mojitos",
+   "name": "Mojito Maracuya",
+   "price": 7900,
+   "qr": false
+  },
+  "mojitomaracuyasinalcohol": {
+   "active": true,
+   "category": "Mojito sin alcohol",
+   "name": "Mojito maracuya (sin alcohol)",
+   "price": 6500,
+   "qr": false
+  },
+  "mojiton7numerodelasuerte": {
+   "active": true,
+   "category": "Tragos de autor",
+   "name": "Mojito N°7 – Número de la Suerte",
+   "price": 9900,
+   "qr": false
+  },
+  "mojitopina": {
+   "active": true,
+   "category": "Mojitos",
+   "name": "Mojito piña",
+   "price": 7500,
+   "qr": false
+  },
+  "mojitoramazzotisinalcohol": {
+   "active": true,
+   "category": "Cocteles Sin alcohol",
+   "name": "Mojito Ramazzoti (sin alcohol)",
+   "price": 7500,
+   "qr": false
+  },
+  "mojitotradicional": {
+   "active": true,
+   "category": "Mojitos",
+   "name": "Mojito Tradicional",
+   "price": 6500,
+   "qr": false
+  },
+  "mojitotradicionalsinalcohol": {
+   "active": true,
+   "category": "Mojito sin alcohol",
+   "name": "Mojito tradicional (sin alcohol)",
+   "price": 4900,
+   "qr": false
+  },
+  "morrons": {
+   "active": true,
+   "category": "Insumo Almuerzo",
+   "name": "Morrons",
+   "price": 0,
+   "qr": false
+  },
+  "moscowmule": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Moscow Mule",
+   "price": 9900,
+   "qr": false
+  },
+  "moteconhuesillo": {
+   "active": true,
+   "category": "FIESTAS PATRIAS",
+   "name": "Mote con huesillo",
+   "price": 4990,
+   "qr": false
+  },
+  "napolitana": {
+   "active": true,
+   "category": "Pizza",
+   "name": "Pizza Napolitana",
+   "price": 12990,
+   "qr": true
+  },
+  "napolitanauber": {
+   "active": true,
+   "category": "PIZZAS UBER ",
+   "name": "Pizza napolitana uber",
+   "price": 14990,
+   "qr": false
+  },
+  "negroni": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Negroni",
+   "price": 6500,
+   "qr": false
+  },
+  "nutella": {
+   "active": true,
+   "category": "Pizza",
+   "name": "Pizza Nutella",
+   "price": 10900,
+   "qr": false
+  },
+  "nutellauber": {
+   "active": true,
+   "category": "PIZZAS UBER ",
+   "name": "Pizza nutella uber",
+   "price": 12900,
+   "qr": false
+  },
+  "orgasmo": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Orgasmo",
+   "price": 7900,
+   "qr": false
+  },
+  "padrino": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Padrino",
+   "price": 6500,
+   "qr": false
+  },
+  "palitosdequeso": {
+   "active": true,
+   "category": "Antipasto",
+   "name": "Palitos de queso",
+   "price": 6990,
+   "qr": false
+  },
+  "paltaburrata": {
+   "active": true,
+   "category": "Ensalada",
+   "name": "Palta Burrata",
+   "price": 12490,
+   "qr": true
+  },
+  "panitas": {
+   "active": true,
+   "category": "Insumo Almuerzo",
+   "name": "Panitas",
+   "price": 0,
+   "qr": false
+  },
+  "pannacotta": {
+   "active": true,
+   "category": "Postre",
+   "name": "Panna Cotta",
+   "price": 4900,
+   "qr": false
+  },
+  "panobambino": {
+   "active": true,
+   "category": "Bodega coperia/limpieza",
+   "name": "Paño bambino",
+   "price": 0,
+   "qr": false
+  },
+  "panodelimpieza": {
+   "active": true,
+   "category": "Bodega Garzoneria",
+   "name": "Paño de limpieza",
+   "price": 0,
+   "qr": false
+  },
+  "panuozzobarrosluco": {
+   "active": true,
+   "category": "Antipasto",
+   "name": "Panuozzo Barros Luco",
+   "price": 11990,
+   "qr": false
+  },
+  "panuozzobrisket": {
+   "active": true,
+   "category": "Antipasto",
+   "name": "Panuozzo Brisket",
+   "price": 19990,
+   "qr": false
+  },
+  "panuozzoitaliano": {
+   "active": true,
+   "category": "Antipasto",
+   "name": "Panuozzo Italiano",
+   "price": 11990,
+   "qr": true
+  },
+  "panuozzopollocesar": {
+   "active": true,
+   "category": "Antipasto",
+   "name": "Panuozzo pollo césar",
+   "price": 11990,
+   "qr": true
+  },
+  "pap": {
+   "active": true,
+   "category": "Bebidas Gaseosas",
+   "name": "Pap",
+   "price": 2500,
+   "qr": false
+  },
+  "papas": {
+   "active": true,
+   "category": "Insumo Almuerzo",
+   "name": "Papas",
+   "price": 0,
+   "qr": false
+  },
+  "papelaluminio": {
+   "active": true,
+   "category": "Bodega coperia/limpieza",
+   "name": "Papel aluminio",
+   "price": 0,
+   "qr": false
+  },
+  "pastilladebano": {
+   "active": true,
+   "category": "Bodega coperia/limpieza",
+   "name": "Pastilla de baño",
+   "price": 0,
+   "qr": false
+  },
+  "peperonibebida": {
+   "active": false,
+   "category": "Promoción",
+   "name": "Pizza Peperoni + Bebida",
+   "price": 14490,
+   "qr": false
+  },
+  "pepperoni": {
+   "active": true,
+   "category": "Pizza",
+   "name": "Pizza Pepperoni",
+   "price": 13990,
+   "qr": false
+  },
+  "pepperoniuber": {
+   "active": true,
+   "category": "PIZZAS UBER ",
+   "name": "Pizza pepperoni uber",
+   "price": 15900,
+   "qr": false
+  },
+  "pepsi": {
+   "active": true,
+   "category": "Bebidas Gaseosas",
+   "name": "Pepsi",
+   "price": 2500,
+   "qr": false
+  },
+  "pepsizero": {
+   "active": true,
+   "category": "Bebidas Gaseosas",
+   "name": "Pepsi zero",
+   "price": 2500,
+   "qr": false
+  },
+  "pesto": {
+   "active": true,
+   "category": "Pizza",
+   "name": "Pizza Pesto",
+   "price": 16990,
+   "qr": false
+  },
+  "pestouber": {
+   "active": true,
+   "category": "PIZZAS UBER ",
+   "name": "Pizza pesto uber",
+   "price": 18900,
+   "qr": false
+  },
+  "pinacolada": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Piña colada",
+   "price": 7900,
+   "qr": false
+  },
+  "pinacolada0": {
+   "active": true,
+   "category": "Cocteles Sin alcohol",
+   "name": "Piña Colada 0°",
+   "price": 6500,
+   "qr": false
+  },
+  "piscosour12litroparallevar": {
+   "active": true,
+   "category": "Pisco Sour",
+   "name": "Pisco sour 1/2 litro (para llevar)",
+   "price": 9000,
+   "qr": true
+  },
+  "piscosouralbahaca": {
+   "active": true,
+   "category": "Pisco Sour",
+   "name": "Pisco Sour Albahaca",
+   "price": 6900,
+   "qr": false
+  },
+  "piscosourarandanos": {
+   "active": true,
+   "category": "Pisco Sour",
+   "name": "Pisco sour Arandanos",
+   "price": 6900,
+   "qr": false
+  },
+  "piscosourcatedral": {
+   "active": true,
+   "category": "Pisco Sour",
+   "name": "Pisco Sour Catedral",
+   "price": 7500,
+   "qr": false
+  },
+  "piscosourcatedralalbahaca": {
+   "active": true,
+   "category": "Pisco Sour",
+   "name": "Pisco Sour Catedral Albahaca",
+   "price": 8500,
+   "qr": false
+  },
+  "piscosourcatedralarandano": {
+   "active": true,
+   "category": "Pisco Sour",
+   "name": "Pisco Sour Catedral Arandano",
+   "price": 8500,
+   "qr": false
+  },
+  "piscosourcatedralframbuesa": {
+   "active": true,
+   "category": "Pisco Sour",
+   "name": "Pisco Sour Catedral Frambuesa",
+   "price": 8500,
+   "qr": true
+  },
+  "piscosourcatedralfrutilla": {
+   "active": true,
+   "category": "Pisco Sour",
+   "name": "Pisco Sour Catedral Frutilla",
+   "price": 8500,
+   "qr": false
+  },
+  "piscosourcatedralmango": {
+   "active": true,
+   "category": "Pisco Sour",
+   "name": "Pisco Sour Catedral Mango",
+   "price": 8500,
+   "qr": false
+  },
+  "piscosourcatedralmaracuya": {
+   "active": true,
+   "category": "Pisco Sour",
+   "name": "Pisco Sour Catedral Maracuya",
+   "price": 8900,
+   "qr": false
+  },
+  "piscosourcortesiadiamama": {
+   "active": false,
+   "category": "Pisco Sour",
+   "name": "Pisco Sour cortesia dia mama",
+   "price": 0,
+   "qr": false
+  },
+  "piscosourframbuesa": {
+   "active": true,
+   "category": "Pisco Sour",
+   "name": "Pisco sour Frambuesa",
+   "price": 6900,
+   "qr": false
+  },
+  "piscosourlitrosolollevar": {
+   "active": true,
+   "category": "Pisco Sour",
+   "name": "Pisco sour litro (solo llevar)",
+   "price": 17500,
+   "qr": false
+  },
+  "piscosourmango": {
+   "active": true,
+   "category": "Pisco Sour",
+   "name": "Pisco Sour Mango",
+   "price": 6900,
+   "qr": false
+  },
+  "piscosourmaracuya": {
+   "active": true,
+   "category": "Pisco Sour",
+   "name": "Pisco Sour Maracuyá",
+   "price": 6900,
+   "qr": false
+  },
+  "piscosourpina": {
+   "active": true,
+   "category": "Pisco Sour",
+   "name": "Pisco Sour Piña",
+   "price": 6900,
+   "qr": false
+  },
+  "piscosourtradicional": {
+   "active": true,
+   "category": "Pisco Sour",
+   "name": "Pisco Sour Tradicional",
+   "price": 6490,
+   "qr": false
+  },
+  "portenafloranativa": {
+   "active": true,
+   "category": "Shop 470 cc cerveza artesanal",
+   "name": "Porteña Flora Nativa",
+   "price": 6500,
+   "qr": false
+  },
+  "postrecortesia": {
+   "active": false,
+   "category": "Postre",
+   "name": "Postre cortesia",
+   "price": 0,
+   "qr": false
+  },
+  "procerkm7": {
+   "active": false,
+   "category": "Bebidas Con Alcohol",
+   "name": "Procer KM7",
+   "price": 6500,
+   "qr": false
+  },
+  "procernotjuice": {
+   "active": true,
+   "category": "Shop 470 cc cerveza artesanal",
+   "name": "Procer Not Juice",
+   "price": 7500,
+   "qr": false
+  },
+  "promocumple": {
+   "active": true,
+   "category": "Promo Cumpleaños",
+   "name": "Promo cumple",
+   "price": 7990,
+   "qr": false
+  },
+  "prosciuttosmangoycrema": {
+   "active": true,
+   "category": "Antipasto",
+   "name": "Prosciuttos Mango y Crema",
+   "price": 10900,
+   "qr": false
+  },
+  "provoletarustica": {
+   "active": true,
+   "category": "Antipasto",
+   "name": "Provoleta Rústica",
+   "price": 9900,
+   "qr": false
+  },
+  "pulpamaracuya": {
+   "active": true,
+   "category": "Pulpa sabores",
+   "name": "pulpa maracuya",
+   "price": 0,
+   "qr": false
+  },
+  "pulpasaborarandano": {
+   "active": true,
+   "category": "Pulpa sabores",
+   "name": "Pulpa sabor arandano",
+   "price": 0,
+   "qr": false
+  },
+  "pulpasaborframbuesa": {
+   "active": true,
+   "category": "Pulpa sabores",
+   "name": "Pulpa sabor frambuesa",
+   "price": 0,
+   "qr": false
+  },
+  "pulpasaborfrutilla": {
+   "active": true,
+   "category": "Pulpa sabores",
+   "name": "pulpa sabor frutilla",
+   "price": 0,
+   "qr": false
+  },
+  "pulpasabormango": {
+   "active": true,
+   "category": "Pulpa sabores",
+   "name": "pulpa sabor mango",
+   "price": 0,
+   "qr": false
+  },
+  "raid": {
+   "active": true,
+   "category": "Bodega coperia/limpieza",
+   "name": "raid",
+   "price": 0,
+   "qr": false
+  },
+  "ramazzotispritzsinalcohol": {
+   "active": true,
+   "category": "Cocteles Sin alcohol",
+   "name": "Ramazzoti Spritz (sin alcohol)",
+   "price": 6500,
+   "qr": false
+  },
+  "ramazzottirossatospritz": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Ramazzotti Rossato Spritz",
+   "price": 6900,
+   "qr": false
+  },
+  "ramazzottivioletospritz": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Ramazzotti Violeto Spritz",
+   "price": 6900,
+   "qr": false
+  },
+  "redbullamarilla": {
+   "active": true,
+   "category": "Bebidas Energeticas",
+   "name": "Red Bull Amarilla",
+   "price": 3500,
+   "qr": false
+  },
+  "redbullmorada": {
+   "active": true,
+   "category": "Bebidas Energeticas",
+   "name": "Red Bull Morada",
+   "price": 3500,
+   "qr": false
+  },
+  "redbullroja": {
+   "active": true,
+   "category": "Bebidas Energeticas",
+   "name": "Red Bull Roja",
+   "price": 3500,
+   "qr": false
+  },
+  "redbullsinazucar": {
+   "active": true,
+   "category": "Bebidas Energeticas",
+   "name": "Red Bull sin azucar",
+   "price": 3500,
+   "qr": false
+  },
+  "redbulltradicional": {
+   "active": false,
+   "category": "Bebidas acompañante (sin precio adicional para SOLO LICORES)",
+   "name": "Redbull tradicional",
+   "price": 0,
+   "qr": false
+  },
+  "redbullverde": {
+   "active": true,
+   "category": "Bebidas Energeticas",
+   "name": "Red Bull Verde",
+   "price": 3500,
+   "qr": false
+  },
+  "redbullzero": {
+   "active": false,
+   "category": "Bebidas Energeticas",
+   "name": "Red Bull Zero",
+   "price": 3500,
+   "qr": false
+  },
+  "ronbacardicartablanca": {
+   "active": false,
+   "category": "Ron",
+   "name": "Ron Bacardí Carta Blanca",
+   "price": 5490,
+   "qr": false
+  },
+  "ronflordecana12anos": {
+   "active": true,
+   "category": "Ron",
+   "name": "Ron Flor de Caña 12 años",
+   "price": 10500,
+   "qr": false
+  },
+  "ronflordecana18anos": {
+   "active": true,
+   "category": "Ron",
+   "name": "Ron Flor de Caña 18 años",
+   "price": 12900,
+   "qr": false
+  },
+  "royalguard": {
+   "active": false,
+   "category": "Cerveza Tradicional",
+   "name": "Royal Guard",
+   "price": 3900,
+   "qr": false
+  },
+  "royalguard0": {
+   "active": true,
+   "category": "Cerveza Sin Alcohol",
+   "name": "Royal Guard 0°",
+   "price": 3900,
+   "qr": false
+  },
+  "rucula": {
+   "active": false,
+   "category": "Pizza",
+   "name": "Pizza Rúcula",
+   "price": 14900,
+   "qr": false
+  },
+  "ruculauber": {
+   "active": true,
+   "category": "PIZZAS UBER ",
+   "name": "Pizza rucula uber",
+   "price": 17900,
+   "qr": false
+  },
+  "rusoblanco": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Ruso blanco",
+   "price": 6900,
+   "qr": false
+  },
+  "rusonegro": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Ruso negro",
+   "price": 6900,
+   "qr": false
+  },
+  "rusticostout": {
+   "active": true,
+   "category": "Tragos de autor",
+   "name": "Rusti-co Stout",
+   "price": 9900,
+   "qr": false
+  },
+  "saborchocolate": {
+   "active": true,
+   "category": "Sabores salsa y helados",
+   "name": "Sabor Chocolate",
+   "price": 0,
+   "qr": false
+  },
+  "sabormixto": {
+   "active": true,
+   "category": "Sabores salsa y helados",
+   "name": "Sabor mixto",
+   "price": 0,
+   "qr": false
+  },
+  "saborvainilla": {
+   "active": true,
+   "category": "Sabores salsa y helados",
+   "name": "Sabor vainilla",
+   "price": 0,
+   "qr": false
+  },
+  "salchichas": {
+   "active": true,
+   "category": "Insumo Almuerzo",
+   "name": "Salchichas",
+   "price": 0,
+   "qr": false
+  },
+  "salmon": {
+   "active": false,
+   "category": "Pizza",
+   "name": "Pizza Salmón",
+   "price": 17900,
+   "qr": true
+  },
+  "salmonuber": {
+   "active": true,
+   "category": "PIZZAS UBER ",
+   "name": "Pizza salmon uber",
+   "price": 19900,
+   "qr": false
+  },
+  "salsachocolate": {
+   "active": true,
+   "category": "Bodega Garzoneria",
+   "name": "Salsa Chocolate",
+   "price": 0,
+   "qr": false
+  },
+  "salsadetomatees": {
+   "active": true,
+   "category": "Insumo Almuerzo",
+   "name": "Salsa de tomatees",
+   "price": 0,
+   "qr": false
+  },
+  "salsafrutilla": {
+   "active": true,
+   "category": "Bodega Garzoneria",
+   "name": "Salsa Frutilla",
+   "price": 0,
+   "qr": false
+  },
+  "salsamanjar": {
+   "active": true,
+   "category": "Bodega Garzoneria",
+   "name": "Salsa Manjar",
+   "price": 0,
+   "qr": false
+  },
+  "sangria": {
+   "active": true,
+   "category": "FIESTAS PATRIAS",
+   "name": "Sangria",
+   "price": 5900,
+   "qr": true
+  },
+  "schweppesgingerale": {
+   "active": true,
+   "category": "Bebidas Gaseosas",
+   "name": "Schweppes Ginger Ale",
+   "price": 2500,
+   "qr": false
+  },
+  "servilletasdemesa": {
+   "active": true,
+   "category": "Bodega Garzoneria",
+   "name": "Servilletas de mesa",
+   "price": 0,
+   "qr": false
+  },
+  "shotdelimon": {
+   "active": true,
+   "category": "Bebidas Sin Alcohol",
+   "name": "Shot de limón",
+   "price": 1000,
+   "qr": false
+  },
+  "sobresmundial": {
+   "active": false,
+   "category": "PROMO MUNDIAL 2026",
+   "name": "Sobres  mundial",
+   "price": 1500,
+   "qr": false
+  },
+  "sobresmundial2026": {
+   "active": false,
+   "category": "PROMO MUNDIAL 2026",
+   "name": "Sobres mundial 2026",
+   "price": 490,
+   "qr": true
+  },
+  "sprite": {
+   "active": true,
+   "category": "Bebidas Gaseosas",
+   "name": "Sprite",
+   "price": 2500,
+   "qr": false
+  },
+  "spritemini": {
+   "active": true,
+   "category": "Bebidas Gaseosas",
+   "name": "Sprite mini",
+   "price": 2000,
+   "qr": false
+  },
+  "spritezero": {
+   "active": true,
+   "category": "Bebidas Gaseosas",
+   "name": "Sprite Zero",
+   "price": 2500,
+   "qr": false
+  },
+  "spritezeromini": {
+   "active": true,
+   "category": "Bebidas Gaseosas",
+   "name": "Sprite zero mini",
+   "price": 2000,
+   "qr": false
+  },
+  "tallarines": {
+   "active": true,
+   "category": "Insumo Almuerzo",
+   "name": "Tallarines",
+   "price": 0,
+   "qr": false
+  },
+  "tanqueray": {
+   "active": true,
+   "category": "Gin",
+   "name": "Tanqueray",
+   "price": 8900,
+   "qr": false
+  },
+  "tartardesalmon": {
+   "active": false,
+   "category": "Antipasto",
+   "name": "Tartar de salmón",
+   "price": 11900,
+   "qr": false
+  },
+  "tedilmah": {
+   "active": true,
+   "category": "Te Y Café",
+   "name": "Te Dilmah",
+   "price": 2900,
+   "qr": false
+  },
+  "tequilamargarita": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Tequila Margarita",
+   "price": 6900,
+   "qr": false
+  },
+  "terremoto": {
+   "active": true,
+   "category": "FIESTAS PATRIAS",
+   "name": "Terremoto",
+   "price": 5900,
+   "qr": true
+  },
+  "tevariedades": {
+   "active": true,
+   "category": "Bodega Garzoneria",
+   "name": "Te variedades",
+   "price": 0,
+   "qr": false
+  },
+  "thetopantipasto6990": {
+   "active": false,
+   "category": "THE TOP CHILE",
+   "name": "The top Antipasto $6990",
+   "price": 6990,
+   "qr": false
+  },
+  "thetopantipastocmr5990": {
+   "active": false,
+   "category": "THE TOP CHILE",
+   "name": "The top antipasto CMR $5990",
+   "price": 5990,
+   "qr": false
+  },
+  "thetoppizza6990": {
+   "active": false,
+   "category": "THE TOP CHILE",
+   "name": "The top pizza 6990",
+   "price": 6990,
+   "qr": false
+  },
+  "thetoppizzacmr5990": {
+   "active": false,
+   "category": "THE TOP CHILE",
+   "name": "The top pizza CMR $5990",
+   "price": 5990,
+   "qr": false
+  },
+  "tintodeverano": {
+   "active": true,
+   "category": "Vinos y sangría",
+   "name": "Tinto de verano",
+   "price": 5900,
+   "qr": true
+  },
+  "tiraditodesalmon": {
+   "active": false,
+   "category": "Antipasto",
+   "name": "Tiradito de Salmón",
+   "price": 13900,
+   "qr": false
+  },
+  "tiramisu": {
+   "active": false,
+   "category": "Postre",
+   "name": "Tiramisú",
+   "price": 5500,
+   "qr": true
+  },
+  "toallainterfoliadabano": {
+   "active": true,
+   "category": "Bodega coperia/limpieza",
+   "name": "Toalla interfoliada Baño",
+   "price": 0,
+   "qr": false
+  },
+  "toallanova": {
+   "active": true,
+   "category": "Bodega coperia/limpieza",
+   "name": "Toalla nova",
+   "price": 0,
+   "qr": false
+  },
+  "tomcollins": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Tom collins",
+   "price": 7500,
+   "qr": false
+  },
+  "traperos": {
+   "active": true,
+   "category": "Bodega coperia/limpieza",
+   "name": "Traperos",
+   "price": 0,
+   "qr": false
+  },
+  "tropicalgin": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Tropical Gin",
+   "price": 6990,
+   "qr": false
+  },
+  "turrondevinotintofrutillayhelio": {
+   "active": false,
+   "category": "Postre",
+   "name": "Turron de vino tinto, frutilla y helio",
+   "price": 7900,
+   "qr": false
+  },
+  "vaina": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Vaina",
+   "price": 5900,
+   "qr": false
+  },
+  "vasodehelado": {
+   "active": true,
+   "category": "Bodega Garzoneria",
+   "name": "Vaso de helado",
+   "price": 0,
+   "qr": false
+  },
+  "vasosplasticos": {
+   "active": true,
+   "category": "Envases Cocina",
+   "name": "Vasos Plasticos",
+   "price": 0,
+   "qr": false
+  },
+  "vegetariana": {
+   "active": true,
+   "category": "Pizza",
+   "name": "Pizza Vegetariana",
+   "price": 13990,
+   "qr": false
+  },
+  "vegetarianaindividual": {
+   "active": true,
+   "category": "Promoción",
+   "name": "Pizza vegetariana individual",
+   "price": 6990,
+   "qr": false
+  },
+  "vegetarianauber": {
+   "active": true,
+   "category": "PIZZAS UBER ",
+   "name": "Pizza vegetariana uber",
+   "price": 15900,
+   "qr": false
+  },
+  "vinocabernetsouvignon": {
+   "active": true,
+   "category": "Vinos y sangría",
+   "name": "Vino Cabernet Souvignon",
+   "price": 10900,
+   "qr": false
+  },
+  "vinocarmenere": {
+   "active": true,
+   "category": "Vinos y sangría",
+   "name": "Vino CARMENERE",
+   "price": 10900,
+   "qr": true
+  },
+  "vinokortachardonay": {
+   "active": true,
+   "category": "Vinos y sangría",
+   "name": "Vino KORTA CHARDONAY",
+   "price": 10900,
+   "qr": false
+  },
+  "vinomerlot": {
+   "active": true,
+   "category": "Vinos y sangría",
+   "name": "Vino MERLOT",
+   "price": 10900,
+   "qr": false
+  },
+  "vinosyrah": {
+   "active": true,
+   "category": "Vinos y sangría",
+   "name": "Vino SYRAH",
+   "price": 13900,
+   "qr": true
+  },
+  "virutillacrema": {
+   "active": true,
+   "category": "Bodega coperia/limpieza",
+   "name": "Virutilla crema",
+   "price": 0,
+   "qr": false
+  },
+  "waqar": {
+   "active": true,
+   "category": "Pisco",
+   "name": "Waqar",
+   "price": 10490,
+   "qr": false
+  },
+  "waxquax": {
+   "active": true,
+   "category": "Envases Cocina",
+   "name": "Wax (quax)",
+   "price": 0,
+   "qr": false
+  },
+  "whiskysour": {
+   "active": true,
+   "category": "Coctel",
+   "name": "Whisky sour",
+   "price": 6500,
+   "qr": false
+  },
+  "zapalllo": {
+   "active": true,
+   "category": "Insumo Almuerzo",
+   "name": "Zapalllo",
+   "price": 0,
+   "qr": false
+  }
+ },
+ "updated": "2026-11-15T22:56:18+00:00"
+}
