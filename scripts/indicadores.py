@@ -291,7 +291,21 @@ def main():
     if not key or not secret:
         print("Faltan FUDO_API_KEY y FUDO_API_SECRET. No se calculó nada.")
         return 0
-    token = http_json(AUTH_URL, {"apiKey": key, "apiSecret": secret})["token"]
+    clave = os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
+    if clave:
+        try:
+            http_json(f"{SUPABASE_URL}/rest/v1/indicadores_manual?select=mes&limit=1",
+                      headers={"apikey": clave, "Authorization": f"Bearer {clave}"})
+            print("Supabase: clave OK.")
+        except urllib.error.HTTPError as e:
+            print(f"Supabase rechazó la clave service_role (HTTP {e.code}). Revisa el secreto SUPABASE_SERVICE_ROLE_KEY.")
+            return 1
+    try:
+        token = http_json(AUTH_URL, {"apiKey": key.strip(), "apiSecret": secret.strip()})["token"]
+    except urllib.error.HTTPError as e:
+        print(f"Fudo rechazó las credenciales (HTTP {e.code}). Revisa FUDO_API_KEY y FUDO_API_SECRET.")
+        return 1
+    print("Fudo: credenciales OK.")
     probar = os.environ.get("PROBAR") == "1"
 
     hoy = datetime.now(TZ)
@@ -320,7 +334,6 @@ def main():
         print(f"Ventas con mesa reconocida: {con_mesa} de {len(ventas)}")
         return 0
 
-    clave = os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
     for mes in meses:
         fila = calcular(mes, ventas, incl)
         if not clave:
