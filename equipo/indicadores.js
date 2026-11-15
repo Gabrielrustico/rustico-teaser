@@ -177,6 +177,7 @@ const IND = (() => {
     const lista = Object.keys(st.meses).filter(m => m.startsWith(st.anio)).sort();
     const suma = k => lista.reduce((a, m) => a + (+st.meses[m][k] || 0), 0);
     const venta = suma("venta"), metas = lista.reduce((a, m) => a + (+(st.manual[m]?.meta_venta) || 0), 0);
+    const ventaConMeta = lista.reduce((a, m) => a + (+(st.manual[m]?.meta_venta) ? st.meses[m].venta : 0), 0);
     const ps = suma("personas_salon"), vs = suma("venta_salon"), n = suma("ventas");
     const res = lista.reduce((a, m) => a + (+(st.manual[m]?.resenas_nuevas) || 0), 0);
     const fila = m => { const d = st.meses[m], man = st.manual[m] || {}, mv = +man.meta_venta || 0, mt = +man.meta_ticket || 0;
@@ -191,7 +192,7 @@ const IND = (() => {
         <p class="small muted">${lista.length} meses con datos · toca un mes para ver su detalle</p></div>
       ${anios.length > 1 ? `<select id="i-anio" aria-label="Año">${anios.map(a => `<option ${a === st.anio ? "selected" : ""}>${a}</option>`).join("")}</select>` : ""}</div>
       <div class="ind-grid">
-        ${tarjeta("Venta del año", mm(venta), metas ? `<span class="small muted">${Math.round(venta / metas * 100)}% de las metas cargadas (${mm(metas)})</span>` : "")}
+        ${tarjeta("Venta del año", mm(venta), metas ? `<span class="small muted">En los meses con meta: ${mm(ventaConMeta)} de ${mm(metas)} (${Math.round(ventaConMeta / metas * 100)}%)</span>` : "")}
         ${tarjeta("Ticket por persona", clp(ps ? vs / ps : 0), `<span class="small muted">promedio del año, salón</span>`)}
         ${tarjeta("Cuentas", n.toLocaleString("es-CL"), `<span class="small muted">${clp(n ? venta / n : 0)} por cuenta</span>`)}
         ${tarjeta("Reseñas nuevas", res || "—", `<span class="small muted">según lo escrito cada mes</span>`)}
