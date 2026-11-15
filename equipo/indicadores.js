@@ -2,7 +2,7 @@
    Lee indicadores_mes (calculados desde Fudo por la acción de GitHub) e indicadores_manual
    (metas y reseñas que escribe el administrador). Sin datos en el código: todo viene de Supabase. */
 const IND = (() => {
-  const st = { cargado: false, meses: {}, manual: {}, mes: null };
+  const st = { cargado: false, meses: {}, manual: {}, mes: null, modo: "mes", anio: null };
   const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
   const nombreMes = m => { const [y, mo] = m.split("-"); return MESES[+mo - 1] + " " + y; };
   const corto = m => MESES[+m.split("-")[1] - 1].slice(0, 3);
@@ -18,7 +18,8 @@ const IND = (() => {
     st.meses = Object.fromEntries(a.map(r => [r.mes, { ...r.datos, actualizado: r.actualizado }]));
     st.manual = Object.fromEntries(b.map(r => [r.mes, r.datos || {}]));
     const lista = Object.keys(st.meses).sort();
-    if (!st.mes || !st.meses[st.mes]) st.mes = lista[lista.length - 1] || hoyMes();
+    if (!st.mes || !st.meses[st.mes]) st.mes = st.meses[hoyMes()] ? hoyMes() : (lista[lista.length - 1] || hoyMes());
+    st.anio = st.anio || st.mes.slice(0, 4);
     st.cargado = true;
   }
 
@@ -55,7 +56,7 @@ const IND = (() => {
 
   // Evolución de la venta por mes, con la meta de cada mes.
   function graficoMeses(){
-    const lista = Object.keys(st.meses).sort().slice(-12);
+    const lista = Object.keys(st.meses).filter(m => m.startsWith(st.anio)).sort();
     if (lista.length < 2) return `<div class="empty">La evolución aparece cuando haya al menos dos meses calculados.</div>`;
     const W = 640, H = 200, P = { l: 46, r: 12, t: 16, b: 24 };
     const vals = lista.map(m => st.meses[m].venta), metas = lista.map(m => +(st.manual[m]?.meta_venta) || 0);
@@ -107,7 +108,7 @@ const IND = (() => {
   function pintarMes(){
     const d = st.meses[st.mes], man = st.manual[st.mes] || {}, ant = st.meses[mesAnterior(st.mes)];
     const lista = Object.keys(st.meses).sort().reverse();
-    const selector = `<div class="ind-top"><div><h2 style="margin:0">Indicadores de ${nombreMes(st.mes)}</h2>
+    const selector = modos() + `<div class="ind-top"><div><h2 style="margin:0">Indicadores de ${nombreMes(st.mes)}</h2>
         <p class="small muted">${d ? (d.cerrado ? "Mes cerrado" : `Al día ${d.dias_transcurridos} de ${d.dias_mes}`) + " · " + esc(d.fuente || "Fudo") : ""}</p></div>
       ${lista.length ? `<select id="i-mes" aria-label="Mes">${lista.map(m => `<option value="${m}" ${m === st.mes ? "selected" : ""}>${nombreMes(m)}</option>`).join("")}</select>` : ""}</div>`;
     if (!d) {
@@ -135,10 +136,7 @@ const IND = (() => {
         ${tarjeta("Panuozzo", d.panuozzo.u.toLocaleString("es-CL") + " unid.", `<span class="small muted">${clp(d.panuozzo.v)} · ${d.panuozzo.ventas} cuentas</span>${cuenta(d.panuozzo.u, ant?.panuozzo?.u)}`)}
         ${tarjeta("Margen de bebidas", clp(d.bebidas.margen), `<span class="small muted">${pct(d.bebidas.pct_margen)} sobre ${clp(d.bebidas.venta)} vendidos</span>`)}
       </div>
-      <div class="ind-2">
-        <div class="box"><h3 style="margin-top:0">Venta acumulada del mes</h3>${graficoAcumulado(d, mv)}</div>
-        <div class="box"><h3 style="margin-top:0">Venta por mes</h3>${graficoMeses()}</div>
-      </div>
+      <div class="box" style="margin-top:14px"><h3 style="margin-top:0">Venta acumulada del mes</h3>${graficoAcumulado(d, mv)}</div>
       <div class="box" style="margin-top:14px"><h3 style="margin-top:0">Actividad por día y hora</h3>${mapaCalor(d)}</div>
       <div class="box" style="margin-top:14px"><h3 style="margin-top:0">Mesas</h3>${tablaMesas(d)}</div>
       <div class="ind-2">
@@ -150,15 +148,61 @@ const IND = (() => {
   }
 
   function bindManual(){
-    const sel = $("i-mes"); if (sel) sel.onchange = () => { st.mes = sel.value; pintarMes(); };
+    const sel = $("i-mes"); if (sel) sel.onchange = () => { st.mes = sel.value; pintar(); };
     const f = $("fInd"); if (!f) return;
     f.onsubmit = async e => {
       e.preventDefault();
       const datos = { ...(st.manual[st.mes] || {}) };
       f.querySelectorAll("[data-k]").forEach(i => { const v = parseFloat(i.value); if (isFinite(v)) datos[i.dataset.k] = v; else delete datos[i.dataset.k]; });
-      try { await q(sb.from("indicadores_manual").upsert({ mes: st.mes, datos, actualizado: new Date().toISOString() })); st.manual[st.mes] = datos; pintarMes(); toast("Guardado"); }
+      try { await q(sb.from("indicadores_manual").upsert({ mes: st.mes, datos, actualizado: new Date().toISOString() })); st.manual[st.mes] = datos; pintar(); toast("Guardado"); }
       catch (err) { say("i-status", "No se pudo guardar: " + err.message, true); }
     };
+  }
+
+  // Botones para cambiar entre el mes en curso y el historial del año.
+  const modos = () => `<div class="ind-modos" role="tablist">
+    <button data-modo="mes" ${st.modo === "mes" ? 'aria-current="page"' : ""}>Mes en curso</button>
+    <button data-modo="anio" ${st.modo === "anio" ? 'aria-current="page"' : ""}>Historial del año</button></div>`;
+  function bindModos(){
+    document.querySelectorAll("[data-modo]").forEach(b => b.onclick = () => {
+      st.modo = b.dataset.modo;
+      if (st.modo === "mes" && st.meses[hoyMes()]) st.mes = hoyMes();
+      pintar();
+    });
+  }
+  const pintar = () => { st.modo === "anio" ? pintarAnio() : pintarMes(); bindModos(); };
+
+  function pintarAnio(){
+    const anios = [...new Set(Object.keys(st.meses).map(m => m.slice(0, 4)))].sort().reverse();
+    const lista = Object.keys(st.meses).filter(m => m.startsWith(st.anio)).sort();
+    const suma = k => lista.reduce((a, m) => a + (+st.meses[m][k] || 0), 0);
+    const venta = suma("venta"), metas = lista.reduce((a, m) => a + (+(st.manual[m]?.meta_venta) || 0), 0);
+    const ps = suma("personas_salon"), vs = suma("venta_salon"), n = suma("ventas");
+    const res = lista.reduce((a, m) => a + (+(st.manual[m]?.resenas_nuevas) || 0), 0);
+    const fila = m => { const d = st.meses[m], man = st.manual[m] || {}, mv = +man.meta_venta || 0, mt = +man.meta_ticket || 0;
+      return `<tr data-ir="${m}" class="ind-fila"><td>${nombreMes(m)}${d.cerrado ? "" : ' <span class="pill warn">en curso</span>'}</td>
+        <td class="num">${mm(d.venta)}</td><td class="num">${mv ? `<span class="${d.venta >= mv ? "ok" : d.cerrado ? "bad" : ""}">${Math.round(d.venta / mv * 100)}%</span>` : "—"}</td>
+        <td class="num">${d.ventas.toLocaleString("es-CL")}</td>
+        <td class="num"><span class="${mt ? (d.ticket_persona >= mt ? "ok" : "bad") : ""}">${clp(d.ticket_persona)}</span></td>
+        <td class="num">${pct(d.pct_con_entrada)}</td><td class="num">${pct(d.pct_postres)}</td>
+        <td class="num">${d.panuozzo.u.toLocaleString("es-CL")}</td><td class="num">${clp(d.bebidas.margen)}</td>
+        <td class="num">${man.resenas_nuevas ?? "—"}</td></tr>`; };
+    $("vista").innerHTML = `${modos()}<div class="ind-top"><div><h2 style="margin:0">Historial ${esc(st.anio)}</h2>
+        <p class="small muted">${lista.length} meses con datos · toca un mes para ver su detalle</p></div>
+      ${anios.length > 1 ? `<select id="i-anio" aria-label="Año">${anios.map(a => `<option ${a === st.anio ? "selected" : ""}>${a}</option>`).join("")}</select>` : ""}</div>
+      <div class="ind-grid">
+        ${tarjeta("Venta del año", mm(venta), metas ? `<span class="small muted">${Math.round(venta / metas * 100)}% de las metas cargadas (${mm(metas)})</span>` : "")}
+        ${tarjeta("Ticket por persona", clp(ps ? vs / ps : 0), `<span class="small muted">promedio del año, salón</span>`)}
+        ${tarjeta("Cuentas", n.toLocaleString("es-CL"), `<span class="small muted">${clp(n ? venta / n : 0)} por cuenta</span>`)}
+        ${tarjeta("Reseñas nuevas", res || "—", `<span class="small muted">según lo escrito cada mes</span>`)}
+      </div>
+      <div class="box" style="margin-top:14px"><h3 style="margin-top:0">Venta por mes</h3>${graficoMeses()}</div>
+      <div class="box" style="margin-top:14px"><h3 style="margin-top:0">Mes a mes</h3><div class="tablewrap"><table>
+        <thead><tr><th>Mes</th><th class="num">Venta</th><th class="num">Meta</th><th class="num">Cuentas</th><th class="num">Ticket/persona</th><th class="num">Con entrada</th><th class="num">Postres</th><th class="num">Panuozzo</th><th class="num">Margen bebidas</th><th class="num">Reseñas</th></tr></thead>
+        <tbody>${lista.slice().reverse().map(fila).join("")}</tbody></table></div>
+        <p class="small muted">Meta en verde si se cumplió. Ticket en verde si llegó al objetivo del mes. Fudo empezó a registrar el 12 de enero, así que enero está incompleto.</p></div>`;
+    const sa = $("i-anio"); if (sa) sa.onchange = () => { st.anio = sa.value; pintar(); };
+    document.querySelectorAll("[data-ir]").forEach(r => r.onclick = () => { st.mes = r.dataset.ir; st.modo = "mes"; pintar(); window.scrollTo(0, 0); });
   }
 
   async function vista(){
@@ -167,7 +211,7 @@ const IND = (() => {
       try { await cargar(); }
       catch (err) { $("vista").innerHTML = `<div class="box">No se pudieron cargar los indicadores: ${esc(err.message)}<p class="small muted">Si es la primera vez, falta correr supabase/migraciones/2026-11-15-indicadores.sql en Supabase.</p></div>`; return; }
     }
-    pintarMes();
+    pintar();
   }
   return { vista, st };
 })();
