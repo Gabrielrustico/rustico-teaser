@@ -112,11 +112,20 @@ def bajar_ventas(token, desde):
         page += 1
 
 
+_POR_ID = {}
+
+
 def buscar(incl, tipo_contiene, id_):
+    """Busca un objeto incluido por id sin depender del nombre exacto del tipo (Item, SaleItem…)."""
     if not id_:
         return None
-    for (t, i), x in incl.items():
-        if i == id_ and tipo_contiene in t.lower():
+    if _POR_ID.get("_de") is not incl or _POR_ID.get("_n") != len(incl):
+        _POR_ID.clear()
+        _POR_ID.update({"_de": incl, "_n": len(incl)})
+        for (t, i), x in incl.items():
+            _POR_ID.setdefault(i, []).append((t.lower(), x))
+    for t, x in _POR_ID.get(id_, []):
+        if tipo_contiene in t:
             return x
     return None
 
