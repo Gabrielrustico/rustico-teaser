@@ -41,3 +41,11 @@ Los cálculos están en `equipo/rrhh.js`.
 
 Las cifras viven solo en Supabase: el repositorio y los registros de Actions son públicos,
 así que el script no imprime montos. Metas y reseñas de Google se escriben a mano en la pestaña.
+
+### Reseñas de Google automáticas
+
+1. **SQL Editor**: pegar y ejecutar `migraciones/2026-11-15-resenas-google.sql`.
+2. En Google Cloud (console.cloud.google.com): crear un proyecto, activar **Places API (New)**
+   y crear una clave de API restringida a esa API. Guardarla en GitHub como `GOOGLE_PLACES_API_KEY`.
+3. La acción guarda cada día el total de reseñas y las estrellas. Reseñas nuevas del mes =
+   último total del mes − último total antes del mes.

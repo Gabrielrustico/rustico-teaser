@@ -26,5 +26,6 @@ jobs:
           FUDO_API_KEY: ${{ secrets.FUDO_API_KEY }}
           FUDO_API_SECRET: ${{ secrets.FUDO_API_SECRET }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          GOOGLE_PLACES_API_KEY: ${{ secrets.GOOGLE_PLACES_API_KEY }}
           MESES: ${{ github.event.inputs.meses }}
         run: python3 scripts/indicadores.py

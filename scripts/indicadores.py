@@ -279,6 +279,51 @@ def calcular(mes, ventas, incl):
     }
 
 
+# ---------- Reseñas de Google ----------
+# Google no da el historial de reseñas, así que se guarda una foto diaria del total
+# (tabla resenas_google). Reseñas nuevas de un mes = último total del mes - último total antes del mes.
+LUGAR = "Rusti-Co. Pizzería y Bar, Concepción"
+LUGAR_CID = "0xb0cda946df20c8c4"  # el de la ficha en Google Maps; sirve para no confundir el local
+
+
+def leer_google(api_key):
+    """Total de reseñas y estrellas desde la API de Google Places (New)."""
+    j = http_json("https://places.googleapis.com/v1/places:searchText",
+                  data={"textQuery": LUGAR, "locationBias": {"circle": {
+                      "center": {"latitude": -36.78909, "longitude": -73.06063}, "radius": 2000}}},
+                  headers={"X-Goog-Api-Key": api_key,
+                           "X-Goog-FieldMask": "places.id,places.displayName,places.rating,places.userRatingCount,places.googleMapsUri"},
+                  method="POST")
+    lugares = (j or {}).get("places") or []
+    elegido = next((p for p in lugares if str(int(LUGAR_CID, 16)) in (p.get("googleMapsUri") or "")), None)
+    elegido = elegido or next((p for p in lugares if "rusti" in norm((p.get("displayName") or {}).get("text", ""))), None)
+    if not elegido:
+        return None
+    return {"total": int(elegido.get("userRatingCount") or 0), "estrellas": float(elegido.get("rating") or 0)}
+
+
+def supa(clave, path, data=None, method=None, prefer=None):
+    h = {"apikey": clave, "Authorization": f"Bearer {clave}"}
+    if prefer:
+        h["Prefer"] = prefer
+    return http_json(f"{SUPABASE_URL}/rest/v1/{path}", data=data, headers=h, method=method)
+
+
+def resenas_del_mes(fotos, mes):
+    """fotos: [{fecha, total, estrellas}] ordenadas por fecha."""
+    ini, fin = rango_mes(mes)
+    a, b = ini.strftime("%Y-%m-%d"), fin.strftime("%Y-%m-%d")
+    antes = [f for f in fotos if f["fecha"] < a]
+    dentro = [f for f in fotos if a <= f["fecha"] < b]
+    if not dentro:
+        return None
+    ult = dentro[-1]
+    base = antes[-1] if antes else None
+    return {"total": ult["total"], "estrellas": float(ult["estrellas"] or 0), "al": ult["fecha"],
+            "nuevas": ult["total"] - base["total"] if base else None,
+            "desde": base["fecha"] if base else None}
+
+
 def guardar(fila, clave):
     http_json(f"{SUPABASE_URL}/rest/v1/indicadores_mes?on_conflict=mes",
               data={"mes": fila["mes"], "datos": fila, "actualizado": datetime.now(timezone.utc).isoformat()},
@@ -334,8 +379,38 @@ def main():
         print(f"Ventas con mesa reconocida: {con_mesa} de {len(ventas)}")
         return 0
 
+    fotos = []
+    if clave:
+        gkey = os.environ.get("GOOGLE_PLACES_API_KEY")
+        if gkey:
+            try:
+                g = leer_google(gkey.strip())
+                if g:
+                    supa(clave, "resenas_google?on_conflict=fecha",
+                         {"fecha": hoy.strftime("%Y-%m-%d"), "total": g["total"], "estrellas": g["estrellas"]},
+                         method="POST", prefer="resolution=merge-duplicates,return=minimal")
+                    print("Google: reseñas leídas OK.")
+                else:
+                    print("Google: no se encontró el local en la búsqueda.")
+            except urllib.error.HTTPError as e:
+                try:
+                    err = json.loads(e.read().decode()).get("error", {})
+                    motivo = next((d.get("reason") for d in err.get("details", []) if d.get("reason")), "") or err.get("status", "")
+                except Exception:
+                    motivo = ""
+                print(f"Google rechazó la consulta (HTTP {e.code} {motivo}). Revisa GOOGLE_PLACES_API_KEY y que Places API (New) esté activada.")
+        else:
+            print("Sin GOOGLE_PLACES_API_KEY: las reseñas siguen siendo manuales.")
+        try:
+            fotos = supa(clave, "resenas_google?select=fecha,total,estrellas&order=fecha") or []
+        except urllib.error.HTTPError:
+            fotos = []
+
     for mes in meses:
         fila = calcular(mes, ventas, incl)
+        r = resenas_del_mes(fotos, mes)
+        if r:
+            fila["resenas"] = r
         if not clave:
             print(f"{mes}: calculado, pero falta SUPABASE_SERVICE_ROLE_KEY; no se guardó.")
             continue
