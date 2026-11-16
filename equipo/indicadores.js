@@ -132,6 +132,8 @@ const IND = (() => {
         ${tarjeta("Venta neta", mm(d.venta), `${mv ? `<span class="small">${Math.round(d.venta / mv * 100)}% de la meta de ${mm(mv)}</span>` : ""}${barra(d.venta, mv, proy)}
           ${proy ? `<span class="small muted">Al ritmo actual cierra en ${mm(proy)}</span>` : ""}${delta(d.venta, ventaAnt)}${!d.cerrado && ant ? `<span class="small muted">(mismos ${d.dias_transcurridos} días)</span>` : ""}`)}
         ${tarjeta("Ticket por persona", clp(d.ticket_persona), `${mt ? `<span class="small ${d.ticket_persona >= mt ? "ok" : "bad"}">Objetivo ${clp(mt)}</span>${barra(d.ticket_persona, mt)}` : ""}${delta(d.ticket_persona, ant?.ticket_persona)}`)}
+        ${d.ticket_persona_limpio ? tarjeta("Ticket limpio por persona", clp(d.ticket_persona_limpio), `${mt ? `<span class="small ${d.ticket_persona_limpio >= mt ? "ok" : "bad"}">Objetivo ${clp(mt)}</span>${barra(d.ticket_persona_limpio, mt)}` : ""}
+          <span class="small muted">Sin el 50% de BancoEstado y Scotiabank · ${d.descuento_banco.ventas} cuentas, ${clp(d.descuento_banco.monto)} descontados</span>${delta(d.ticket_persona_limpio, ant?.ticket_persona_limpio)}`) : ""}
         ${tarjeta("Reseñas nuevas en Google", rn != null && rn !== "" ? rn : "—", `${mr ? `<span class="small">Meta ${mr}</span>${barra(+rn || 0, mr)}` : ""}
           ${R.total ? `<span class="small muted">${R.total} en total · ${R.estrellas ? String(R.estrellas).replace(".", ",") : "—"} ★${R.auto ? " · leído de Google" : ""}</span>` : `<span class="small muted">Escríbelas abajo</span>`}`)}
         ${tarjeta("Cuentas", d.ventas.toLocaleString("es-CL"), `<span class="small muted">${clp(d.ticket_venta)} por cuenta · ${d.personas_salon.toLocaleString("es-CL")} personas en salón</span>${cuenta(d.ventas, ant?.ventas)}`)}
@@ -189,6 +191,7 @@ const IND = (() => {
         <td class="num">${mm(d.venta)}</td><td class="num">${mv ? `<span class="${d.venta >= mv ? "ok" : d.cerrado ? "bad" : ""}">${Math.round(d.venta / mv * 100)}%</span>` : "—"}</td>
         <td class="num">${d.ventas.toLocaleString("es-CL")}</td>
         <td class="num"><span class="${mt ? (d.ticket_persona >= mt ? "ok" : "bad") : ""}">${clp(d.ticket_persona)}</span></td>
+        <td class="num"><span class="${mt && d.ticket_persona_limpio ? (d.ticket_persona_limpio >= mt ? "ok" : "bad") : ""}">${d.ticket_persona_limpio ? clp(d.ticket_persona_limpio) : "—"}</span></td>
         <td class="num">${pct(d.pct_con_entrada)}</td><td class="num">${pct(d.pct_postres)}</td>
         <td class="num">${d.panuozzo.u.toLocaleString("es-CL")}</td><td class="num">${clp(d.bebidas.margen)}</td>
         <td class="num">${resenas(m).nuevas ?? "—"}</td></tr>`; };
@@ -203,7 +206,7 @@ const IND = (() => {
       </div>
       <div class="box" style="margin-top:14px"><h3 style="margin-top:0">Venta por mes</h3>${graficoMeses()}</div>
       <div class="box" style="margin-top:14px"><h3 style="margin-top:0">Mes a mes</h3><div class="tablewrap"><table>
-        <thead><tr><th>Mes</th><th class="num">Venta</th><th class="num">Meta</th><th class="num">Cuentas</th><th class="num">Ticket/persona</th><th class="num">Con entrada</th><th class="num">Postres</th><th class="num">Panuozzo</th><th class="num">Margen bebidas</th><th class="num">Reseñas</th></tr></thead>
+        <thead><tr><th>Mes</th><th class="num">Venta</th><th class="num">Meta</th><th class="num">Cuentas</th><th class="num">Ticket/persona</th><th class="num">Ticket limpio</th><th class="num">Con entrada</th><th class="num">Postres</th><th class="num">Panuozzo</th><th class="num">Margen bebidas</th><th class="num">Reseñas</th></tr></thead>
         <tbody>${lista.slice().reverse().map(fila).join("")}</tbody></table></div>
         <p class="small muted">Meta en verde si se cumplió. Ticket en verde si llegó al objetivo del mes. Fudo empezó a registrar el 12 de enero, así que enero está incompleto.</p></div>`;
     const sa = $("i-anio"); if (sa) sa.onchange = () => { st.anio = sa.value; pintar(); };
