@@ -393,7 +393,12 @@ def main():
                 else:
                     print("Google: no se encontró el local en la búsqueda.")
             except urllib.error.HTTPError as e:
-                print(f"Google rechazó la consulta (HTTP {e.code}). Revisa GOOGLE_PLACES_API_KEY y que Places API (New) esté activada.")
+                try:
+                    err = json.loads(e.read().decode()).get("error", {})
+                    motivo = next((d.get("reason") for d in err.get("details", []) if d.get("reason")), "") or err.get("status", "")
+                except Exception:
+                    motivo = ""
+                print(f"Google rechazó la consulta (HTTP {e.code} {motivo}). Revisa GOOGLE_PLACES_API_KEY y que Places API (New) esté activada.")
         else:
             print("Sin GOOGLE_PLACES_API_KEY: las reseñas siguen siendo manuales.")
         try:
