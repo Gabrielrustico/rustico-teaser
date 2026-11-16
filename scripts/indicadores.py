@@ -87,15 +87,15 @@ def rango_mes(mes):
 
 def bajar_ventas(token, desde):
     """Ventas desde `desde` (más recientes primero), con ítems, productos, categorías y mesa."""
-    include = "items.product.productCategory,table"
+    include = "items.product.productCategory,table,discounts"
     ventas, incl, page = [], {}, 1
     while True:
         url = f"{API}/sales?sort=-createdAt&page[size]=100&page[number]={page}&include={include}"
         try:
             j = http_json(url, token=token)
         except urllib.error.HTTPError as e:
-            if e.code == 400 and include.endswith(",table"):
-                include = "items.product.productCategory"  # por si la mesa no se puede incluir
+            if e.code == 400 and include.endswith(",table,discounts"):
+                include = "items.product.productCategory,discounts"  # por si la mesa no se puede incluir
                 continue
             raise
         data = j.get("data") or []
@@ -171,6 +171,8 @@ def calcular(mes, ventas, incl):
     tam_grupo = defaultdict(int)
     margen_beb = venta_beb = 0.0
     descuentos = 0.0
+    banco = {"ventas": 0, "monto": 0.0}  # descuentos del 50% (BancoEstado miércoles, Scotiabank jueves)
+    venta_salon_limpia = 0.0
 
     for v in ventas:
         a = v["attributes"]
@@ -185,7 +187,22 @@ def calcular(mes, ventas, incl):
             continue
         n += 1
         venta += total
-        descuentos += float(a.get("discount") or a.get("discountAmount") or 0)
+        desc_banco = 0.0
+        for did in rel_ids(v, "discounts"):
+            dsc = buscar(incl, "discount", did)
+            da = (dsc or {}).get("attributes") or {}
+            if not dsc or da.get("canceled"):
+                continue
+            monto = float(da.get("amount") or 0)
+            pctj = float(da.get("percentage") or 0)
+            if not monto and 0 < pctj < 100:
+                monto = total * pctj / (100 - pctj)  # sin monto: se estima desde el total ya descontado
+            descuentos += monto
+            if round(pctj) == 50:
+                desc_banco += monto
+        if desc_banco:
+            banco["ventas"] += 1
+            banco["monto"] += desc_banco
         por_dia[f.day] += total
         calor[(f.weekday(), f.hour)] += total
         dias_semana_vistos[f.weekday()].add(f.date())
@@ -198,6 +215,7 @@ def calcular(mes, ventas, incl):
         if mesa in SALON and gente > 0:
             personas_salon += gente
             venta_salon += total
+            venta_salon_limpia += total + desc_banco
             tam_grupo[min(gente, 8)] += 1
 
         tuvo_entrada = tuvo_pan = False
@@ -260,6 +278,8 @@ def calcular(mes, ventas, incl):
         "personas_salon": personas_salon,
         "venta_salon": r(venta_salon),
         "ticket_persona": r(venta_salon / personas_salon) if personas_salon else 0,
+        "ticket_persona_limpio": r(venta_salon_limpia / personas_salon) if personas_salon else 0,
+        "descuento_banco": {"ventas": banco["ventas"], "monto": r(banco["monto"])},
         "pct_con_entrada": round(100 * con_entrada / n, 1) if n else 0,
         "pct_entradas_venta": round(100 * venta_entradas / venta, 1) if venta else 0,
         "pct_postres": round(100 * venta_postres / venta, 1) if venta else 0,
