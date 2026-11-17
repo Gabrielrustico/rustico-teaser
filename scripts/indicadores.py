@@ -512,10 +512,15 @@ def main():
     except urllib.error.HTTPError as e:
         try:
             err = json.loads(e.read().decode()).get("error", {})
-            motivo = err.get("status", "") if isinstance(err, dict) else str(err)
+            if isinstance(err, dict):
+                razones = [d.get("reason", "") for d in err.get("details", []) if isinstance(d, dict) and d.get("reason")]
+                motivo = " ".join([err.get("status", "")] + razones) + " | " + str(err.get("message", ""))[:200]
+            else:
+                motivo = str(err)[:200]
         except Exception:
             motivo = ""
-        print(f"Perfil de Empresa: Google rechazó la consulta (HTTP {e.code} {motivo}).")
+        api = urllib.parse.urlsplit(getattr(e, "url", "") or "").netloc
+        print(f"Perfil de Empresa: Google rechazó la consulta a {api} (HTTP {e.code} {motivo}).")
 
     for mes in meses:
         fila = calcular(mes, ventas, incl)
