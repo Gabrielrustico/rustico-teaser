@@ -367,15 +367,18 @@ def token_perfil():
 
 
 def ubicacion_perfil(tok):
-    """El id de la ficha de Rusti-Co (locations/123…) dentro de las cuentas del usuario conectado."""
+    """Fichas candidatas de Rusti-Co (locations/123…) en las cuentas del usuario conectado, verificadas primero."""
     cuentas = http_json("https://mybusinessaccountmanagement.googleapis.com/v1/accounts", token=tok).get("accounts") or []
     todas = []
     for c in cuentas:
         j = http_json(f"https://mybusinessbusinessinformation.googleapis.com/v1/{c['name']}/locations"
-                      "?readMask=name,title&pageSize=100", token=tok)
+                      "?readMask=name,title,metadata&pageSize=100", token=tok)
         todas += j.get("locations") or []
-    elegida = next((l for l in todas if "rusti" in norm(l.get("title", ""))), todas[0] if len(todas) == 1 else None)
-    return elegida and elegida["name"]
+    cand = [l for l in todas if "rusti" in norm(l.get("title", ""))] or (todas if len(todas) == 1 else [])
+    cand.sort(key=lambda l: not (l.get("metadata") or {}).get("hasVoiceOfMerchant"))
+    print(f"Perfil de Empresa: {len(cuentas)} cuenta(s), {len(todas)} ficha(s), {len(cand)} de Rusti-Co "
+          f"({sum(1 for l in cand if (l.get('metadata') or {}).get('hasVoiceOfMerchant'))} verificada(s)).")
+    return [l["name"] for l in cand]
 
 
 def metricas_perfil(tok, ubic, desde, hasta):
@@ -499,11 +502,17 @@ def main():
     try:
         tok = token_perfil()
         if tok:
-            ubic = ubicacion_perfil(tok)
-            if ubic:
+            fichas = ubicacion_perfil(tok)
+            if fichas:
                 ini = min(rango_mes(m)[0] for m in meses).date()
                 fin = (hoy - timedelta(days=1)).date()
-                perfil = metricas_perfil(tok, ubic, ini, fin)
+                for i, ubic in enumerate(fichas):
+                    try:
+                        perfil = metricas_perfil(tok, ubic, ini, fin)
+                        break
+                    except urllib.error.HTTPError as e:
+                        if e.code != 403 or i == len(fichas) - 1:
+                            raise
                 print("Perfil de Empresa: métricas leídas OK.")
             else:
                 print("Perfil de Empresa: la cuenta conectada no administra la ficha de Rusti-Co.")
