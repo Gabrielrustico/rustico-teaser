@@ -26,6 +26,7 @@ import os
 import sys
 import unicodedata
 import urllib.error
+import urllib.parse
 import urllib.request
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
@@ -344,6 +345,77 @@ def resenas_del_mes(fotos, mes):
             "desde": base["fecha"] if base else None}
 
 
+# ---------- Perfil de Empresa de Google (Business Profile Performance API) ----------
+METRICAS_PERFIL = {
+    "BUSINESS_IMPRESSIONS_MOBILE_MAPS": "vistas_maps", "BUSINESS_IMPRESSIONS_DESKTOP_MAPS": "vistas_maps",
+    "BUSINESS_IMPRESSIONS_MOBILE_SEARCH": "vistas_busqueda", "BUSINESS_IMPRESSIONS_DESKTOP_SEARCH": "vistas_busqueda",
+    "BUSINESS_DIRECTION_REQUESTS": "como_llegar", "CALL_CLICKS": "llamadas", "WEBSITE_CLICKS": "web",
+    "BUSINESS_FOOD_MENU_CLICKS": "carta",
+}
+
+
+def token_perfil():
+    cid, sec, ref = (os.environ.get(k, "").strip() for k in ("GBP_CLIENT_ID", "GBP_CLIENT_SECRET", "GBP_REFRESH_TOKEN"))
+    if not (cid and sec and ref):
+        return None
+    body = urllib.parse.urlencode({"client_id": cid, "client_secret": sec, "refresh_token": ref,
+                                   "grant_type": "refresh_token"}).encode()
+    req = urllib.request.Request("https://oauth2.googleapis.com/token", data=body,
+                                 headers={"Content-Type": "application/x-www-form-urlencoded"})
+    with urllib.request.urlopen(req, timeout=30) as r:
+        return json.loads(r.read().decode())["access_token"]
+
+
+def ubicacion_perfil(tok):
+    """Fichas candidatas de Rusti-Co (locations/123…) en las cuentas del usuario conectado, verificadas primero."""
+    cuentas = http_json("https://mybusinessaccountmanagement.googleapis.com/v1/accounts", token=tok).get("accounts") or []
+    todas = []
+    for c in cuentas:
+        j = http_json(f"https://mybusinessbusinessinformation.googleapis.com/v1/{c['name']}/locations"
+                      "?readMask=name,title,metadata&pageSize=100", token=tok)
+        todas += j.get("locations") or []
+    cand = [l for l in todas if "rusti" in norm(l.get("title", ""))] or (todas if len(todas) == 1 else [])
+    cand.sort(key=lambda l: not (l.get("metadata") or {}).get("hasVoiceOfMerchant"))
+    print(f"Perfil de Empresa: {len(cuentas)} cuenta(s), {len(todas)} ficha(s), {len(cand)} de Rusti-Co "
+          f"({sum(1 for l in cand if (l.get('metadata') or {}).get('hasVoiceOfMerchant'))} verificada(s)).")
+    return [l["name"] for l in cand]
+
+
+def metricas_perfil(tok, ubic, desde, hasta):
+    """{ 'YYYY-MM-DD': {vistas_maps, vistas_busqueda, como_llegar, llamadas, web, carta} }"""
+    q = [("dailyMetrics", m) for m in METRICAS_PERFIL] + [
+        ("dailyRange.startDate.year", desde.year), ("dailyRange.startDate.month", desde.month), ("dailyRange.startDate.day", desde.day),
+        ("dailyRange.endDate.year", hasta.year), ("dailyRange.endDate.month", hasta.month), ("dailyRange.endDate.day", hasta.day)]
+    j = http_json(f"https://businessprofileperformance.googleapis.com/v1/{ubic}:fetchMultiDailyMetricsTimeSeries?"
+                  + urllib.parse.urlencode(q), token=tok)
+    por_dia = defaultdict(lambda: defaultdict(int))
+    for grupo in j.get("multiDailyMetricTimeSeries") or []:
+        for serie in grupo.get("dailyMetricTimeSeries") or []:
+            clave = METRICAS_PERFIL.get(serie.get("dailyMetric"))
+            for dv in (serie.get("timeSeries") or {}).get("datedValues") or []:
+                d = dv.get("date") or {}
+                if clave and d:
+                    por_dia[f"{d['year']:04d}-{d['month']:02d}-{d['day']:02d}"][clave] += int(dv.get("value") or 0)
+    return por_dia
+
+
+def perfil_del_mes(por_dia, mes):
+    dias = sorted(k for k in por_dia if k.startswith(mes))
+    if not dias:
+        return None
+    tot = defaultdict(int)
+    for k in dias:
+        for m, v in por_dia[k].items():
+            tot[m] += v
+    tot = dict(tot)
+    tot["vistas"] = tot.get("vistas_maps", 0) + tot.get("vistas_busqueda", 0)
+    tot["acciones"] = tot.get("como_llegar", 0) + tot.get("llamadas", 0) + tot.get("web", 0) + tot.get("carta", 0)
+    tot["hasta"] = dias[-1]
+    tot["vistas_por_dia"] = [sum(por_dia.get(f"{mes}-{d:02d}", {}).get(m, 0) for m in ("vistas_maps", "vistas_busqueda"))
+                             for d in range(1, 32)]
+    return tot
+
+
 def guardar(fila, clave):
     http_json(f"{SUPABASE_URL}/rest/v1/indicadores_mes?on_conflict=mes",
               data={"mes": fila["mes"], "datos": fila, "actualizado": datetime.now(timezone.utc).isoformat()},
@@ -426,11 +498,47 @@ def main():
         except urllib.error.HTTPError:
             fotos = []
 
+    perfil = {}
+    try:
+        tok = token_perfil()
+        if tok:
+            fichas = ubicacion_perfil(tok)
+            if fichas:
+                ini = min(rango_mes(m)[0] for m in meses).date()
+                fin = (hoy - timedelta(days=1)).date()
+                for i, ubic in enumerate(fichas):
+                    try:
+                        perfil = metricas_perfil(tok, ubic, ini, fin)
+                        break
+                    except urllib.error.HTTPError as e:
+                        if e.code != 403 or i == len(fichas) - 1:
+                            raise
+                print("Perfil de Empresa: métricas leídas OK.")
+            else:
+                print("Perfil de Empresa: la cuenta conectada no administra la ficha de Rusti-Co.")
+        else:
+            print("Sin GBP_CLIENT_ID / GBP_CLIENT_SECRET / GBP_REFRESH_TOKEN: sin métricas del Perfil de Empresa.")
+    except urllib.error.HTTPError as e:
+        try:
+            err = json.loads(e.read().decode()).get("error", {})
+            if isinstance(err, dict):
+                razones = [d.get("reason", "") for d in err.get("details", []) if isinstance(d, dict) and d.get("reason")]
+                motivo = " ".join([err.get("status", "")] + razones) + " | " + str(err.get("message", ""))[:200]
+            else:
+                motivo = str(err)[:200]
+        except Exception:
+            motivo = ""
+        api = urllib.parse.urlsplit(getattr(e, "url", "") or "").netloc
+        print(f"Perfil de Empresa: Google rechazó la consulta a {api} (HTTP {e.code} {motivo}).")
+
     for mes in meses:
         fila = calcular(mes, ventas, incl)
         r = resenas_del_mes(fotos, mes)
         if r:
             fila["resenas"] = r
+        pm = perfil_del_mes(perfil, mes)
+        if pm:
+            fila["perfil"] = pm
         if not clave:
             print(f"{mes}: calculado, pero falta SUPABASE_SERVICE_ROLE_KEY; no se guardó.")
             continue

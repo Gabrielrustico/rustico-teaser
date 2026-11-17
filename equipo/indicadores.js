@@ -143,6 +143,7 @@ const IND = (() => {
         ${tarjeta("Margen de bebidas", clp(d.bebidas.margen), `<span class="small muted">${pct(d.bebidas.pct_margen)} sobre ${clp(d.bebidas.venta)} vendidos</span>`)}
       </div>
       <div class="box" style="margin-top:14px"><h3 style="margin-top:0">Venta acumulada del mes</h3>${graficoAcumulado(d, mv)}</div>
+      ${bloquePerfil(d, ant)}
       <div class="box" style="margin-top:14px"><h3 style="margin-top:0">Actividad por día y hora</h3>${mapaCalor(d)}</div>
       <div class="box" style="margin-top:14px"><h3 style="margin-top:0">Mesas</h3>${tablaMesas(d)}</div>
       <div class="ind-2">
@@ -163,6 +164,24 @@ const IND = (() => {
       try { await q(sb.from("indicadores_manual").upsert({ mes: st.mes, datos, actualizado: new Date().toISOString() })); st.manual[st.mes] = datos; pintar(); toast("Guardado"); }
       catch (err) { say("i-status", "No se pudo guardar: " + err.message, true); }
     };
+  }
+
+  // Perfil de Empresa de Google: cómo encuentran el local y qué hacen después.
+  function bloquePerfil(d, ant){
+    const p = d.perfil; if (!p) return "";
+    const n = x => (x || 0).toLocaleString("es-CL");
+    // Comparación justa: mismos días del mes anterior (solo para vistas, que vienen por día).
+    const diaHasta = +p.hasta.slice(8, 10);
+    const vAnt = ant?.perfil?.vistas_por_dia ? ant.perfil.vistas_por_dia.slice(0, diaHasta).reduce((a, b) => a + b, 0) : 0;
+    const tasa = p.vistas ? (p.acciones / p.vistas * 100) : 0;
+    return `<div class="box" style="margin-top:14px"><h3 style="margin-top:0">Google: cómo te encuentran</h3>
+      <div class="ind-grid">
+        ${tarjeta("Vistas del perfil", n(p.vistas), `<span class="small muted">${n(p.vistas_maps)} en Maps · ${n(p.vistas_busqueda)} en la búsqueda</span>${vAnt ? delta(p.vistas, vAnt) + `<span class="small muted">(mismos ${diaHasta} días)</span>` : ""}`)}
+        ${tarjeta("Cómo llegar", n(p.como_llegar), `<span class="small muted">personas que pidieron la ruta</span>`)}
+        ${tarjeta("Llamadas", n(p.llamadas), `<span class="small muted">desde el perfil</span>`)}
+        ${tarjeta("Clics a la web y carta", n((p.web || 0) + (p.carta || 0)), `<span class="small muted">${n(p.web)} web · ${n(p.carta)} carta</span>`)}
+      </div>
+      <p class="small muted" style="margin-top:10px">${tasa.toLocaleString("es-CL", { maximumFractionDigits: 1 })} acciones por cada 100 vistas. Google entrega estos datos con 2 a 5 días de atraso: van hasta el ${p.hasta.split("-").reverse().join("-")}.</p></div>`;
   }
 
   // Botones para cambiar entre el mes en curso y el historial del año.
@@ -194,7 +213,8 @@ const IND = (() => {
         <td class="num"><span class="${mt && d.ticket_persona_limpio ? (d.ticket_persona_limpio >= mt ? "ok" : "bad") : ""}">${d.ticket_persona_limpio ? clp(d.ticket_persona_limpio) : "—"}</span></td>
         <td class="num">${pct(d.pct_con_entrada)}</td><td class="num">${pct(d.pct_postres)}</td>
         <td class="num">${d.panuozzo.u.toLocaleString("es-CL")}</td><td class="num">${clp(d.bebidas.margen)}</td>
-        <td class="num">${resenas(m).nuevas ?? "—"}</td></tr>`; };
+        <td class="num">${resenas(m).nuevas ?? "—"}</td>
+        <td class="num">${d.perfil ? d.perfil.vistas.toLocaleString("es-CL") : "—"}</td><td class="num">${d.perfil ? d.perfil.como_llegar.toLocaleString("es-CL") : "—"}</td></tr>`; };
     $("vista").innerHTML = `${modos()}<div class="ind-top"><div><h2 style="margin:0">Historial ${esc(st.anio)}</h2>
         <p class="small muted">${lista.length} meses con datos · toca un mes para ver su detalle</p></div>
       ${anios.length > 1 ? `<select id="i-anio" aria-label="Año">${anios.map(a => `<option ${a === st.anio ? "selected" : ""}>${a}</option>`).join("")}</select>` : ""}</div>
@@ -206,7 +226,7 @@ const IND = (() => {
       </div>
       <div class="box" style="margin-top:14px"><h3 style="margin-top:0">Venta por mes</h3>${graficoMeses()}</div>
       <div class="box" style="margin-top:14px"><h3 style="margin-top:0">Mes a mes</h3><div class="tablewrap"><table>
-        <thead><tr><th>Mes</th><th class="num">Venta</th><th class="num">Meta</th><th class="num">Cuentas</th><th class="num">Ticket/persona</th><th class="num">Ticket limpio</th><th class="num">Con entrada</th><th class="num">Postres</th><th class="num">Panuozzo</th><th class="num">Margen bebidas</th><th class="num">Reseñas</th></tr></thead>
+        <thead><tr><th>Mes</th><th class="num">Venta</th><th class="num">Meta</th><th class="num">Cuentas</th><th class="num">Ticket/persona</th><th class="num">Ticket limpio</th><th class="num">Con entrada</th><th class="num">Postres</th><th class="num">Panuozzo</th><th class="num">Margen bebidas</th><th class="num">Reseñas</th><th class="num">Vistas Google</th><th class="num">Cómo llegar</th></tr></thead>
         <tbody>${lista.slice().reverse().map(fila).join("")}</tbody></table></div>
         <p class="small muted">Meta en verde si se cumplió. Ticket en verde si llegó al objetivo del mes. Fudo empezó a registrar el 12 de enero, así que enero está incompleto.</p></div>`;
     const sa = $("i-anio"); if (sa) sa.onchange = () => { st.anio = sa.value; pintar(); };
