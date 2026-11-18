@@ -43,7 +43,7 @@ GRUPOS = [("1+2", {1, 2}), ("3+4", {3, 4}), ("5", {5}), ("6", {6}), ("7+8", {7, 
           ("Terraza 14-15", {14, 15}), ("Barra 16-18", {16, 17, 18})]
 SALON = set(range(1, 16))
 # Tramos especiales: ticket limpio desde una fecha, con su objetivo (solo para ese mes).
-TRAMOS = {"2026-11": {"desde": "2026-11-18", "meta": 18900, "meta_cierre": 17500}}
+TRAMOS = {"2026-11": {"desde": "2026-11-18", "meta": 19000}}
 DIAS = ["lun", "mar", "mié", "jue", "vie", "sáb", "dom"]
 
 

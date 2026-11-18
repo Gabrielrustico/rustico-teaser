@@ -137,7 +137,7 @@ const IND = (() => {
         ${d.tramo ? (() => { const t = d.tramo, f = t.desde.split("-").reverse().slice(0, 2).join("/");
           return tarjeta(`Ticket limpio desde el ${f}`, t.ticket_limpio ? clp(t.ticket_limpio) : "—",
             `<span class="small ${t.ticket_limpio >= t.meta ? "ok" : "bad"}">Objetivo ${clp(t.meta)}</span>${barra(t.ticket_limpio, t.meta)}
-             <span class="small muted">${t.personas.toLocaleString("es-CL")} personas · para cerrar el mes en ${clp(t.meta_cierre)} limpio</span>`); })() : ""}
+             <span class="small muted">${t.personas.toLocaleString("es-CL")} personas · sin descuento bancario</span>`); })() : ""}
         ${tarjeta("Reseñas nuevas en Google", rn != null && rn !== "" ? rn : "—", `${mr ? `<span class="small">Meta ${mr}</span>${barra(+rn || 0, mr)}` : ""}
           ${R.total ? `<span class="small muted">${R.total} en total · ${R.estrellas ? String(R.estrellas).replace(".", ",") : "—"} ★${R.auto ? " · leído de Google" : ""}</span>` : `<span class="small muted">Escríbelas abajo</span>`}`)}
         ${tarjeta("Cuentas", d.ventas.toLocaleString("es-CL"), `<span class="small muted">${clp(d.ticket_venta)} por cuenta · ${d.personas_salon.toLocaleString("es-CL")} personas en salón</span>${cuenta(d.ventas, ant?.ventas)}`)}
