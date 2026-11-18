@@ -42,6 +42,8 @@ GRUPOS = [("1+2", {1, 2}), ("3+4", {3, 4}), ("5", {5}), ("6", {6}), ("7+8", {7, 
           ("9+10", {9, 10}), ("11+12", {11, 12}), ("13", {13}),
           ("Terraza 14-15", {14, 15}), ("Barra 16-18", {16, 17, 18})]
 SALON = set(range(1, 16))
+# Tramos especiales: ticket limpio desde una fecha, con su objetivo (solo para ese mes).
+TRAMOS = {"2026-11": {"desde": "2026-11-18", "meta": 18900, "meta_cierre": 17500}}
 DIAS = ["lun", "mar", "mié", "jue", "vie", "sáb", "dom"]
 
 
@@ -174,6 +176,8 @@ def calcular(mes, ventas, incl):
     descuentos = 0.0
     banco = {"ventas": 0, "monto": 0.0}  # descuentos del 50% (BancoEstado miércoles, Scotiabank jueves)
     venta_salon_limpia = 0.0
+    tramo_cfg = TRAMOS.get(mes)
+    tramo = {"personas": 0, "venta_limpia": 0.0}
 
     for v in ventas:
         a = v["attributes"]
@@ -217,6 +221,9 @@ def calcular(mes, ventas, incl):
             personas_salon += gente
             venta_salon += total
             venta_salon_limpia += total + desc_banco
+            if tramo_cfg and f.strftime("%Y-%m-%d") >= tramo_cfg["desde"]:
+                tramo["personas"] += gente
+                tramo["venta_limpia"] += total + desc_banco
             tam_grupo[min(gente, 8)] += 1
 
         tuvo_entrada = tuvo_pan = False
@@ -280,6 +287,9 @@ def calcular(mes, ventas, incl):
         "venta_salon": r(venta_salon),
         "ticket_persona": r(venta_salon / personas_salon) if personas_salon else 0,
         "ticket_persona_limpio": r(venta_salon_limpia / personas_salon) if personas_salon else 0,
+        "tramo": ({**tramo_cfg, "personas": tramo["personas"],
+                   "ticket_limpio": r(tramo["venta_limpia"] / tramo["personas"]) if tramo["personas"] else 0}
+                  if tramo_cfg else None),
         "descuento_banco": {"ventas": banco["ventas"], "monto": r(banco["monto"])},
         "pct_con_entrada": round(100 * con_entrada / n, 1) if n else 0,
         "pct_entradas_venta": round(100 * venta_entradas / venta, 1) if venta else 0,
