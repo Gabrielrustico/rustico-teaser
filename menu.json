@@ -652,7 +652,7 @@
    "qr": true
   },
   "cesarrustica": {
-   "active": true,
+   "active": false,
    "category": "Ensalada",
    "name": "Cesar Rustica",
    "price": 10900,
@@ -1912,7 +1912,7 @@
    "qr": true
   },
   "panuozzopollocesar": {
-   "active": true,
+   "active": false,
    "category": "Antipasto",
    "name": "Panuozzo pollo césar",
    "price": 11990,
@@ -2752,5 +2752,5 @@
    "qr": false
   }
  },
- "updated": "2026-11-17T19:13:40+00:00"
+ "updated": "2026-11-18T18:53:22+00:00"
 }
