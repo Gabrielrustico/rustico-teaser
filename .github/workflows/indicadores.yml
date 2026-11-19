@@ -5,7 +5,9 @@ name: Indicadores mensuales desde Fudo
 # rusti-co.cl/equipo → Indicadores, con sesión de administrador.
 on:
   schedule:
-    - cron: "40 9,16,23 * * *"   # 3 veces al día (≈ 6:40, 13:40 y 20:40 en Concepción, verano)
+    # Cada hora de 8:23 a 1:23 (hora de Chile, verano). GitHub atrasa o se salta
+    # corridas programadas cuando está cargado, así que se pide más seguido.
+    - cron: "23 0-4,11-23 * * *"
   workflow_dispatch:
     inputs:
       meses:

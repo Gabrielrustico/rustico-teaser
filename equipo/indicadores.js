@@ -39,6 +39,14 @@ const IND = (() => {
     return `<div class="ind-bar" role="img" aria-label="${Math.round(valor / meta * 100)}% de la meta">
       ${pp > p ? `<i class="proy" style="width:${pp}%"></i>` : ""}<i style="width:${p}%"></i></div>`;
   }
+  // Fecha y hora en que la acción de GitHub guardó por última vez los datos del mes.
+  const ultima = d => {
+    if (!d?.actualizado) return "";
+    const t = new Date(d.actualizado), h = (Date.now() - t) / 36e5;
+    const txt = t.toLocaleString("es-CL", { weekday: "long", day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "America/Santiago" });
+    const hace = h < 1 ? `hace ${Math.max(1, Math.round(h * 60))} min` : `hace ${Math.round(h)} h`;
+    return `<p class="small ${!d.cerrado && h > 3 ? "bad" : "muted"}">Última actualización: ${txt} (${hace})</p>`;
+  };
   const tarjeta = (titulo, valor, extra) => `<div class="box ind-k"><span class="label">${titulo}</span><b>${valor}</b>${extra || ""}</div>`;
 
   // Venta acumulada del mes contra la línea de la meta.
@@ -113,7 +121,7 @@ const IND = (() => {
     const d = st.meses[st.mes], man = st.manual[st.mes] || {}, ant = st.meses[mesAnterior(st.mes)];
     const lista = Object.keys(st.meses).sort().reverse();
     const selector = modos() + `<div class="ind-top"><div><h2 style="margin:0">Indicadores de ${nombreMes(st.mes)}</h2>
-        <p class="small muted">${d ? (d.cerrado ? "Mes cerrado" : `Al día ${d.dias_transcurridos} de ${d.dias_mes}`) + " · " + esc(d.fuente || "Fudo") : ""}</p></div>
+        <p class="small muted">${d ? (d.cerrado ? "Mes cerrado" : `Al día ${d.dias_transcurridos} de ${d.dias_mes}`) + " · Fudo" : ""}</p>${ultima(d)}</div>
       ${lista.length ? `<select id="i-mes" aria-label="Mes">${lista.map(m => `<option value="${m}" ${m === st.mes ? "selected" : ""}>${nombreMes(m)}</option>`).join("")}</select>` : ""}</div>`;
     if (!d) {
       $("vista").innerHTML = `${selector}<div class="box stack"><p>Todavía no hay indicadores calculados.</p>
