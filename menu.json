@@ -1982,7 +1982,7 @@
    "qr": false
   },
   "pesto": {
-   "active": false,
+   "active": true,
    "category": "Pizza",
    "name": "Pizza Pesto",
    "price": 16990,
@@ -2752,5 +2752,5 @@
    "qr": false
   }
  },
- "updated": "2026-11-21T02:26:10+00:00"
+ "updated": "2026-11-21T23:26:16+00:00"
 }
