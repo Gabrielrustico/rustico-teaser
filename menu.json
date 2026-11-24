@@ -393,7 +393,7 @@
    "qr": false
   },
   "borgona": {
-   "active": true,
+   "active": false,
    "category": "FIESTAS PATRIAS",
    "name": "Borgoña",
    "price": 5900,
@@ -1191,7 +1191,7 @@
    "qr": false
   },
   "heladoconosoft": {
-   "active": false,
+   "active": true,
    "category": "Postre",
    "name": "Helado cono Soft",
    "price": 1900,
@@ -1212,7 +1212,7 @@
    "qr": false
   },
   "heladosoftoreo": {
-   "active": false,
+   "active": true,
    "category": "Postre",
    "name": "Helado soft Oreo",
    "price": 2900,
@@ -1793,7 +1793,7 @@
    "qr": false
   },
   "moteconhuesillo": {
-   "active": true,
+   "active": false,
    "category": "FIESTAS PATRIAS",
    "name": "Mote con huesillo",
    "price": 4990,
@@ -2535,7 +2535,7 @@
    "qr": false
   },
   "terremoto": {
-   "active": true,
+   "active": false,
    "category": "FIESTAS PATRIAS",
    "name": "Terremoto",
    "price": 5900,
@@ -2752,5 +2752,5 @@
    "qr": false
   }
  },
- "updated": "2026-11-24T10:02:24+00:00"
+ "updated": "2026-11-24T20:41:58+00:00"
 }
