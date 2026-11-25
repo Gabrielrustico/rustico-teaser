@@ -652,7 +652,7 @@
    "qr": true
   },
   "cesarrustica": {
-   "active": true,
+   "active": false,
    "category": "Ensalada",
    "name": "Cesar Rustica",
    "price": 10900,
@@ -1194,7 +1194,7 @@
    "active": true,
    "category": "Postre",
    "name": "Helado cono Soft",
-   "price": 1900,
+   "price": 2000,
    "qr": false
   },
   "heladosoftchubi": {
@@ -1219,7 +1219,7 @@
    "qr": false
   },
   "heladosoftsahnenuss": {
-   "active": false,
+   "active": true,
    "category": "Postre",
    "name": "Helado soft Sahne nuss",
    "price": 3590,
@@ -2653,6 +2653,13 @@
    "price": 0,
    "qr": false
   },
+  "vasoheladosoft": {
+   "active": true,
+   "category": "Envases Cocina",
+   "name": "Vaso helado soft",
+   "price": 300,
+   "qr": false
+  },
   "vasosplasticos": {
    "active": true,
    "category": "Envases Cocina",
@@ -2752,5 +2759,5 @@
    "qr": false
   }
  },
- "updated": "2026-11-25T04:17:39+00:00"
+ "updated": "2026-11-25T19:58:19+00:00"
 }
