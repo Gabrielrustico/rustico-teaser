@@ -323,7 +323,7 @@
    "qr": false
   },
   "bilzzero": {
-   "active": true,
+   "active": false,
    "category": "Bebidas Gaseosas",
    "name": "Bilz zero",
    "price": 2500,
@@ -2759,5 +2759,5 @@
    "qr": false
   }
  },
- "updated": "2026-11-27T03:39:53+00:00"
+ "updated": "2026-11-28T03:21:08+00:00"
 }
